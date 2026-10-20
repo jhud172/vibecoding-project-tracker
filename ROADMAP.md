@@ -82,4 +82,6 @@ Baseline a227405. All 75 requested improvements remain in scope. Status is evide
 
 ## Current work
 
-Storage/recovery and handoff increments pass 45 unit tests and 13 browser tests. Lint and production build pass. The remaining roadmap is still active; this ledger deliberately distinguishes implementation, observed checks and unfinished acceptance gates.
+User-authorised motion/3D extension: original Blender journal, cover plus four page hinges, on-demand Three.js scene, functional focus-chapter navigation, tactile hover/press, dialog and page transitions. Editable .blend and generation script are included. Reduced-motion and fallback checks are part of e2e/motion.spec.js. This extension does not replace the unfinished original roadmap items.
+
+Storage/recovery and handoff increments pass 46 unit tests and 18 browser tests. Lint and production build pass. The remaining roadmap is still active; this ledger deliberately distinguishes implementation, observed checks and unfinished acceptance gates.

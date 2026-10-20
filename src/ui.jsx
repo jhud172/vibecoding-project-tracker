@@ -11,7 +11,7 @@ import { X } from "lucide-react";
 export const fieldClass =
   "w-full rounded-lg border border-strong-line bg-surface-card px-3 py-2.5 text-sm text-text-primary outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20";
 export const buttonClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg border border-strong-line bg-surface-card px-3.5 py-2.5 text-sm font-medium transition-colors hover:bg-surface-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  "relay-button inline-flex items-center justify-center gap-2 rounded-lg border border-strong-line bg-surface-card px-3.5 py-2.5 text-sm font-medium transition-colors hover:bg-surface-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
 export const primaryClass = `${buttonClass} !border-brand-primary !bg-action !text-action-ink hover:brightness-110`;
 export const DialogAudioContext = createContext(null);
 

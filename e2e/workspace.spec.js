@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { seedTasks, ANCHORS } from "../src/model.js";
+// Core data regressions run without GPU contention; motion.spec exercises real 3D separately.
+test.use({ reducedMotion: "reduce" });
 
 const KEY = "relay.workspace:v3";
 
@@ -212,7 +214,8 @@ async function saved(page) {
 }
 async function storedTasks(page) {
   return page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)).data.projects[0].tasks,
+    (key) =>
+      JSON.parse(localStorage.getItem(key))?.data.projects[0].tasks || [],
     KEY,
   );
 }
@@ -426,6 +429,9 @@ test("enlarged mobile workspace and access dialog reflow without horizontal over
   await expect(
     page.getByRole("button", { name: "Board layout", exact: true }),
   ).toBeDisabled();
+  const caption = await page.locator(".journal-caption-label").boundingBox();
+  const artwork = await page.locator(".journal-canvas").boundingBox();
+  expect(caption.y).toBeGreaterThanOrEqual(artwork.y + artwork.height);
   await expect(page.getByTestId("task-list-row")).toHaveCount(4);
 });
 

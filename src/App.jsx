@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "./ErrorBoundary.jsx";
+import { Journal } from "./Journal.jsx";
+import { turnWorkspacePage } from "./motion.js";
 import WorkspaceTransfer from "./WorkspaceTransfer.jsx";
 import { workspaceBackup } from "./transfer.js";
 import { validAccess } from "./accessibility.js";
@@ -583,7 +585,7 @@ function TaskCard({
     <article
       data-testid="task-card"
       onClick={() => onEdit(task)}
-      className={`group cursor-pointer overflow-hidden rounded-xl border border-line border-l-[3px] ${cardTints[due.tone]} shadow-[0_2px_3px_0_#252B2705] transition hover:shadow-md motion-reduce:transition-none ${task.type === "bug" ? "border-l-type-bug" : "border-l-type-feature"}`}
+      className={`motion-card group cursor-pointer overflow-hidden rounded-xl border border-line border-l-[3px] ${cardTints[due.tone]} shadow-[0_2px_3px_0_#252B2705] transition hover:shadow-md motion-reduce:transition-none ${task.type === "bug" ? "border-l-type-bug" : "border-l-type-feature"}`}
     >
       <div className="p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
@@ -759,11 +761,13 @@ export default function App() {
     notify(result.ok ? "Change reapplied." : result.error);
   };
   const showBoard = () => {
-    setView("board");
-    setContextFilter("all");
+    turnWorkspacePage(() => {
+      setView("board");
+      setContextFilter("all");
+    });
   };
   const showFocus = () => {
-    setView("focus");
+    turnWorkspacePage(() => setView("focus"));
     window.scrollTo({ top: 0, behavior: "instant" });
   };
   const addTask = (status = "todo") =>
@@ -1115,32 +1119,41 @@ export default function App() {
               </button>
             </div>
           )}
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
-            <div>
+          <div className="studio-hero" data-chapter={view}>
+            <div className="studio-hero-copy">
               <p className="mb-3 flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-[0.22em] text-type-feature">
                 <span className="h-1.5 w-1.5 rounded-full bg-type-feature" />{" "}
                 The context-first project studio
               </p>
-              <h1 className="font-editorial text-4xl tracking-tight sm:text-[2.75rem]">
+              <h1 className="studio-hero-title font-editorial tracking-tight">
                 {view === "focus"
                   ? "Less noise. Your next move."
                   : "Good work deserves a clear next step."}
               </h1>
-              <p className="mt-3 text-sm text-text-muted">
+              <p className="studio-hero-description text-text-muted">
                 {view === "focus"
                   ? "Pick up the thinking, not just the task."
                   : "Plan it. Build it. Leave the context for what comes next."}
               </p>
+              <button
+                type="button"
+                className={`${primaryClass} studio-resume`}
+                onClick={() => setPanel("resume")}
+              >
+                <Sparkles size={16} />
+                Resume work
+                <ArrowUpRight size={16} />
+              </button>
+              <p className="studio-hero-footnote">
+                <span aria-hidden="true" /> Your ideas. Your decisions. Ready
+                for the next chapter.
+              </p>
             </div>
-            <button
-              type="button"
-              className={primaryClass}
-              onClick={() => setPanel("resume")}
-            >
-              <Sparkles size={16} />
-              Resume work
-              <ArrowUpRight size={16} />
-            </button>
+            <Journal
+              focused={view === "focus"}
+              onOpen={showFocus}
+              onBoard={showBoard}
+            />
           </div>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div className="inline-flex max-w-full flex-wrap rounded-xl border border-line bg-surface-subtle p-1">
@@ -1247,7 +1260,7 @@ export default function App() {
                 return (
                   <div
                     key={anchor.id}
-                    className="min-w-0 rounded-xl border border-line bg-surface-card/75 p-3.5"
+                    className="deliverable-card min-w-0 rounded-xl border border-line bg-surface-card/75 p-3.5"
                   >
                     <div className="flex items-center justify-between">
                       <Icon

@@ -18,6 +18,7 @@ Other open tabs pick up preference changes on reload.
 | Higher contrast | Strong neutral text/boundaries; takes precedence over palette. |
 | Plain headings / underlined links | Offer familiar type and an extra non-colour link cue. |
 | Reduced motion | Honour OS preference or an additional user choice. |
+| Static journal / 3D pause | Reduced motion skips the renderer and animated model and keeps a small Blender-rendered still. A labelled button can pause 3D interaction separately. |
 | Read aloud | Read a task, workspace briefing, design guide or current presentation slide on request. |
 | Voice and rate selection | Let users choose a device/browser voice and 0.75–1.5× rate. |
 | Pause / resume / stop | Keep speech controllable in a reading dock and inside dialogs. No autoplay. |
@@ -35,6 +36,8 @@ change actual surfaces/text and native `color-scheme`, with matching theme-color
 metadata. They do not use page-wide colour filters. Form boundaries use the
 strong-line token. Forced-colours CSS preserves system focus and control edges.
 System fonts avoid external font requests.
+
+The original 3D journal is decorative and hidden from the accessibility tree. Its chapter action is a standard labelled button, and all task information remains HTML. The renderer is loaded only when its viewport is near the screen, draws during interaction rather than forever, and stops when hidden. Reduced-motion, save-data and forced-colour preferences use the static poster. View-transition and WebGL support are enhancements; navigation still works without either. Model-load failure keeps the poster and a retry action. The journal and chapter composition reflow into a single column on narrow screens and enlarged text.
 
 Text uses relative rem sizes. Small labels are at least 0.75rem at standard size.
 At narrow widths and 200%, dialog headers stack and padding adapts. The access

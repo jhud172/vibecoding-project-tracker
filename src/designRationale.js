@@ -18,11 +18,49 @@ export const PRINCIPLES = [
 ];
 export const DECISIONS = [
   {
+    title: "An open journal: 3D and purposeful motion",
+    items: [
+      [
+        "Original animated journal",
+        "A book makes the saved-context concept tangible: the board is an overview, while opening the book leads to Focus desk. The hardcover, linked-square emblem, foil frame, paper, ribbon and page animation were modelled in Blender for Relay. The model is decorative; task information and controls remain semantic HTML.",
+      ],
+      [
+        "Chapter composition and subtle orbits",
+        "The framed hero gives the headline and next action a distinct starting point. Fine orbit lines, a faint grid, layered paper edges and a contact shadow add depth without adding information or moving task controls. Serif type carries the journal identity; the existing plain-heading preference remains available.",
+      ],
+      [
+        "Opening, page turns and pointer response",
+        "The cover and four staggered page hinges use an exported Blender animation. Pointer movement gives a small bounded change of perspective; leaving returns to rest. Opening Focus desk plays toward the open-book pose, connecting movement to the actual change of work mode. No task depends on hovering or interacting with a canvas.",
+      ],
+      [
+        "Lift, press and entrance timing",
+        "Actionable cards lift on pointer hover, buttons compress on press, and dialogs open with a short perspective entrance. These responses acknowledge interaction and establish hierarchy. Brief card entrances are bounded to the first few cards, without an endless animation over a large board.",
+      ],
+      [
+        "Page transitions with immediate navigation fallback",
+        "Supported browsers use a short perspective transition between board and Focus desk. Other browsers change views directly. Repeated navigation skips the previous transition so animation does not become a queue that delays the user's work.",
+      ],
+      [
+        "Motion controls and resource limits",
+        "OS or in-app reduced motion uses a small Blender-rendered still and skips downloading the renderer and animated model. Save-data and forced-colour modes also keep the static view. A labelled pause button stops 3D motion. Enlarged text separates artwork from naturally sized captions and controls, preventing overlap. The scene draws only while responding, stops when hidden, caps pixel density and batches static meshes by material. This targets smoothness while limiting ongoing GPU work; frame rate still depends on the device.",
+      ],
+    ],
+  },
+  {
     title: "Recovery and inspectable handoffs",
     items: [
-      ["Complete backup and conflict review", "Export names what it includes and makes accessibility preferences optional. Import separates current and incoming text, defaults to keeping current content and labels the scope of replacement. A prior workspace version provides a recovery route after an import."],
-      ["Optional cloud controls and explicit sync", "Account, sharing and comments load in a separate panel so everyday local work is not gated by sign-in. Cloud preview precedes loading, and upload names the data it sends. Visible versions and stale-save rejection make conflicts inspectable. Account IDs enable deliberate sharing without searching or exposing an email directory."],
-      ["Recoverable error screen", "A render failure presents a raw-download and reload action, preserving saved work. The message describes what happened without displaying implementation stack traces or inventing a successful recovery."],
+      [
+        "Complete backup and conflict review",
+        "Export names what it includes and makes accessibility preferences optional. Import separates current and incoming text, defaults to keeping current content and labels the scope of replacement. A prior workspace version provides a recovery route after an import.",
+      ],
+      [
+        "Optional cloud controls and explicit sync",
+        "Account, sharing and comments load in a separate panel so everyday local work is not gated by sign-in. Cloud preview precedes loading, and upload names the data it sends. Visible versions and stale-save rejection make conflicts inspectable. Account IDs enable deliberate sharing without searching or exposing an email directory.",
+      ],
+      [
+        "Recoverable error screen",
+        "A render failure presents a raw-download and reload action, preserving saved work. The message describes what happened without displaying implementation stack traces or inventing a successful recovery.",
+      ],
       [
         "Explicit first-use choice",
         "An empty workspace is offered alongside labelled samples. The choice establishes what is the user’s work and what is an example; a short introduction explains the task-context-handoff sequence.",

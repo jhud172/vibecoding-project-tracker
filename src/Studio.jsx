@@ -157,7 +157,7 @@ export function WorkspacePulse({
             href={href}
             type={href ? undefined : "button"}
             onClick={action}
-            className="group rounded-2xl border border-line bg-surface-card/70 p-4 text-left transition hover:border-strong-line hover:bg-surface-card focus-visible:outline-brand-primary motion-reduce:transition-none"
+            className="metric-card group rounded-2xl border border-line bg-surface-card/70 p-4 text-left transition hover:border-strong-line hover:bg-surface-card focus-visible:outline-brand-primary motion-reduce:transition-none"
           >
             <span className="flex items-center justify-between text-[0.75rem] font-medium text-text-muted">
               {label}

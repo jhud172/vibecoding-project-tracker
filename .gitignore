@@ -12,3 +12,4 @@ qa/
 playwright-report/
 test-results/
 supabase/.temp/
+*.blend1

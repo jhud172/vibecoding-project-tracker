@@ -28,6 +28,9 @@ npm run preview -- --host 127.0.0.1
 
 ## What you can do
 
+- Explore an original Blender-made journal: the cover and four pages open when entering Focus desk. The hero responds gently to pointer movement and offers an explicit 3D pause control.
+- Use perspective page transitions, layered deliverables, card hover/lift and tactile button/dialog responses. Reduced motion keeps the static Blender render and direct navigation.
+
 - Track tasks in To Do, In Progress, Review and Done.
 - Add, edit and delete tasks with a keyboard-accessible modal.
 - Distinguish features and bugs through labels, icons and coloured stripes.
@@ -101,6 +104,8 @@ Date-only deadlines use the local calendar day. Today and the next two days are 
 - `tests/studio.test.js`: recovery, import compatibility, focus ordering and checklist regression tests.
 - `e2e/workspace.spec.js`, `.github/workflows/verify.yml`: isolated Chromium/axe regression checks and CI validation.
 - `IMPLEMENTATION_PLAN.md`, `ROADMAP.md`: all 75 requested improvements and evidence-based completion status.
+- `src/Journal.jsx`, `src/journalScene.js`, `src/motion.js`: accessible journal navigation, on-demand Three.js rendering and view transitions.
+- `assets/source/relay-journal.blend`, `assets/source/create_journal.py`: original editable Blender model and reproducible animation/export script; see assets/source/README.md.
 - `REPORT.md`: implementation report and validation record.
 - `HACKATHON.md`: portal setup and verified milestone names.
 - `LECTURER_SETUP.md`: reusable student instructions for GitHub login, fork registration and webhook setup.

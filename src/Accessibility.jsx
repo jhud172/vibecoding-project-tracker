@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useId,
   useRef,
   useState,
 } from "react";
@@ -266,17 +267,25 @@ export function ReadingDock({ hidden }) {
 }
 
 function Toggle({ label, hint, checked, onChange }) {
+  const id = useId();
   return (
     <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line bg-surface-card p-4">
       <input
         type="checkbox"
+        aria-labelledby={`${id}-label`}
+        aria-describedby={`${id}-hint`}
         className="mt-1 h-5 w-5 shrink-0 accent-brand-primary"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
       />
       <span>
-        <span className="block text-sm font-semibold">{label}</span>
-        <span className="mt-1 block text-xs leading-relaxed text-text-muted">
+        <span id={`${id}-label`} className="block text-sm font-semibold">
+          {label}
+        </span>
+        <span
+          id={`${id}-hint`}
+          className="mt-1 block text-xs leading-relaxed text-text-muted"
+        >
           {hint}
         </span>
       </span>

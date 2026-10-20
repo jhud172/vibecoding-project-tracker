@@ -2,6 +2,446 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Motion is an interaction language: lift = actionable, opening = a new chapter. */
+:root {
+  --motion-quick: 160ms;
+  --motion-settle: 340ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(290px, 0.88fr);
+  align-items: center;
+  gap: 1rem;
+  min-height: 350px;
+  margin-bottom: 2rem;
+  padding: 2rem 2.25rem;
+  border: 1px solid rgb(var(--line));
+  border-radius: 1.5rem;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse at 87% 30%,
+      rgb(var(--accent) / 0.65),
+      transparent 62%
+    ),
+    linear-gradient(120deg, rgb(var(--card) / 0.7), rgb(var(--page)));
+}
+.studio-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.13;
+  background-image:
+    linear-gradient(rgb(var(--brand) / 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--brand) / 0.2) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(90deg, transparent 45%, black);
+}
+.studio-hero-copy {
+  position: relative;
+  z-index: 1;
+  padding-block: 0.5rem;
+}
+.studio-hero-title {
+  max-width: 640px;
+  font-size: clamp(2.3rem, 3.5vw, 3.65rem);
+  line-height: 1.09;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.studio-hero-description {
+  max-width: 28rem;
+  margin-top: 1.15rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+.studio-resume {
+  margin-top: 1.6rem;
+  padding: 0.85rem 1.2rem;
+  box-shadow: 0 7px 22px rgb(var(--brand) / 0.13);
+}
+.studio-hero-footnote {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  max-width: 28rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: rgb(var(--muted));
+}
+.studio-hero-footnote > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(var(--brand));
+  flex-shrink: 0;
+}
+.journal {
+  position: relative;
+  align-self: stretch;
+  min-width: 0;
+  min-height: 300px;
+  margin: 0;
+  isolation: isolate;
+}
+.journal-canvas,
+.journal-poster {
+  position: absolute;
+  inset: -1rem -1.5rem 2rem;
+  width: calc(100% + 3rem);
+  height: calc(100% - 1rem);
+  object-fit: contain;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+.journal-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.journal-poster.is-hidden,
+.journal-canvas.is-hidden {
+  opacity: 0;
+}
+.journal-edition {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-family: monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  color: rgb(var(--muted));
+}
+.journal-orbit {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 270px;
+  height: 180px;
+  border: 1px solid rgb(var(--brand) / 0.15);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  pointer-events: none;
+  z-index: -1;
+}
+.journal-orbit-outer {
+  width: 330px;
+  height: 230px;
+  border-style: dashed;
+  opacity: 0.7;
+  transform: translate(-50%, -50%) rotate(-25deg);
+}
+.journal-shadow {
+  position: absolute;
+  left: 23%;
+  right: 16%;
+  bottom: 24%;
+  height: 13%;
+  border-radius: 50%;
+  background: rgb(var(--brand) / 0.16);
+  filter: blur(20px);
+  pointer-events: none;
+}
+.journal-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.journal-caption-label {
+  display: block;
+  font:
+    0.75rem/1.5 ui-monospace,
+    monospace;
+  letter-spacing: 0.16em;
+  color: rgb(var(--muted));
+}
+.journal-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.1rem;
+  padding: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgb(var(--brand));
+}
+.journal-action svg {
+  transition: transform var(--motion-settle) var(--motion-ease);
+}
+.journal-pause {
+  position: absolute;
+  right: -0.2rem;
+  bottom: 3.8rem;
+  display: grid;
+  place-items: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  border: 1px solid rgb(var(--line));
+  border-radius: 50%;
+  background: rgb(var(--card) / 0.85);
+  color: rgb(var(--muted));
+}
+.journal-retry {
+  position: absolute;
+  right: 0;
+  top: 2rem;
+  font-size: 0.7rem;
+}
+.motion-card,
+.metric-card,
+.deliverable-card {
+  position: relative;
+  transform-origin: center bottom;
+}
+.motion-card {
+  overflow: clip;
+}
+.motion-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgb(var(--card) / 0.35) 43%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+}
+.deliverable-card::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -4px;
+  height: 6px;
+  border: 1px solid rgb(var(--line));
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  background: rgb(var(--card));
+  z-index: -1;
+}
+@keyframes card-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotateX(4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes journal-dialog-open {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) translateY(14px) rotateY(-5deg) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1200px) translateY(0) rotateY(0) scale(1);
+  }
+}
+@keyframes backdrop-arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes chapter-out {
+  to {
+    opacity: 0;
+    transform: perspective(1400px) translateX(-20px) rotateY(-4deg) scale(0.99);
+  }
+}
+@keyframes chapter-in {
+  from {
+    opacity: 0;
+    transform: perspective(1400px) translateX(25px) rotateY(4deg) scale(0.99);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-reduce-motion="true"]) .relay-button {
+    transition:
+      transform var(--motion-quick) ease,
+      box-shadow var(--motion-settle) var(--motion-ease),
+      background-color var(--motion-quick) ease;
+  }
+  html:not([data-reduce-motion="true"]) .relay-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgb(var(--brand) / 0.1);
+  }
+  html:not([data-reduce-motion="true"]) .relay-button:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+  html:not([data-reduce-motion="true"])
+    :is(.motion-card, .metric-card, .deliverable-card) {
+    transition:
+      transform var(--motion-settle) var(--motion-ease),
+      box-shadow var(--motion-settle) var(--motion-ease),
+      border-color var(--motion-quick) ease;
+  }
+  html:not([data-reduce-motion="true"]) .motion-card {
+    animation: card-arrive 400ms var(--motion-ease) backwards;
+  }
+  html:not([data-reduce-motion="true"]) .motion-card:nth-of-type(2) {
+    animation-delay: 45ms;
+  }
+  html:not([data-reduce-motion="true"]) .motion-card:nth-of-type(3) {
+    animation-delay: 80ms;
+  }
+  html:not([data-reduce-motion="true"]) .motion-card:nth-of-type(n + 5) {
+    animation: none;
+  }
+  html:not([data-reduce-motion="true"]) dialog[open] {
+    animation: journal-dialog-open 300ms var(--motion-ease) both;
+    transform-origin: 35% center;
+  }
+  html:not([data-reduce-motion="true"]) dialog::backdrop {
+    animation: backdrop-arrive 200ms ease both;
+    backdrop-filter: blur(4px);
+  }
+  html:not([data-reduce-motion="true"])::view-transition-old(root) {
+    animation: chapter-out 220ms var(--motion-ease) both;
+  }
+  html:not([data-reduce-motion="true"])::view-transition-new(root) {
+    animation: chapter-in 420ms var(--motion-ease) both;
+  }
+  ::view-transition-group(root) {
+    animation-duration: 420ms;
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html:not([data-reduce-motion="true"]) .motion-card:hover {
+    transform: perspective(900px) translateY(-5px) rotateX(1.2deg);
+    box-shadow: 0 16px 25px -15px rgb(var(--brand) / 0.35);
+  }
+  html:not([data-reduce-motion="true"]) .motion-card:hover::after {
+    opacity: 1;
+    transform: translateX(100%);
+    transition:
+      transform 800ms var(--motion-ease),
+      opacity 300ms ease;
+  }
+  html:not([data-reduce-motion="true"])
+    :is(.metric-card, .deliverable-card):hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 22px -16px rgb(var(--brand) / 0.4);
+  }
+  html:not([data-reduce-motion="true"]) .journal-action:hover svg {
+    transform: translate(3px, -3px);
+  }
+}
+@media (max-width: 1050px) {
+  .studio-hero {
+    padding: 1.7rem;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 0.85fr);
+  }
+  .studio-hero-title {
+    font-size: 2.65rem;
+  }
+}
+@media (max-width: 700px) {
+  .studio-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.5rem;
+    gap: 0.25rem;
+  }
+  .studio-hero-title {
+    font-size: 2.6rem;
+    max-width: 32rem;
+  }
+  .journal {
+    min-height: 270px;
+    max-width: 440px;
+    width: 100%;
+    justify-self: center;
+  }
+  .studio-hero-footnote {
+    margin-top: 1rem;
+  }
+  .journal-orbit-outer {
+    width: min(330px, 100%);
+  }
+  .journal-canvas,
+  .journal-poster {
+    inset: -0.5rem 0 2rem;
+    width: 100%;
+    height: calc(100% - 1rem);
+  }
+}
+[data-large-text="true"] .studio-hero {
+  grid-template-columns: minmax(0, 1fr);
+}
+[data-large-text="true"] .journal {
+  min-height: 300px;
+  width: min(100%, 440px);
+  justify-self: center;
+}
+[data-large-text="true"] .journal-caption {
+  position: relative;
+  padding-top: 260px;
+}
+[data-large-text="true"] :is(.journal-canvas, .journal-poster) {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 250px;
+}
+[data-large-text="true"] .journal-pause {
+  top: 0;
+  bottom: auto;
+  right: 0;
+}
+[data-large-text="true"] :is(.journal-orbit, .journal-shadow) {
+  display: none;
+}
+@media (forced-colors: active) {
+  .studio-hero {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+  .studio-hero::before,
+  .journal-orbit,
+  .journal-shadow,
+  .journal-canvas {
+    display: none;
+  }
+  .journal-poster {
+    opacity: 1;
+  }
+  .journal-action {
+    color: LinkText;
+  }
+  .journal-pause {
+    display: none;
+  }
+}
+@media print {
+  .journal {
+    display: none;
+  }
+  .studio-hero {
+    display: block;
+    border: 0;
+    background: none;
+  }
+}
+
 html,
 body,
 #root {
