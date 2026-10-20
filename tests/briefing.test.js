@@ -7,9 +7,16 @@ import {
   updateSection,
   validTemplates,
 } from "../src/briefing.js";
-test("concise exports recognise existing colon-form next actions",()=>{
-  const result=conciseBrief({title:"Legacy",assignee:"James",status:"todo",context:"A decision. Next: Inspect the board. Verify: Reload successfully."});
-  assert.match(result,/## Next step\nInspect the board/);assert.match(result,/## Verify\nReload successfully/);
+test("concise exports recognise existing colon-form next actions", () => {
+  const result = conciseBrief({
+    title: "Legacy",
+    assignee: "James",
+    status: "todo",
+    context:
+      "A decision. Next: Inspect the board. Verify: Reload successfully.",
+  });
+  assert.match(result, /## Next step\nInspect the board/);
+  assert.match(result, /## Verify\nReload successfully/);
 });
 test("section editing preserves free text and unknown sections", () => {
   const raw =

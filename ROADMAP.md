@@ -9,7 +9,7 @@ Baseline a227405. All 75 requested improvements remain in scope. Status is evide
 | 03 | Reliability | Prevent conflicting edits across browser tabs | Verified in Chromium: stale task draft rejected; latest saved task preserved. Web Locks plus revision checks; older-browser lock fallback documented. |
 | 04 | Reliability | Recover unfinished task drafts | Verified: autosave, reload, explicit recovery and save. Per-editor keys prevent draft overwrites. |
 | 05 | Engineering | Automate browser regression workflows | Verified: 13 production-build Chromium/axe workflows pass; e2e/workspace.spec.js. |
-| 06 | Engineering | Run tests/build in GitHub CI | Workflow implemented with pinned actions; remote run pending push. |
+| 06 | Engineering | Run tests/build in GitHub CI | Verified on Linux/Node 24: install, lint, unit tests, generated-doc check, production build and all 13 browser checks pass. [Run](https://github.com/jhud172/vibecoding-project-tracker/actions/runs/39418101856). |
 | 07 | Competition | Create a clearly labelled before/after demo workspace | Planned |
 | 08 | Human evaluation | Complete an actual timed rehearsal | Planned; requires actual human participation |
 | 09 | Reliability | Persist recoverable workspace snapshots | Implemented with bounded persistent history; unit/reload tests pass. Restore-version UI final check pending. |

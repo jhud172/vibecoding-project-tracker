@@ -1,5 +1,7 @@
 # Relay cloud setup and acceptance evidence
 
+Authentication Site URL is saved as `https://relay-jhud172.vercel.app` in the project's URL Configuration. The dashboard confirmed successful persistence; confirmation and recovery links therefore have the production fallback destination instead of the initial localhost default. No unrelated auth security settings were changed.
+
 Dedicated project: `rnxsqhcjfdrxdbopyktw` (Relay), region `eu-west-2`, organization Crystal Powers (`dqaqmuvrzrnkzesjjetu`). Created 20 October 2026 after the user chose a new dedicated project and explicitly selected the organization. Organization plan verified as Free; no paid plan or charge was accepted. Unrelated projects were not modified.
 
 The browser uses a public publishable key only. No service-role or secret API key belongs in source, browser storage or a Vite environment variable. Database access requires a signed-in Supabase user and row-level permissions. Schema changes are saved in `supabase/migrations/` and applied to the dedicated project.

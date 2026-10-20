@@ -1683,6 +1683,10 @@ export default function App() {
               const task = p.tasks.find((t) => t.id === id);
               if (!task)
                 throw new Error("This task is no longer on the board.");
+              if (JSON.stringify(task) !== JSON.stringify(editing))
+                throw new Error(
+                  "This task changed in another tab. Review its latest version before deleting it. Your draft is kept.",
+                );
               p.tasks = p.tasks.filter((t) => t.id !== id);
               p.trash = [
                 { task, deletedAt: new Date().toISOString() },

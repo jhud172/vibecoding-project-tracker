@@ -3,6 +3,12 @@
 Owner: James (`jhud172`). Built from the course's React, Vite and Tailwind starter.
 Review date: 20 October 2026.
 
+## Current roadmap increment
+
+The complete 75-item goal remains active in ROADMAP.md. Current local checks pass: 45 unit tests, ESLint and a production build. Thirteen isolated Chromium/axe workflows cover migration, persistent recovery, drafts, stale edits, failed storage, denied clipboard access, invalid/reviewed imports, safe previews, templates, enlarged mobile layout and core accessibility scans. GitHub's Linux/Node 24 workflow also passes those checks: [verified run](https://github.com/jhud172/vibecoding-project-tracker/actions/runs/39418101856). The later sections retain baseline implementation history; ROADMAP.md records current feature and acceptance status.
+
+The dedicated cloud database passes transaction-scoped outsider/viewer/editor/owner isolation checks and stale-version rejection with all fixtures rolled back. Supabase's security advisor reports zero findings after hardening. Real signup/email delivery, two-device account flows, collaborator UI checks, NVDA/VoiceOver evaluation, user studies and James's rehearsal remain unverified. See CLOUD.md for cloud setup and limits.
+
 ## Problem and outcome
 
 AI-assisted work loses momentum when its decisions disappear into old chat

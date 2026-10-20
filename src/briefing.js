@@ -45,8 +45,16 @@ export function conciseBrief(task) {
     const section = sections.find(
       (item) => item.heading.toLowerCase() === heading.toLowerCase(),
     )?.body;
-    const pattern = heading === "Next step" ? "next step|next action|next" : "verify|verification|acceptance criteria|done when|test";
-    const prose = (task.context || "").split(/\n|\.\s+/).map(line => line.trim().match(new RegExp(`^(?:${pattern}):\\s*(.+)$`, "i"))).find(Boolean)?.[1];
+    const pattern =
+      heading === "Next step"
+        ? "next step|next action|next"
+        : "verify|verification|acceptance criteria|done when|test";
+    const prose = (task.context || "")
+      .split(/\n|\.\s+/)
+      .map((line) =>
+        line.trim().match(new RegExp(`^(?:${pattern}):\\s*(.+)$`, "i")),
+      )
+      .find(Boolean)?.[1];
     return section || prose || "Not captured; review the full context.";
   };
   return `# ${task.title || "Untitled task"}\nOwner: ${task.assignee}\nStage: ${task.status}\nDue: ${task.dueDate || "No date"}\n\n## Next step\n${pick("Next step")}\n\n## Verify\n${pick("Verify")}`;

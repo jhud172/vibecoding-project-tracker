@@ -20,6 +20,7 @@ export default function CloudPanel({ workspace, onClose }) {
   const [remote, setRemote] = useState(null);
   const [comments, setComments] = useState([]);
   const [members, setMembers] = useState([]);
+  const [remoteRole, setRemoteRole] = useState("");
   const [comment, setComment] = useState("");
   const [member, setMember] = useState("");
   const [role, setRole] = useState("viewer");
@@ -36,10 +37,12 @@ export default function CloudPanel({ workspace, onClose }) {
       data: { subscription },
     } = api.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
+      if (_event === "TOKEN_REFRESHED") return;
       setProjects([]);
       setRemote(null);
       setComments([]);
       setMembers([]);
+      setRemoteRole("");
       setSelected("");
     });
     return () => {
@@ -96,12 +99,14 @@ export default function CloudPanel({ workspace, onClose }) {
           .limit(100),
       ),
     );
-    setMembers(
+    const memberships = check(
+      await api.from("relay_members").select("*").eq("project_id", id),
+    );
+    setMembers(data.owner_id === user.id ? memberships : []);
+    setRemoteRole(
       data.owner_id === user.id
-        ? check(
-            await api.from("relay_members").select("*").eq("project_id", id),
-          )
-        : [],
+        ? "owner"
+        : memberships.find((m) => m.user_id === user.id)?.role || "viewer",
     );
     setMessage(
       `Preview loaded: ${data.name}, version ${data.version}. Local work has not been changed.`,
@@ -383,7 +388,7 @@ export default function CloudPanel({ workspace, onClose }) {
             {remote && (
               <section className="space-y-4 rounded-xl border border-line p-4">
                 <h3 className="font-semibold">
-                  {remote.name} · cloud version {remote.version}
+                  {remote.name} · cloud version {remote.version} · {remoteRole}
                 </h3>
                 <p className="text-sm text-text-muted">
                   {remote.payload.tasks.length} tasks ·{" "}
@@ -464,17 +469,15 @@ export default function CloudPanel({ workspace, onClose }) {
                 </Field>
                 <button
                   className={buttonClass}
-                  disabled={busy || !comment.trim()}
+                  disabled={busy || !comment.trim() || remoteRole === "viewer"}
                   onClick={() =>
                     run(async () => {
                       check(
-                        await api
-                          .from("relay_comments")
-                          .insert({
-                            project_id: remote.id,
-                            author_id: user.id,
-                            body: comment.trim(),
-                          }),
+                        await api.from("relay_comments").insert({
+                          project_id: remote.id,
+                          author_id: user.id,
+                          body: comment.trim(),
+                        }),
                       );
                       setComment("");
                       await load(remote.id);
@@ -551,13 +554,11 @@ export default function CloudPanel({ workspace, onClose }) {
                           )
                             return;
                           check(
-                            await api
-                              .from("relay_members")
-                              .insert({
-                                project_id: remote.id,
-                                user_id: member,
-                                role,
-                              }),
+                            await api.from("relay_members").insert({
+                              project_id: remote.id,
+                              user_id: member,
+                              role,
+                            }),
                           );
                           setMember("");
                           await load(remote.id);

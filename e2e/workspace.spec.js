@@ -335,6 +335,16 @@ test("two tabs cannot overwrite a changed task with a stale draft", async ({
   await expect(page.getByLabel("Curated context", { exact: true })).toHaveValue(
     "Unsaved work in the first tab",
   );
+  await page.getByRole("button", { name: "Delete task", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Yes, delete task", exact: true })
+    .click();
+  await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
+    "before deleting it",
+  );
+  expect(
+    (await storedTasks(page)).find((t) => t.id === samples[0].id).title,
+  ).toBe("Latest name from the second tab");
 });
 
 test("full storage reports a failed save without losing the prior workspace", async ({
