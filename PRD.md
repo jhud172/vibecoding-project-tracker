@@ -1,252 +1,386 @@
-# Vibecoding Project Tracker — PRD
+# Relay — my Product Requirements Document
 
-Latest extension: James explicitly requested Resume Capsules as the main purpose
-on 20 October 2026, after the narrowed release. CAPSULE_PLAN.md and CAPSULES.md
-define the new notes → sections → evidence → save/resume workflow. Existing
-task/anchor requirements stay intact; optional unrelated roadmap items remain
-deferred. This extension needs no paid service.
+**Project owner:** James Hudson (`jhud172`) · solo project
 
-**Status:** Reviewed for Relay, James Hudson's solo project, on 20 October 2026. The supplied product scope and data model are retained.
+**Updated:** 20 October 2026
 
----
+**Live app:** https://relay-jhud172.vercel.app/
 
-## 1. Problem
+**Repository:** https://github.com/jhud172/vibecoding-project-tracker
 
-Vibecoding teams have two recurring pains with large projects:
+This document explains what I want Relay to do, the choices I made about its
+direction, and how AI helped turn those instructions into a working project.
+It is an AI-assisted rewrite based on my recorded requests and the repository.
+The first-person wording describes my role as project owner; it does not mean
+I personally wrote every line of code or this document without assistance.
+I still need to read and confirm the wording before using it for assessment.
 
-1. **They lose track of tasks.** Three teammates, a hundred small things, no shared view. Nothing tells them what state each task is actually in.
-2. **They lose track of prompts.** The AI gave them working code two days ago but no one remembers the prompt that produced it. When they need to iterate, they start from scratch.
+My starting point was the university's
+[Vibecoding Project Tracker starter](https://github.com/ignacioalvmar/vibecoding-project-tracker)
+by Prof. Dr. Ignacio Alvarez. The original task-tracking brief and Task/Anchor
+model came from that starter. I am not claiming I created the starting project
+or the original assignment requirements.
 
-A spreadsheet doesn't solve this. A real project tool (Linear, Jira, Notion) is overkill, doesn't know about prompts, and takes hours to set up.
+## 1. The problem I want to address
 
-## 2. Target users
+I want to make it easier to return to an AI-assisted coding project after a
+break. A task title tells me what needs doing, but I also need the decisions,
+failed approaches, current progress and next step behind it.
 
-- **Primary:** the team members, for the remaining weeks of the summer semester.
-- **Secondary:** future cohorts of vibecoders taking the same class.
+Relay gives that information a place alongside the tasks. The intended benefit
+is a clearer restart, including when someone moves to a different AI tool.
+I have not measured time savings or run a user study, so I describe this as the
+problem I am targeting rather than a proven productivity improvement.
 
-We are designing the tool we ourselves will use. The pitch demo is also our first real user test.
+## 2. Who I am building it for
 
-## 3. Product overview
+- **Main users:** students and solo developers working on coding projects with AI.
+- **Other intended users:** small teams sharing notes and a briefing for the next
+  session. A capsule can be copied or downloaded for another person.
+- **My own use:** organising my university project, its context and its submission links.
 
-A single-page web app with two persistent surfaces:
+I am working solo. Team-note support does not mean the main local workspace is
+automatically shared with other people. Real-account cloud collaboration is
+still a preview with checks outstanding.
 
-- A **Kanban board** where vibecoding tasks move through four states.
-- An **Anchor Board** above it that pins the four final-project deliverables (Presentation, Demo, Report, Documentation).
+## 3. What Relay is
 
-Each task carries the prompt context that produced it, so any teammate can click a button and copy the task + prompt history back into an AI chat to continue work.
+Relay is a local-first web app. Its main purpose is now **Resume Capsules**:
+saved stopping points containing the notes and next action for another session.
+The task board supports the work around those handoffs.
 
-## 4. Primary user flow
+The app has three main parts:
 
-1. Open the Webapp. The board loads from local storage.
-2. Click "+" to add a task. Fill in title, type, assignee, due date, prompt context.
-3. Move the task across columns as you work.
-4. When stuck, click "Copy as Prompt Context" on a task and paste it into Claude/ChatGPT/Cursor to continue.
-5. Hand off a task to a teammate with one dropdown.
-6. Drop final deliverable links into the Anchor Board as you produce them.
+1. **Resume Capsules:** original notes, curated sections, reported evidence and
+   a clear place to take off next.
+2. **Task tracking:** features and bugs, owners, deadlines and four stages.
+3. **Deliverable links:** Presentation, Demo, Report and Documentation together.
 
-## 5. Data model
+The main app is at `/`. The explanation of the design is at `/design.html`,
+and the eight-slide presentation is at `/presentation.html`.
 
-Locked. Do not change without team agreement.
+I chose to make capsules central after asking how Relay could stand out more.
+The AI assistant suggested the capsule direction. I chose to have it built and
+specifically asked for team notes, clear sections, an easier first-use flow,
+design justification, testing and a working live release. I am not claiming I
+invented the idea without that suggestion or that no other product has similar features.
+
+## 4. The experience I want users to have
+
+### Main capsule journey
+
+1. Open Relay and understand the three steps: **Add notes → Shape the handoff → Review and save**.
+2. Paste notes or load/drop a plain `.txt` or `.md` file.
+3. Keep the original notes, then organise Goal, Decisions, Tried/rejected,
+   What works, Next step, How to verify and Risks/unknowns.
+4. Optionally use recognised headings to fill empty sections. This is text
+   extraction; it does not invent a summary or use an AI service.
+5. Optionally add a task link, contributors, repository reference, revision,
+   file names and evidence. Goal and Next step are required before saving.
+6. Review the briefing and save a capsule, or explicitly save a draft to finish later.
+7. Return to a saved capsule, read **Take off here**, review its evidence and
+   copy or download the handoff for the next session.
+8. Start another session from it. The earlier capsule remains unchanged;
+   check names carry forward but results reset to **Not run**.
+
+For my presentation, I asked for **Try an example draft** to fill every section
+with fictional Campus Companion data, so I can walk through without typing.
+Opening this example alone does not save it or replace existing tasks.
+
+### Original task journey I am retaining
+
+Create a task, save its context, move it through the stages, change its owner
+label and copy its task/context briefing. The four deliverable links must also
+remain editable and saved. Deleting a task must leave an available recovery route.
+
+### Checks against my requirements
+
+| Requirement | How I can demonstrate it |
+|---|---|
+| Create, edit and delete tasks | Add a task, change it, reload it, delete it and recover it. |
+| Preserve task context and copy it | Save decisions and a next step; inspect the actual copied briefing. |
+| Keep the four submission links | Edit a destination, reload, and open the correct link. |
+| Capture a capsule without losing original notes | Compare the original notes with the editable sections. |
+| Give the next session an actionable start | Open a saved capsule and show its goal and next step. |
+| Preserve earlier stopping points | Save a continuation and show the original is unchanged. |
+| Keep evidence honest | Show Not run and user-reported outcomes; compare differing revision labels. |
+| Support beginners | Walk through the prefilled example without entering data. |
+| Protect local work | Demonstrate a backup/import, Undo and a failed-save message. |
+
+## 5. The information the app stores
+
+The implementation retains the original Task and Anchor fields. Extra capsule
+information sits alongside them in the workspace rather than replacing them.
 
 ```js
-// A single vibecoding task.
 Task = {
-  id: string,                    // uuid or timestamp string
+  id: string,
   title: string,
   description: string,
-  type: 'feature' | 'bug',       // visual color coding
+  type: 'feature' | 'bug',
   status: 'todo' | 'in-progress' | 'review' | 'done',
-  assignee: string,              // one of the three teammate names from §8
-  dueDate: string | null,        // ISO date 'YYYY-MM-DD'
-  createdDate: string,           // ISO date 'YYYY-MM-DD'
-
-  // Added in later milestones:
-  context: string,               // M9 context — curated briefing for the next AI / teammate
-  contextTool: string | null,    // M9 context — 'Claude' | 'ChatGPT' | 'Cursor' | 'Lovable' | 'Replit' | 'Other'
-  contextUpdatedAt: string|null, // M9 context — ISO timestamp set automatically on save
+  assignee: string,
+  dueDate: string | null,        // YYYY-MM-DD
+  createdDate: string,           // YYYY-MM-DD
+  context: string,
+  contextTool: string | null,
+  contextUpdatedAt: string | null // ISO timestamp
 }
 
-// One of four pinned deliverable slots.
 Anchor = {
   id: 'presentation' | 'demo' | 'report' | 'documentation',
-  label: string,                 // human-readable
-  url: string | null,            // the link the team pastes in
+  label: string,
+  url: string | null
 }
 ```
 
-## 6. Tech stack
+Each capsule records its ID and save time, title, original notes, contributors,
+seven handoff sections, relevant files, repository/revision labels, evidence,
+an optional task ID and an optional parent capsule ID. Evidence contains a name,
+command/source, result and outcome: Not run, Reported pass, Reported failure or Blocked.
 
-| Layer | Choice | Why |
+Task context-tool choices remain Claude, ChatGPT, Cursor, Lovable, Replit and
+Other, or no specified tool. These labels record where context came from;
+selecting one does not connect Relay to that service.
+
+Capsules and one saved capsule draft are optional fields in the existing
+version-3 project envelope. Older saved work remains supported. The technical
+validation and limits are in `src/capsules.js`, `src/workspace.js` and [CAPSULES.md](CAPSULES.md).
+
+## 6. The technology used and why
+
+I asked the assistant to build on the supplied repository. The implementation
+keeps its React/Vite/Tailwind foundation rather than starting a different project.
+
+| Part | Current choice | Reason |
 |---|---|---|
-| Framework | React (via Vite) | What the scaffold ships with. Don't migrate. |
-| Styling | Tailwind | Already configured. Use utility classes; no separate CSS files. |
-| State | React `useState` + a `useLocalStorage` hook | Simple, no library needed. |
-| Persistence | **localStorage** | Zero infra. Pick this. Do not switch to a backend mid-hackathon. |
-| Deploy | Vercel | One-click deploy from GitHub. |
+| Interface | React 18 and Vite 7 | Continues the starter's approach with updated build tooling. |
+| Styling | Tailwind 3 and shared CSS | Reuses the design system, responsive rules and motion controls. |
+| State and saving | React hooks and an atomic workspace store in localStorage | Keeps core work usable without an account and saves related data together. |
+| 3D | Original Blender source/export and optional Three.js rendering | Provides the journal identity with a static fallback. |
+| Speech | Browser/device speech synthesis | Provides optional reading without an AI speech API. |
+| Deployment | GitHub-connected Vercel project | Publishes changes through the existing repository connection. |
+| Optional cloud | Dedicated Relay Supabase project on the Free plan | Separate preview for authenticated copies and collaboration; not required for the local workflow. |
 
-> **Decision:** localStorage, not a shared backend. If you want a shared backend later, that's M14 — out of scope for the hackathon.
+I required approval before any paid plan or charge. No paid service was added
+for the capsule feature. The deployed app itself has no connected AI provider.
+Using AI to develop Relay is separate from the app running AI for its users.
 
-## 7. Stage names
+## 7. Task stages and deadline behaviour
 
-Four columns, in this order, with these exact labels in the UI:
+The required stage labels remain **To Do**, **In Progress**, **Review** and **Done**.
+Users can change stage through a labelled menu as an alternative to dragging.
 
-1. **To Do**
-2. **In Progress**
-3. **Review**
-4. **Done**
+Dates use the local calendar day. Past deadlines are overdue; today and the next
+two days have urgency cues; completed tasks show Completed rather than overdue.
+Missing dates remain neutral. Written labels carry the meaning alongside colour.
 
-## 8. Team
+## 8. My solo-project setup
 
-James confirmed this is a solo project. The two demo identities below exist only to demonstrate the required assignment and handoff flows; they are not real collaborators.
+| Identity | Role |
+|---|---|
+| James (`jhud172`) | Actual solo project owner. |
+| Demo Designer | Fictional identity for demonstrating the owner dropdown. |
+| Demo Reviewer | Fictional identity for demonstrating a handoff. |
 
-| Slot | Name | GitHub handle |
+These three names are the allowed local task owners. Selecting a demo identity
+does not invite, notify or synchronise with a real person. I told the assistant
+I was solo rather than providing invented real teammates.
+
+## 9. Milestones and responsibility
+
+I am responsible for the project and its presentation. Being the owner of a
+milestone does not mean I wrote all of its implementation personally.
+
+| # | Portal identifier | What it covers | Project owner |
+|---|---|---|---|
+| 1 | `git-linked` | Repository connection | James |
+| 2 | `prd-done` | Requirements document | James |
+| 3 | `design-done` | Design system and explanation | James |
+| 4 | `data-model` | Task model and board | James |
+| 5 | `crud-modal` | Task creation, editing and deletion | James |
+| 6 | `tag-style` | Feature/bug presentation | James |
+| 7 | `task-owner` | Owner labels and handoff | James |
+| 8 | `due-tint` | Deadline presentation | James |
+| 9 | `task-context` | Saved task context | James |
+| 10 | `copy-context` | Copyable task briefing | James |
+| 11 | `project-deliverables` | Four submission links | James |
+| 12 | `secret-sauce` | Visible distinguishing functionality | James |
+| 13 | `pitch-done` | Prepared pitch/demo materials | James |
+
+The delivery record reports all 13 recognised by the portal, and matching Git
+tags were pushed. [HACKATHON.md](HACKATHON.md) records the evidence and naming
+differences from the starter. A preparation milestone is not proof that I have
+rehearsed or delivered the pitch. The original on-stage task-copy requirement
+still applies alongside the capsule demonstration.
+
+## 10. How I contributed and how AI helped
+
+I used the ChatGPT/Codex assistant throughout this project, including its tools
+for repository work, browser interaction and verification. Its contribution was
+substantial. It generated and edited much of the implementation, wrote and ran
+automated checks, diagnosed failures, handled deployment work and drafted
+documentation and pitch material. I should not describe it as only spellchecking.
+
+My contribution was directing the project through requests, constraints and
+decisions. These are concrete examples from the work:
+
+| Area | What I contributed | What the AI assistant did |
 |---|---|---|
-| Teammate A | James | `jhud172` |
-| Teammate B | Demo Designer | Not applicable - demo identity |
-| Teammate C | Demo Reviewer | Not applicable - demo identity |
+| Starting point | I supplied the repository and portal links and asked it to use the existing PRD as the specification. | Inspected and built on the starter, connected the working repository and implemented the brief. |
+| Solo setup and access | I confirmed I was solo and approved the requested GitHub verification prompts. | Configured the project connection through tools and retained clearly labelled demo identities. |
+| Competition improvements | I asked for substantial improvements and questioned what made Relay useful compared with other tools. | Suggested approaches, explained trade-offs and implemented the authorised changes. |
+| Accessibility | I requested read-aloud, larger text, colour-vision alternatives and light/dark modes. | Wrote the controls, preference handling and relevant automated checks. |
+| Design and motion | I requested reasons for visual choices, more immersive design and original Blender animation. | Developed the visual implementation, created the Blender source/export workflow and documented the reasons and limits. I did not manually model that asset in Blender. |
+| Scope | I later told it to prioritise necessary work and skip unnecessary additions. | Narrowed the release scope, preserved deferred items as history and completed the agreed checks. |
+| Costs and database | I required approval before spending, chose a dedicated Relay project and selected the Crystal Powers organisation. | Set up the dedicated Free cloud preview and documented the remaining service checks. |
+| Resume Capsules | After its suggestion, I chose to make capsules the main purpose and specified team notes, clear sections, a simpler flow and live verification. | Designed and implemented the capsule data, interface, portability, recovery and tests. |
+| Demo usability | I asked for example data, a short five-minute outline, and then a fully prefilled example requiring no typing. | Prepared the material and changed the example button to preload the complete fictional capsule. |
+| Understanding and explanation | I asked what the requirements and PRD meant and requested wording I could explain to my lecturer. | Explained the terms and rewrote this document from my recorded instructions. I still need to review and understand it myself. |
 
-These three names become the **only** allowed values for `Task.assignee`. No auth — just a dropdown.
+I am not claiming I personally authored every function, ran every test manually,
+completed a full accessibility audit or developed every design idea unaided.
+Equally, I did make decisions about the product direction and how I wanted it
+to work. My role should be described accurately as directing an AI-assisted
+development project, with responsibility for understanding and presenting it.
 
-## 9. Milestone ownership
+## 11. Project identity
 
-Fill in the owner column. Recommended default in **bold**; change if your team has different strengths.
+- **Name:** Relay — James's solo studio.
+- **Tagline:** Keep the work moving. Keep the context.
+- **Main message now:** Team notes in. A clear next session out.
+- **Live URL:** https://relay-jhud172.vercel.app/
 
-| # | Tag | Title | Suggested owner | Final owner |
-|---|---|---|---|---|
-| 3 | `design-done` | Design system + voice (DESIGN.md) | **B** | James |
-| 4 | `data-model` | Task model + board view | **A** | James |
-| 5 | `crud-modal` | Add / edit / delete modal | **A** | James |
-| 6 | `tag-style` | Feature / bug colors | **B** | James |
-| 7 | `task-owner` | Owner indicator + handoff | **A** | James |
-| 8 | `due-tint` | Due-date color tinting | **B** | James |
-| 9 | `task-context` | Context field on the task modal | **C** | James |
-| 10 | `copy-context` | "Copy as Prompt Context" button | **C** | James |
-| 11 | `project-deliverables` | Deliverable Anchor Board | **B** | James |
-| 12 | `secret-sauce` | The one thing that makes it yours | **C / All** | James |
-| 13 | `pitch-done` | Demo + pitch rehearsal | **All** | James |
+The journal imagery supports the idea of keeping a stopping point and returning
+to a page. It is decorative; real task and capsule information remains readable
+HTML. I asked for original 3D work, while the assistant produced the asset and code.
 
+## 12. What is outside the current release
 
-Track A owns the state model and task ownership. Track B owns the visuals (and design — M3 runs parallel to M2 so the team starts Phase 3 with the palette already chosen). Track C owns the differentiator features (M9 + M10 — the context field and the Copy-as-Prompt button) and usually leads on M12 secret-sauce. Put your strongest prompter on Track C.
+The original assignment did not require a shared backend, accounts or real
+GitHub integration. Some optional account/cloud controls were later added as a
+preview, but core tasks and capsules must work without them.
 
-**Dependency note.** M3 (`design-done`) runs **in parallel with M2** — Person B drafts DESIGN.md and pastes the colors into `tailwind.config.js` while the rest of the team reviews the PRD. M6 / M7 / M8 / M11 all depend on M4 + M5 being done first. While Person A builds M4+M5 (first ~60 min of Phase 3), Person C should draft the Markdown template for the "Copy as Prompt Context" output (M10). M12 `secret-sauce` is open-ended — pick whatever makes the tracker uniquely yours; constraint is "must be visible in the demo and must not break anything else."
+I am not presenting the following as finished product capabilities:
 
-## 10. AI / vibe coding angle
+- Simultaneous live team editing or fully accepted real-device cloud collaboration.
+- Automatic reading of AI conversations or repository files.
+- Automatic test execution, code verification or detection of finished work.
+- GitHub issue synchronisation, AI-generated assistance inside Relay or an installable offline app.
+- The additional languages, calendar views and advanced project-management additions I removed from scope.
 
-Where AI will be heavily used:
-- M4, M5: scaffold the board and the modal from a single prompt each.
-- M9, M10: write the Markdown serialization helper for the Context field.
-- M7: animation polish for the handoff toast.
+## 13. How I judge completion
 
-Where AI will **not** save you time:
-- M2 (this PRD review) — read it yourself.
-- M3 (DESIGN.md) — design taste is yours, not the model's.
-- M12 (secret-sauce) — the whole point is that AI can't predict it.
-- M13 (pitch) — write the script in your own voice.
+The software needs to meet the original task/link requirements and the capsule
+requirements above, preserve existing data, pass appropriate checks and work at
+the deployed URL. The requirements handout and test files provide specific
+acceptance checks rather than relying only on a completion percentage.
+The original tracking requirement is all 13 milestone tags pushed and recognised
+on the hackathon dashboard, as recorded in section 9.
 
-Keep the Context field of each real task up to date as you work. By the end of the hackathon you should have a handful of curated context blocks — those become part of your Module 5 "Vibe Coding History" deliverable.
+Before this document rewrite, software commit `97194a5` passed **59 unit tests
+and 39 browser workflows**, alongside lint, generated-document checks and the
+production build in [the recorded GitHub workflow](https://github.com/jhud172/vibecoding-project-tracker/actions/runs/39434973136).
+The assistant wrote and ran these checks through tools. They cover specific
+behaviour; they do not prove the app is bug-free, fully accessible or better
+for people than other products.
 
-## 11. Team identity
+My personal presentation gates remain: rehearse the five-minute pitch, check
+the room/browser clipboard and audio if used, and perform the actual on-stage
+copy demonstration. These must not be claimed complete from automated tests.
 
-Fill in:
+## 14. Important implementation decisions and limits
 
-- **Team name:** Relay - James's solo studio
-- **Tagline (one sentence):** Keep the work moving. Keep the context.
-- **Tracker URL after deploy:** https://relay-jhud172.vercel.app
+- **Local-first:** work is saved in this browser and origin. Clearing site data
+  can remove it; another device does not automatically see it. Backups matter.
+- **Context:** the timestamp changes when task context or its source tool changes,
+  rather than on an unrelated owner/stage change.
+- **Capsule history:** resuming creates a new draft; earlier snapshots stay intact.
+  Previous check outcomes reset to Not run in the continuation.
+- **Evidence:** results are supplied by the user. Matching revision text does not
+  establish that code was inspected or a check passed.
+- **Privacy:** copied capsule Markdown excludes original notes until selected.
+  Full capsule JSON, complete backups and explicitly confirmed cloud uploads
+  include them. Users should review private information before sharing.
+- **Drafts:** capsule typing alone is not saved. Save draft persists it; dirty-close
+  and reload warnings explain the unsaved boundary.
+- **Bounds:** capsules, history, notes and imports have size/retention limits.
+  Storage can fill earlier than the headline limits. [CAPSULES.md](CAPSULES.md)
+  describes the values and recovery behaviour.
 
-## 12. Out of scope (do not build)
+## 15. Improvements beyond the starter
 
-- Authentication / accounts.
-- Real GitHub integration.
-- A real backend / shared database.
-- Mobile responsive — desktop only is fine.
-- Multi-team support.
-- Real-time collaboration.
+I asked for a stronger competition project. In response, the assistant proposed
+and implemented additions such as Focus desk, Resume work briefings, context
+templates/history, recovery, backup/import, board/list layouts and quick actions.
+I later asked to reduce unnecessary expansion and finish the essential work.
 
-## 13. Definition of done
+After discussing differentiation, I authorised the capsule extension as the
+main direction. Those capsules now lead the experience, while the existing
+task board and deliverable links remain. The eight-slide presentation and
+[short pitch outline](PITCH_OUTLINE.md) reflect that direction.
 
-The hackathon is "done" when all 13 milestone tags are pushed to your repo and visible on the dashboard. The pitch is "done" when:
+## 16. Why design and accessibility are requirements for me
 
-- The board loads on Vercel without errors.
-- The "Copy as Prompt Context" demo works on stage.
-- 5 min pitch is rehearsed.
+I explicitly asked for visual and interaction choices to have a reason. I want
+to explain how layout, labels, icons, imagery and motion support the user, rather
+than only saying they look good.
 
----
+The assistant documented those choices in the shared
+[design guide](https://relay-jhud172.vercel.app/design.html#register) and
+[DESIGN_RATIONALE.md](DESIGN_RATIONALE.md). Design intentions are distinguished
+from measured psychological effects. The reasons are not evidence of a human study.
 
-*Based on hackathon-starter v1 by Prof. Dr. Ignacio Alvarez.*
+My requested controls include light/dark/device appearance, text sizing up to
+200%, alternate palettes, higher contrast, reduced motion and read-aloud. The
+implementation also provides keyboard controls, labels, focus handling and
+written status cues. Speech supplements screen readers; it does not replace them.
 
-## 14. Implementation decisions
+Automated accessibility checks and specific layouts were exercised. Full
+NVDA/VoiceOver evaluation, broader browser/device coverage and testing with
+disabled users remain unperformed unless real results are separately recorded.
+[ACCESSIBILITY.md](ACCESSIBILITY.md) explains the checked behaviour and limits.
 
-- James owns all milestones. Suggested team tracks above are retained as assignment context.
-- Product name: **Relay**. Warm paper surfaces, forest green actions and editorial typography.
-- Status changes use a labelled dropdown, supporting keyboard operation without drag-and-drop.
-- Date-only deadlines use local calendar days: today is due soon, the next two days are upcoming, later dates are safe, earlier dates are overdue. Done overrides urgency; missing dates are neutral.
-- Context timestamps change only when curated context or source tool changes. Task IDs and creation dates remain stable during editing and handoff.
-- Secret sauce: **Resume work**, a previewable Markdown briefing of unfinished tasks ordered by urgency, with saved context, owners and deliverable links. Deterministic formatting requires no AI API or backend.
-- Seed four clearly identified demo tasks only on first use. An explicitly empty saved board stays empty after refresh. Restoring demo tasks requires confirmation.
-- The live portal uses the milestone identifiers in the table above. See HACKATHON.md for differences from the starter README.
-- Data stays in this browser. Handoff changes the local owner label; it does not message or synchronise with another person.
-- Delivery must distinguish a prepared pitch from James's actual rehearsal.
+## 17. How my scope changed
 
-## 15. Competition improvements
+The project grew through several requests from me:
 
-James requested substantial improvements after the original delivery. These
-extensions keep the locked Task/Anchor schema and localStorage architecture:
+1. Build the original PRD on the supplied repository and connect the hackathon setup.
+2. Improve the competition entry, accessibility, explained design and animation.
+3. Consider a much larger improvement list, then reduce the commitment to necessary work.
+4. Discuss a stronger purpose, then explicitly authorise Resume Capsules as the main workflow.
+5. Make the example complete enough to demonstrate without typing.
 
-- Focus desk: explained next-task ordering, selectable queue and direct progress actions.
-- Handoff coaching: four transparent presence checks, additive context templates
-  and a filter for incomplete briefings.
-- Recovery: one-step undo, an 80-entry activity history and earlier context
-  restoration into the task draft.
-- Portable workspace: versioned JSON backups, validated import preview,
-  non-overwriting merge and confirmed replacement.
-- Interaction polish: board/list layouts, accessible stage controls alongside
-  drag grips, a command palette and keyboard shortcuts.
-- Updated seven-slide presentation and demo sequence.
+The old 75-item roadmap remains a historical record, not a claim that every
+suggestion was delivered. [FINALISATION.md](FINALISATION.md) and
+[CAPSULE_PLAN.md](CAPSULE_PLAN.md) record the later scope decisions.
 
-The handoff checks are deterministic guidance, not AI-generated evaluation.
-No backend, paid API, authentication, invented teammate or real-time sync was added.
+## 18. My current release scope
 
-## 16. Explained design and accessibility
+My current requirements are the original task and deliverable flows, the complete
+local capsule workflow, understandable first use, the prefilled example,
+recovery/portability, the requested accessibility and motion controls, explained
+design, verified software and prepared presentation material.
 
-James requested reasons for every visual/UX decision and multiple access features.
-The component and icon inventory is recorded in DESIGN_RATIONALE.md and the
-published /design.html guide, generated from shared source content. Future visual
-changes must add the user need, reason/source or design judgment, accessibility
-implications, verification and trade-offs.
+Unrelated optional roadmap additions remain deferred. Cloud stays visibly a
+preview until real email/account/device and collaborator checks are completed.
+I still require approval before any paid plan or charge. Human evaluation and my
+own rehearsal are separate activities, not things the assistant can declare done
+from simulated data or a generated script.
 
-Added light/dark/device themes, 100-200% relative text sizing, adaptive list/grid
-layout, alternate colour-vision palettes and monochrome, higher contrast, plain
-headings, underlined links, reduced motion and optional single-key shortcuts.
-The workspace, guide and eight-slide pitch share local preferences. Labelled
-read-aloud supports tasks, workspace briefings and the current slide, with voice,
-rate, pause, resume and stop. Device speech engines are an external dependency.
-Semantics, focus, keyboard controls and non-colour state labels remain independent
-of speech. ACCESSIBILITY.md distinguishes checked behavior from broader
-assistive-technology testing and full conformance, which are not claimed.
+## 19. How I can explain my role to my lecturer
 
-## 17. Complete roadmap authorisation (historical)
+“I started with the supplied university repository and PRD. I worked solo and
+used AI extensively as a development assistant. I directed the project through
+my requirements: accessibility, explained design, original animation and a
+clearer workflow. When the assistant proposed Resume Capsules, I chose to make
+that the main purpose and specified team notes, handoff sections and an example
+I could demonstrate without typing. The assistant generated much of the code,
+wrote and ran tests, handled deployment work and helped draft the documentation.
+My contribution was choosing the direction, setting constraints and priorities,
+and asking for improvements and explanations. I am responsible for understanding
+what was built and presenting its behaviour and limitations honestly.”
 
-On 20 October 2026 James requested implementation and finalisation of the full
-75-item improvement roadmap. The scope now includes the additional metadata,
-offline, project-management and connected-service extensions listed in ROADMAP.md.
-This supersedes the earlier restriction against those extensions for this phase.
-Preserve existing data and compatibility through explicit versioned migrations.
-The dependency order and evidence requirements are in IMPLEMENTATION_PLAN.md.
-Actual human evaluations/rehearsals and service-dependent capabilities cannot be
-marked complete by simulated data or interface placeholders.
-
-## 18. Necessary-feature release scope (latest instruction)
-
-Later on 20 October 2026 James asked to minimise remaining work to necessary
-features and skip unnecessary additions. This supersedes section 17's all-75
-build commitment. FINALISATION.md defines the release scope: preserve the PRD
-flows and saved data, finish checking existing features, correct concrete
-reliability/accessibility problems, retain the original Blender motion work,
-and publish a verified build with accurate documentation.
-
-Do not add optional AI, languages, advanced project-management views or further
-integrations solely because they were suggested. Existing cloud tools are
-explicitly a preview pending real-account/email acceptance; the local competition
-flows work without sign-in. Human evaluation and James's actual rehearsal remain
-personal checks and must never be claimed from automated tests. No paid plan or
-charge is authorised.
+Before submission, I need to review this wording, be able to demonstrate the
+main flows and follow the lecturer's rules for declaring AI assistance. No
+separate marking rubric or course AI-use policy is asserted by this document.

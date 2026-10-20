@@ -63,12 +63,15 @@ advanced project-management features from the build commitment. See PRD section
 
 ## How to explain it aloud
 
-“My main requirements were to build a task tracker that saves work, shows task
-stages, owners and deadlines, keeps the context behind each task, copies that
-context for the next AI session, and links the four project deliverables. I built
-on the supplied repository and deployed it. I then added accessibility, recovery,
-Focus desk and an original animated journal. My justifications explain why those
-solutions were chosen; my tests show which behaviours I have actually checked.”
+“I worked from the supplied repository and used AI extensively to develop the
+project. The original requirements were tasks, stages, owners, deadlines, saved
+context, copying and the four deliverable links. I directed additional work on
+accessibility, recovery, explained design and animation. After the assistant
+suggested Resume Capsules, I chose them as the main purpose and asked for team
+notes, clear handoff sections and a simpler example flow. The assistant generated
+much of the implementation, wrote and ran checks, and helped with deployment and
+documentation. My role was directing the requirements and priorities; I still
+need to understand and demonstrate the result myself.”
 
 If asked **“How do you know the requirement is met?”**, demonstrate its concrete
 check and name the supporting evidence. Automated results do not establish a
