@@ -27,7 +27,7 @@ Avoid neon gradients, decorative dashboard metrics and heavy card shadows.
 | due-overdue | #FBE5DF | Earlier deadlines |
 | due-neutral | #EDF0EC | Done or no date |
 
-Tokens live in tailwind.config.js. Urgency includes text and an icon, not colour alone. Done is neutral regardless of deadline.
+These are the original light palette values. Semantic tokens now live in src/accessibility.js and are exposed through tailwind.config.js. Secondary text was strengthened to #536056. Dark, alternate and contrast palettes are resolved there as complete foreground/background pairs. Urgency includes text and an icon, not colour alone. Done is neutral regardless of deadline.
 
 ## Typography
 
@@ -37,7 +37,7 @@ Tokens live in tailwind.config.js. Urgency includes text and an icon, not colour
 | Body / controls | System sans-serif | Familiar and crisp |
 | Section labels / IDs | System monospace | Subtle structure for metadata |
 
-Page heading: 36-44 px. Section heading: 18 px. Task title: 15 px semibold. Body: 14 px. Metadata: 12 px.
+At standard size: page heading 36-44 px, task title 15 px semibold, body 14 px and metadata at least 12 px. Text and spacing use rem values and support 100-200% scaling. The optional plain-heading mode uses the body font throughout.
 
 ## Component principles
 
@@ -69,7 +69,7 @@ Page heading: 36-44 px. Section heading: 18 px. Task title: 15 px semibold. Body
 - Team: James's solo studio
 - Tagline: Keep the work moving. Keep the context.
 - Wordmark: lowercase serif lettering beside a Lucide workflow icon.
-- One light theme. No theme picker or decorative animation.
+- Light, dark or device appearance. Optional blue/amber, teal/rose and monochrome palettes, higher contrast, link underlines and reduced motion. No automatic decorative animation.
 
 ## Competition extension
 
@@ -88,3 +88,14 @@ Page heading: 36-44 px. Section heading: 18 px. Task title: 15 px semibold. Body
 - Quick actions use a labelled native dialog and standard Tab/Enter navigation.
 - Recovery is visible: undo in the header and toast, earlier context in the
   editor, import preview before mutation, and confirmation for replacement.
+
+## Rationale and accessibility
+
+[DESIGN_RATIONALE.md](DESIGN_RATIONALE.md) explains each component family, colour,
+typographic role, image treatment, logo and icon, including the intended cognitive
+benefit and limits. It is generated from the same source as the live
+[Why this design? guide](https://relay-jhud172.vercel.app/design.html).
+
+[ACCESSIBILITY.md](ACCESSIBILITY.md) documents the controls, implementation,
+evidence and outstanding assistive-technology checks. Future visual or interaction
+changes require a rationale entry and relevant rendered verification.

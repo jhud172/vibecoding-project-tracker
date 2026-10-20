@@ -26,6 +26,8 @@ import {
   parseBackup,
 } from "./competition";
 import { Modal, buttonClass, fieldClass, primaryClass } from "./ui";
+import { ReadButton } from "./Accessibility.jsx";
+import { spokenTask } from "./accessibility";
 
 export function ContextCoach({ task, onTemplate, compact = false }) {
   const checks = contextChecklist(task);
@@ -33,12 +35,12 @@ export function ContextCoach({ task, onTemplate, compact = false }) {
   return (
     <div
       className={
-        compact ? "" : "rounded-xl border border-[#CED8C7] bg-white/60 p-4"
+        compact ? "" : "rounded-xl border border-line bg-surface-card/60 p-4"
       }
     >
       <div className="flex items-center justify-between gap-3">
         <h3 className="text-sm font-semibold">Handoff checklist</h3>
-        <span className="rounded-full bg-brand-accent px-2 py-1 font-mono text-[10px] text-brand-primary">
+        <span className="rounded-full bg-brand-accent px-2 py-1 font-mono text-[0.75rem] text-brand-primary">
           {complete}/4 present
         </span>
       </div>
@@ -52,7 +54,7 @@ export function ContextCoach({ task, onTemplate, compact = false }) {
             {item.done ? (
               <Check size={14} className="shrink-0" />
             ) : (
-              <Circle size={13} className="shrink-0 text-stone-400" />
+              <Circle size={13} className="shrink-0 text-text-muted" />
             )}
             <span className="sr-only">
               {item.done ? "Present: " : "Missing: "}
@@ -62,16 +64,16 @@ export function ContextCoach({ task, onTemplate, compact = false }) {
         ))}
       </div>
       {!compact && (
-        <p className="mt-3 text-[11px] leading-relaxed text-text-muted">
+        <p className="mt-3 text-[0.75rem] leading-relaxed text-text-muted">
           {checks.find((item) => !item.done)?.hint ||
             "The essentials are present. Read them once more before sharing."}
         </p>
       )}
-      <p className="mt-3 text-[10px] text-text-muted">
+      <p className="mt-3 text-[0.75rem] text-text-muted">
         Presence checks only. You judge the quality.
       </p>
       {onTemplate && (
-        <div className="mt-4 border-t border-stone-200 pt-3">
+        <div className="mt-4 border-t border-line pt-3">
           <p className="mb-2 text-xs font-medium">
             Start with a briefing structure
           </p>
@@ -80,14 +82,14 @@ export function ContextCoach({ task, onTemplate, compact = false }) {
               <button
                 key={id}
                 type="button"
-                className="rounded-full border border-[#CCD8C3] bg-white px-3 py-1.5 text-[11px] text-brand-primary hover:bg-brand-accent focus-visible:outline-brand-primary"
+                className="rounded-full border border-line bg-surface-card px-3 py-1.5 text-[0.75rem] text-brand-primary hover:bg-brand-accent focus-visible:outline-brand-primary"
                 onClick={() => onTemplate(template.text)}
               >
                 + {template.label}
               </button>
             ))}
           </div>
-          <p className="mt-2 text-[10px] text-text-muted">
+          <p className="mt-2 text-[0.75rem] text-text-muted">
             Adds a template after your existing context. Replace the prompts in
             brackets.
           </p>
@@ -155,16 +157,16 @@ export function WorkspacePulse({
             href={href}
             type={href ? undefined : "button"}
             onClick={action}
-            className="group rounded-2xl border border-stone-200 bg-white/70 p-4 text-left transition hover:border-[#99AF91] hover:bg-white focus-visible:outline-brand-primary motion-reduce:transition-none"
+            className="group rounded-2xl border border-line bg-surface-card/70 p-4 text-left transition hover:border-strong-line hover:bg-surface-card focus-visible:outline-brand-primary motion-reduce:transition-none"
           >
-            <span className="flex items-center justify-between text-[11px] font-medium text-text-muted">
+            <span className="flex items-center justify-between text-[0.75rem] font-medium text-text-muted">
               {label}
               <Icon size={15} className="text-type-feature" />
             </span>
             <span className="mt-3 block font-editorial text-3xl tracking-tight text-brand-primary">
               {value}
             </span>
-            <span className="mt-1 block text-[10px] leading-relaxed text-text-muted">
+            <span className="mt-1 block text-[0.75rem] leading-relaxed text-text-muted">
               {detail}
             </span>
           </Tag>
@@ -210,7 +212,7 @@ export function FocusDesk({
         </button>
       </div>
       {!task ? (
-        <div className="rounded-2xl border border-[#CCD8C3] bg-[#EAF0E2] p-10 text-center">
+        <div className="rounded-2xl border border-line bg-surface-tint p-10 text-center">
           <CheckCheck size={32} className="mx-auto text-brand-primary" />
           <h3 className="mt-4 font-editorial text-3xl">
             A clean slate. Nicely done.
@@ -225,43 +227,48 @@ export function FocusDesk({
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.8fr)_minmax(240px,1fr)]">
-          <div className="overflow-hidden rounded-2xl border border-[#CCD8C3] bg-white">
-            <div className="relative overflow-hidden bg-[#203E31] p-6 text-[#F4F4E8] sm:p-7">
+          <div className="overflow-hidden rounded-2xl border border-line bg-surface-card">
+            <div className="focus-hero relative overflow-hidden bg-focus-base p-6 text-focus-ink sm:p-7">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -right-10 -top-16 h-64 w-64 rounded-full border-[38px] border-white/[0.035]"
               />
               <div className="relative">
-                <div className="mb-5 flex flex-wrap items-center gap-3 text-[10px] font-medium uppercase tracking-[.16em] text-[#CBDEB4]">
+                <div className="mb-5 flex flex-wrap items-center gap-3 text-[0.75rem] font-medium uppercase tracking-[.16em] text-focus-accent">
                   <Target size={15} />
                   {task.id === queue[0].id
                     ? "Suggested next move"
                     : "Your selected focus"}
-                  <span className="ml-auto rounded-full border border-white/20 px-2.5 py-1 tracking-normal text-[#E1E9D7]">
+                  <span className="ml-auto rounded-full border border-white/20 px-2.5 py-1 tracking-normal text-focus-ink">
                     {deadline(task, now).label}
                   </span>
                 </div>
                 <h3 className="max-w-xl font-editorial text-3xl leading-tight sm:text-4xl">
                   {task.title}
                 </h3>
-                <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#D5DFD2]">
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-focus-muted">
                   {task.description || "Add a brief to make the outcome clear."}
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2">
                   <button
-                    className={`${buttonClass} !border-[#DCE8C7] !bg-[#DCE8C7] !text-[#203E31] hover:!bg-white`}
+                    className={`${buttonClass} !border-focus-accent !bg-focus-accent !text-focus-base hover:!bg-focus-ink`}
                     onClick={() => onCopy(taskPrompt(task))}
                   >
                     <Clipboard size={15} /> Copy task briefing
                   </button>
                   <button
-                    className={`${buttonClass} !border-white/25 !bg-transparent !text-white hover:!bg-white/10`}
+                    className={`${buttonClass} !border-white/25 !bg-transparent !text-white hover:!bg-surface-card/10`}
                     onClick={() => onEdit(task)}
                   >
                     Refine context <ArrowUpRight size={15} />
                   </button>
+                  <ReadButton
+                    text={spokenTask(task)}
+                    title={task.title}
+                    className={`${buttonClass} !border-white/25 !bg-transparent !text-white hover:!bg-surface-card/10`}
+                  />
                 </div>
-                <p className="mt-5 flex items-start gap-2 text-[11px] leading-relaxed text-[#BCD0B3]">
+                <p className="mt-5 flex items-start gap-2 text-[0.75rem] leading-relaxed text-focus-muted">
                   <Sparkles size={13} className="mt-0.5 shrink-0" />
                   {task.id === queue[0].id
                     ? focusReason(task, now)
@@ -271,11 +278,12 @@ export function FocusDesk({
             </div>
             <div className="grid gap-5 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-text-muted">
+                <p className="text-[0.75rem] uppercase tracking-widest text-text-muted">
                   Owner / stage
                 </p>
                 <p className="mt-1 text-sm font-medium">
-                  {task.assignee} <span className="px-1 text-stone-300">/</span>{" "}
+                  {task.assignee}{" "}
+                  <span className="px-1 text-text-muted">/</span>{" "}
                   {STAGES.find((stage) => stage.id === task.status).label}
                 </p>
               </div>
@@ -300,18 +308,18 @@ export function FocusDesk({
                 <ArrowRight size={14} />
               </button>
             </div>
-            <div className="border-t border-stone-100 p-5">
+            <div className="border-t border-line p-5">
               <ContextCoach task={task} compact />
             </div>
           </div>
-          <div className="rounded-2xl border border-stone-200 bg-[#EEEFE6] p-5">
+          <div className="rounded-2xl border border-line bg-surface-subtle p-5">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Up next</h3>
               <span className="text-xs text-text-muted">
                 {queue.length} open
               </span>
             </div>
-            <p className="mb-4 mt-1 text-[11px] leading-relaxed text-text-muted">
+            <p className="mb-4 mt-1 text-[0.75rem] leading-relaxed text-text-muted">
               Earliest deadline first. Work in progress breaks ties.
             </p>
             <div className="max-h-[430px] space-y-2 overflow-y-auto">
@@ -321,16 +329,16 @@ export function FocusDesk({
                   type="button"
                   onClick={() => setSelectedId(item.id)}
                   aria-pressed={item.id === task.id}
-                  className={`flex w-full gap-3 rounded-xl border p-3.5 text-left transition focus-visible:outline-brand-primary motion-reduce:transition-none ${item.id === task.id ? "border-[#93AA83] bg-white shadow-sm" : "border-transparent hover:bg-white/70"}`}
+                  className={`flex w-full gap-3 rounded-xl border p-3.5 text-left transition focus-visible:outline-brand-primary motion-reduce:transition-none ${item.id === task.id ? "border-strong-line bg-surface-card shadow-sm" : "border-transparent hover:bg-surface-card/70"}`}
                 >
-                  <span className="pt-0.5 font-mono text-[10px] text-text-muted">
+                  <span className="pt-0.5 font-mono text-[0.75rem] text-text-muted">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-xs font-semibold leading-relaxed">
                       {item.title}
                     </span>
-                    <span className="mt-1 block text-[10px] text-text-muted">
+                    <span className="mt-1 block text-[0.75rem] text-text-muted">
                       {deadline(item, now).label} · {item.assignee}
                     </span>
                   </span>
@@ -399,7 +407,7 @@ export function CommandMenu({ tasks, onClose, onEdit, actions }) {
             </button>
           ))}
           {matches.length > 0 && (
-            <p className="px-3 pb-1 pt-4 text-[10px] uppercase tracking-widest text-text-muted">
+            <p className="px-3 pb-1 pt-4 text-[0.75rem] uppercase tracking-widest text-text-muted">
               Tasks
             </p>
           )}
@@ -414,10 +422,10 @@ export function CommandMenu({ tasks, onClose, onEdit, actions }) {
               className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm hover:bg-brand-accent focus-visible:bg-brand-accent focus-visible:outline-brand-primary"
             >
               <span
-                className={`h-2 w-2 shrink-0 rounded-full ${task.status === "done" ? "bg-type-feature" : "bg-[#BD8A39]"}`}
+                className={`h-2 w-2 shrink-0 rounded-full ${task.status === "done" ? "bg-type-feature" : "bg-warning"}`}
               />
               <span className="min-w-0 flex-1 truncate">{task.title}</span>
-              <span className="text-[10px] text-text-muted">
+              <span className="text-[0.75rem] text-text-muted">
                 {STAGES.find((stage) => stage.id === task.status).label}
               </span>
             </button>
@@ -428,7 +436,7 @@ export function CommandMenu({ tasks, onClose, onEdit, actions }) {
             </p>
           )}
         </div>
-        <p className="mt-4 border-t border-stone-200 pt-3 text-[11px] text-text-muted">
+        <p className="mt-4 border-t border-line pt-3 text-[0.75rem] text-text-muted">
           Tab to navigate · Enter to choose · Esc to close
         </p>
       </div>
@@ -460,7 +468,7 @@ export function ActivityPanel({ activity, tasks, onClose, onEdit }) {
             const task = tasks.find((item) => item.id === entry.taskId);
             return (
               <li key={entry.id} className="flex gap-3">
-                <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E6EDDE] text-brand-primary">
+                <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-accent text-brand-primary">
                   <History size={13} />
                 </span>
                 <div className="min-w-0">
@@ -480,7 +488,7 @@ export function ActivityPanel({ activity, tasks, onClose, onEdit }) {
                       {entry.title}
                     </p>
                   )}
-                  <p className="mt-1 text-[10px] text-text-muted">
+                  <p className="mt-1 text-[0.75rem] text-text-muted">
                     {new Date(entry.at).toLocaleString("en-GB", {
                       dateStyle: "medium",
                       timeStyle: "short",
@@ -521,7 +529,7 @@ export function ImportBackup({ tasks, onImport }) {
     }
   }
   return (
-    <div className="border-t border-stone-200 pt-5">
+    <div className="border-t border-line pt-5">
       <h3 className="flex items-center gap-2 text-sm font-semibold">
         <Upload size={15} /> Bring your workspace with you
       </h3>
@@ -535,7 +543,7 @@ export function ImportBackup({ tasks, onImport }) {
         aria-label="Import workspace backup"
         onChange={readFile}
         disabled={reading}
-        className="block w-full rounded-lg border border-stone-300 bg-white p-2 text-xs file:mr-3 file:rounded file:border-0 file:bg-[#E6EDDE] file:px-3 file:py-2 file:text-brand-primary"
+        className="block w-full rounded-lg border border-line bg-surface-card p-2 text-xs file:mr-3 file:rounded file:border-0 file:bg-brand-accent file:px-3 file:py-2 file:text-brand-primary"
       />
       {reading && (
         <p role="status" className="mt-2 text-xs">
@@ -548,7 +556,7 @@ export function ImportBackup({ tasks, onImport }) {
         </p>
       )}
       {candidate && (
-        <div className="mt-3 rounded-xl bg-[#EAF0E2] p-4">
+        <div className="mt-3 rounded-xl bg-surface-tint p-4">
           <p className="text-sm font-semibold">Ready to import</p>
           <p className="my-2 text-xs leading-relaxed text-text-muted">
             {candidate.tasks.length} tasks ·{" "}
@@ -579,7 +587,7 @@ export function ImportBackup({ tasks, onImport }) {
               Replace workspace
             </button>
           </div>
-          <p className="mt-2 text-[10px] text-text-muted">
+          <p className="mt-2 text-[0.75rem] text-text-muted">
             Merge keeps existing task IDs, history and links; fills empty
             deliverable slots.
           </p>
@@ -595,7 +603,7 @@ export function TaskList({ tasks, now, onEdit, onUpdate, onCopy }) {
     ...tasks.filter((task) => task.status === "done"),
   ];
   return (
-    <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
+    <div className="overflow-hidden rounded-xl border border-line bg-surface-card">
       {!ordered.length && (
         <p className="p-10 text-center text-sm text-text-muted">
           No tasks match. Clear your filters or create a task.
@@ -605,7 +613,7 @@ export function TaskList({ tasks, now, onEdit, onUpdate, onCopy }) {
         <div
           key={task.id}
           data-testid="task-list-row"
-          className="flex flex-wrap items-center gap-3 border-b border-stone-100 p-4 last:border-0 sm:gap-5"
+          className="flex flex-wrap items-center gap-3 border-b border-line p-4 last:border-0 sm:gap-5"
         >
           <span
             className={`h-2 w-2 rounded-full ${task.type === "bug" ? "bg-type-bug" : "bg-type-feature"}`}
@@ -615,14 +623,14 @@ export function TaskList({ tasks, now, onEdit, onUpdate, onCopy }) {
             onClick={() => onEdit(task)}
           >
             <span className="block text-sm font-semibold">{task.title}</span>
-            <span className="mt-1 block text-[11px] text-text-muted">
+            <span className="mt-1 block text-[0.75rem] text-text-muted">
               {task.assignee} · {task.type} ·{" "}
               {contextChecklist(task).filter((item) => item.done).length}/4
               handoff checks
             </span>
           </button>
           <span
-            className={`rounded-md px-2 py-1 text-[11px] ${deadline(task, now).tone === "overdue" ? "bg-due-overdue text-type-bug" : "bg-[#EEF1E7] text-text-muted"}`}
+            className={`rounded-md px-2 py-1 text-[0.75rem] ${deadline(task, now).tone === "overdue" ? "bg-due-overdue text-type-bug" : "bg-due-neutral text-text-muted"}`}
           >
             {deadline(task, now).label}
           </span>

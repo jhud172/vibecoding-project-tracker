@@ -199,3 +199,21 @@ extensions keep the locked Task/Anchor schema and localStorage architecture:
 
 The handoff checks are deterministic guidance, not AI-generated evaluation.
 No backend, paid API, authentication, invented teammate or real-time sync was added.
+
+## 16. Explained design and accessibility
+
+James requested reasons for every visual/UX decision and multiple access features.
+The component and icon inventory is recorded in DESIGN_RATIONALE.md and the
+published /design.html guide, generated from shared source content. Future visual
+changes must add the user need, reason/source or design judgment, accessibility
+implications, verification and trade-offs.
+
+Added light/dark/device themes, 100-200% relative text sizing, adaptive list/grid
+layout, alternate colour-vision palettes and monochrome, higher contrast, plain
+headings, underlined links, reduced motion and optional single-key shortcuts.
+The workspace, guide and eight-slide pitch share local preferences. Labelled
+read-aloud supports tasks, workspace briefings and the current slide, with voice,
+rate, pause, resume and stop. Device speech engines are an external dependency.
+Semantics, focus, keyboard controls and non-colour state labels remain independent
+of speech. ACCESSIBILITY.md distinguishes checked behavior from broader
+assistive-technology testing and full conformance, which are not claimed.

@@ -49,6 +49,14 @@ import {
   validateTask,
 } from "./model";
 import { useLocalStorage } from "./useLocalStorage";
+import {
+  AccessButton,
+  AccessibilityPanel,
+  ReadButton,
+  ReadingDock,
+  useAccess,
+} from "./Accessibility.jsx";
+import { spokenTask } from "./accessibility";
 import { Field, Modal, buttonClass, fieldClass, primaryClass } from "./ui";
 import {
   contextChecklist,
@@ -71,19 +79,19 @@ export { STAGES, TEAM, useLocalStorage };
 const toneClasses = {
   neutral: "bg-due-neutral text-text-muted",
   safe: "bg-due-safe text-type-feature",
-  warning: "bg-due-warning text-[#785313]",
+  warning: "bg-due-warning text-warning",
   overdue: "bg-due-overdue text-type-bug",
 };
 const cardTints = {
-  neutral: "bg-white",
-  safe: "bg-white",
-  warning: "bg-[#FFFCF3]",
-  overdue: "bg-[#FFF5F1]",
+  neutral: "bg-surface-card",
+  safe: "bg-surface-card",
+  warning: "bg-due-warning",
+  overdue: "bg-due-overdue",
 };
 const stageColours = [
-  "bg-stone-400",
-  "bg-[#BD8A39]",
-  "bg-[#7880A1]",
+  "bg-text-muted",
+  "bg-warning",
+  "bg-brand-primary",
   "bg-brand-primary",
 ];
 const anchorIcons = {
@@ -205,12 +213,18 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
             />
           </Field>
         </div>
-        <section className="rounded-xl border border-[#CDD9C7] bg-[#ECF1E6] p-4">
-          <div className="mb-3 flex items-center gap-2 text-brand-primary">
+        <section className="rounded-xl border border-line bg-surface-tint p-4">
+          <div className="mb-3 flex flex-wrap items-center gap-2 text-brand-primary">
             <Sparkles size={17} />
             <h3 className="font-semibold">
               Leave the next prompt a head start.
             </h3>
+          </div>
+          <div className="mb-3">
+            <ReadButton
+              text={spokenTask(draft)}
+              title={draft.title || "Task draft"}
+            />
           </div>
           <Field
             label="Curated context"
@@ -260,7 +274,7 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
             />
           </div>
           {versions.length > 0 && (
-            <div className="mt-4 border-t border-[#CCD8C3] pt-3">
+            <div className="mt-4 border-t border-line pt-3">
               <button
                 type="button"
                 aria-expanded={historyOpen}
@@ -274,9 +288,9 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
                   {versions.map((entry) => (
                     <div
                       key={entry.id}
-                      className="rounded-lg border border-stone-200 bg-white p-3"
+                      className="rounded-lg border border-line bg-surface-card p-3"
                     >
-                      <p className="text-[10px] text-text-muted">
+                      <p className="text-[0.75rem] text-text-muted">
                         Before {new Date(entry.at).toLocaleString("en-GB")} ·{" "}
                         {entry.previous.contextTool || "No tool set"}
                       </p>
@@ -322,7 +336,7 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
           </p>
         )}
         {deleting ? (
-          <div className="rounded-xl border border-red-200 bg-due-overdue p-4">
+          <div className="rounded-xl border border-line bg-due-overdue p-4">
             <p className="text-sm font-medium">
               Remove this task from the board? Undo is available until your next
               change or reload.
@@ -345,7 +359,7 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
             </div>
           </div>
         ) : (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
             <div className="flex gap-2">
               {task.id && (
                 <button
@@ -455,7 +469,7 @@ function TaskCard({
     <article
       data-testid="task-card"
       onClick={() => onEdit(task)}
-      className={`group cursor-pointer overflow-hidden rounded-xl border border-stone-200 border-l-[3px] ${cardTints[due.tone]} shadow-[0_2px_3px_0_#252B2705] transition hover:shadow-md motion-reduce:transition-none ${task.type === "bug" ? "border-l-type-bug" : "border-l-type-feature"}`}
+      className={`group cursor-pointer overflow-hidden rounded-xl border border-line border-l-[3px] ${cardTints[due.tone]} shadow-[0_2px_3px_0_#252B2705] transition hover:shadow-md motion-reduce:transition-none ${task.type === "bug" ? "border-l-type-bug" : "border-l-type-feature"}`}
     >
       <div className="p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
@@ -470,25 +484,25 @@ function TaskCard({
             onDragEnd={onDragEnd}
             title="Drag to another stage, or use the stage dropdown"
             aria-hidden="true"
-            className="cursor-grab text-stone-400 active:cursor-grabbing"
+            className="cursor-grab text-text-muted active:cursor-grabbing"
           >
             <GripVertical size={14} />
           </span>
           <span
-            className={`inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider ${task.type === "bug" ? "text-type-bug" : "text-type-feature"}`}
+            className={`inline-flex items-center gap-1.5 text-[0.75rem] font-semibold uppercase tracking-wider ${task.type === "bug" ? "text-type-bug" : "text-type-feature"}`}
           >
             <TypeIcon size={13} />
             {task.type}
           </span>
           <button
             type="button"
-            className="rounded p-1 text-text-muted hover:bg-stone-100 focus-visible:outline-brand-primary"
+            className="rounded p-1 text-text-muted hover:bg-surface-subtle focus-visible:outline-brand-primary"
             aria-label={`Edit ${task.title}`}
           >
             <MoreHorizontal size={17} />
           </button>
         </div>
-        <h3 className="text-[15px] font-semibold leading-snug">
+        <h3 className="text-[0.9375rem] font-semibold leading-snug">
           <button
             type="button"
             className="text-left focus-visible:rounded focus-visible:outline-brand-primary"
@@ -496,12 +510,12 @@ function TaskCard({
             {task.title}
           </button>
         </h3>
-        <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-text-muted">
+        <p className="mt-2 line-clamp-3 text-[0.8125rem] leading-relaxed text-text-muted">
           {task.description || "Add a brief so the next step is clear."}
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span
-            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium ${toneClasses[due.tone]}`}
+            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[0.75rem] font-medium ${toneClasses[due.tone]}`}
           >
             {task.status === "done" ? (
               <CheckCheck size={12} />
@@ -511,18 +525,18 @@ function TaskCard({
             {due.label}
           </span>
           {task.id.startsWith("demo-") && (
-            <span className="text-[10px] uppercase tracking-wider text-text-muted">
+            <span className="text-[0.75rem] uppercase tracking-wider text-text-muted">
               Demo
             </span>
           )}
         </div>
         <div
-          className="mt-4 flex items-center gap-2 border-t border-stone-100 pt-3"
+          className="mt-4 flex items-center gap-2 border-t border-line pt-3"
           onClick={(event) => event.stopPropagation()}
         >
           <span
             aria-hidden="true"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E8EADD] text-[10px] font-semibold text-brand-primary"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-accent text-[0.75rem] font-semibold text-brand-primary"
           >
             {task.assignee === "James"
               ? "JH"
@@ -551,7 +565,7 @@ function TaskCard({
             aria-label={`Stage for ${task.title}`}
             value={task.status}
             onChange={(event) => onUpdate(task, { status: event.target.value })}
-            className="min-w-0 rounded-md border border-stone-200 bg-stone-50 p-1.5 text-[11px] focus-visible:outline-brand-primary"
+            className="min-w-0 rounded-md border border-line bg-surface-subtle p-1.5 text-[0.75rem] focus-visible:outline-brand-primary"
           >
             {STAGES.map((stage) => (
               <option value={stage.id} key={stage.id}>
@@ -561,7 +575,7 @@ function TaskCard({
           </select>
           <button
             type="button"
-            className="flex items-center gap-1.5 rounded-md p-1.5 text-[11px] font-medium text-brand-primary hover:bg-due-safe focus-visible:outline-brand-primary"
+            className="flex items-center gap-1.5 rounded-md p-1.5 text-[0.75rem] font-medium text-brand-primary hover:bg-due-safe focus-visible:outline-brand-primary"
             aria-label={`Copy as Prompt Context: ${task.title}`}
             title="Copy as Prompt Context"
             onClick={() => onCopy(taskPrompt(task))}
@@ -572,10 +586,10 @@ function TaskCard({
         </div>
       </div>
       <div
-        className={`flex items-center gap-1.5 px-4 py-2 text-[10px] ${task.context?.trim() ? "bg-[#F0F4EB] text-type-feature" : "bg-stone-50 text-text-muted"}`}
+        className={`flex items-center gap-1.5 px-4 py-2 text-[0.75rem] ${task.context?.trim() ? "bg-due-safe text-type-feature" : "bg-surface-subtle text-text-muted"}`}
       >
         <span
-          className={`h-1.5 w-1.5 rounded-full ${task.context?.trim() ? "bg-type-feature" : "bg-stone-400"}`}
+          className={`h-1.5 w-1.5 rounded-full ${task.context?.trim() ? "bg-type-feature" : "bg-text-muted"}`}
         />
         {contextCount === 4
           ? "Handoff essentials present"
@@ -586,6 +600,7 @@ function TaskCard({
 }
 
 export default function App() {
+  const { prefs } = useAccess();
   const [tasks, setTasks, taskError, replaceTasks] = useLocalStorage(
     "vibetracker.tasks",
     seedTasks,
@@ -601,9 +616,10 @@ export default function App() {
     useLocalStorage("relay.activity:v1", [], validActivity);
   const [undo, setUndo] = useState(null);
   const [view, setView] = useState("board");
-  const [layout, setLayout] = useState(() =>
+  const [chosenLayout, setLayout] = useState(() =>
     window.matchMedia("(max-width: 767px)").matches ? "list" : "board",
   );
+  const layout = prefs.textSize >= 150 ? "list" : chosenLayout;
   const [contextFilter, setContextFilter] = useState("all");
   const [dragging, setDragging] = useState(null);
   const [dragOver, setDragOver] = useState(null);
@@ -743,7 +759,14 @@ export default function App() {
         setPanel("commands");
         return;
       }
-      if (typing || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (
+        typing ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        !prefs.shortcuts
+      )
+        return;
       if (event.key.toLowerCase() === "n") {
         event.preventDefault();
         addTask();
@@ -760,10 +783,13 @@ export default function App() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [editing, editingAnchor, panel, clipboardFallback]);
+  }, [editing, editingAnchor, panel, clipboardFallback, prefs.shortcuts]);
   return (
     <div className="min-h-screen bg-surface-page text-text-primary selection:bg-brand-accent">
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-52 flex-col border-r border-[#DFE3D8] bg-[#EEEEE5] p-6 xl:flex">
+      <a href="#workspace" className="skip-link">
+        Skip to workspace
+      </a>
+      <aside className="workspace-sidebar fixed inset-y-0 left-0 z-10 hidden w-52 flex-col overflow-y-auto border-r border-line bg-surface-subtle p-6 xl:flex">
         <a
           href="#board"
           onClick={showBoard}
@@ -772,10 +798,10 @@ export default function App() {
         >
           <Workflow size={25} strokeWidth={1.6} />
           <span className="font-editorial text-4xl tracking-tight">
-            relay<span className="text-[#91A36D]">.</span>
+            relay<span className="text-type-feature">.</span>
           </span>
         </a>
-        <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.18em] text-text-muted">
+        <p className="mt-8 font-mono text-[0.75rem] uppercase tracking-[0.18em] text-text-muted">
           Your workspace
         </p>
         <nav aria-label="Workspace" className="mt-3 space-y-1 text-sm">
@@ -783,7 +809,7 @@ export default function App() {
             type="button"
             onClick={showBoard}
             aria-pressed={view === "board"}
-            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium text-brand-primary ${view === "board" ? "bg-brand-accent" : "hover:bg-white/60"}`}
+            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium text-brand-primary ${view === "board" ? "bg-brand-accent" : "hover:bg-surface-card/60"}`}
           >
             <LayoutGrid size={16} />
             Task board<span className="ml-auto text-xs">{tasks.length}</span>
@@ -792,17 +818,19 @@ export default function App() {
             type="button"
             onClick={showFocus}
             aria-pressed={view === "focus"}
-            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium text-brand-primary ${view === "focus" ? "bg-brand-accent" : "hover:bg-white/60"}`}
+            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium text-brand-primary ${view === "focus" ? "bg-brand-accent" : "hover:bg-surface-card/60"}`}
           >
             <Target size={16} />
             Focus desk
-            <span className="ml-auto rounded border border-[#CCD8C3] px-1.5 text-[10px]">
-              F
-            </span>
+            {prefs.shortcuts && (
+              <span className="ml-auto rounded border border-line px-1.5 text-[0.75rem]">
+                F
+              </span>
+            )}
           </button>
           <a
             href="#deliverables"
-            className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-white/60"
+            className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-surface-card/60"
           >
             <FolderOpen size={16} />
             Deliverables
@@ -810,7 +838,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setPanel("resume")}
-            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-white/60"
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-surface-card/60"
           >
             <Sparkles size={16} />
             Resume work
@@ -818,7 +846,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setPanel("activity")}
-            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-white/60"
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-surface-card/60"
           >
             <History size={16} />
             Activity
@@ -826,14 +854,14 @@ export default function App() {
           <button
             type="button"
             onClick={() => setPanel("commands")}
-            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-white/60"
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-surface-card/60"
           >
             <Command size={16} />
             Quick actions
           </button>
         </nav>
         <div className="mt-auto">
-          <div className="mb-6 rounded-xl border border-[#D5DCCB] bg-[#E5E9D9] p-3.5">
+          <div className="mb-6 rounded-xl border border-line bg-surface-tint p-3.5">
             <Workflow size={20} className="text-brand-primary" />
             <p className="mt-3 font-editorial text-lg leading-snug">
               Good work has
@@ -850,7 +878,7 @@ export default function App() {
             onClick={() => setPanel("settings")}
             className="flex w-full items-center gap-2.5 rounded-lg text-left focus-visible:outline-brand-primary"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary text-xs text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-action text-xs text-action-ink">
               JH
             </span>
             <span className="flex-1 text-xs font-semibold">
@@ -863,17 +891,18 @@ export default function App() {
           </button>
         </div>
       </aside>
-      <div className="xl:ml-52">
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 px-5 py-4 sm:px-9">
+      <div className="workspace-shell xl:ml-52">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4 sm:px-9">
           <div className="flex items-center gap-2 text-xs text-text-muted">
             <Workflow size={18} className="text-brand-primary xl:hidden" />
             <span>James's studio</span>
-            <span className="text-stone-400">/</span>
+            <span className="text-text-muted">/</span>
             <span className="font-medium text-text-primary">
               Vibecoding project
             </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <AccessButton onClick={() => setPanel("accessibility")} />
             {undo && (
               <button
                 type="button"
@@ -888,11 +917,11 @@ export default function App() {
               type="button"
               onClick={() => setPanel("commands")}
               aria-label="Open quick actions"
-              className="flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-2.5 py-1.5 text-text-muted"
+              className="flex items-center gap-2 rounded-lg border border-line bg-surface-card px-2.5 py-1.5 text-text-muted"
             >
               <Search size={14} />
               <span className="hidden text-xs sm:inline">Quick actions</span>
-              <kbd className="hidden rounded border border-stone-200 px-1 text-[10px] sm:inline">
+              <kbd className="hidden rounded border border-line px-1 text-[0.75rem] sm:inline">
                 Ctrl K
               </kbd>
             </button>
@@ -911,14 +940,21 @@ export default function App() {
             </button>
           </div>
         </header>
-        <main className="mx-auto max-w-[1700px] px-5 pb-10 pt-8 sm:px-9">
+        <ReadingDock
+          hidden={!!(panel || editing || editingAnchor || clipboardFallback)}
+        />
+        <main
+          id="workspace"
+          tabIndex={-1}
+          className="mx-auto max-w-[1700px] px-5 pb-10 pt-8 sm:px-9"
+        >
           <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-type-feature">
+              <p className="mb-3 flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-[0.22em] text-type-feature">
                 <span className="h-1.5 w-1.5 rounded-full bg-type-feature" />{" "}
                 The context-first project studio
               </p>
-              <h1 className="font-editorial text-4xl tracking-tight sm:text-[44px]">
+              <h1 className="font-editorial text-4xl tracking-tight sm:text-[2.75rem]">
                 {view === "focus"
                   ? "Less noise. Your next move."
                   : "Good work deserves a clear next step."}
@@ -939,13 +975,13 @@ export default function App() {
               <ArrowUpRight size={16} />
             </button>
           </div>
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <div className="inline-flex rounded-xl border border-stone-200 bg-[#EEEFE6] p-1">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="inline-flex max-w-full flex-wrap rounded-xl border border-line bg-surface-subtle p-1">
               <button
                 type="button"
                 aria-pressed={view === "board"}
                 onClick={showBoard}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium ${view === "board" ? "bg-white text-brand-primary shadow-sm" : "text-text-muted"}`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium ${view === "board" ? "bg-surface-card text-brand-primary shadow-sm" : "text-text-muted"}`}
               >
                 <LayoutGrid size={14} /> Board
               </button>
@@ -953,7 +989,7 @@ export default function App() {
                 type="button"
                 aria-pressed={view === "focus"}
                 onClick={showFocus}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium ${view === "focus" ? "bg-white text-brand-primary shadow-sm" : "text-text-muted"}`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium ${view === "focus" ? "bg-surface-card text-brand-primary shadow-sm" : "text-text-muted"}`}
               >
                 <Target size={14} /> Focus desk
               </button>
@@ -987,7 +1023,7 @@ export default function App() {
           {(taskError || anchorError || activityError) && (
             <div
               role="alert"
-              className="mb-5 rounded-lg border border-red-200 bg-due-overdue p-4 text-sm text-type-bug"
+              className="mb-5 rounded-lg border border-line bg-due-overdue p-4 text-sm text-type-bug"
             >
               <p>{taskError || anchorError || activityError}</p>
               <button
@@ -1017,7 +1053,7 @@ export default function App() {
           <section
             id="deliverables"
             aria-labelledby="deliverables-title"
-            className="scroll-mt-5 rounded-2xl border border-[#DFE3D8] bg-[#EEEFE6] p-4 sm:p-5"
+            className="scroll-mt-5 rounded-2xl border border-line bg-surface-subtle p-4 sm:p-5"
           >
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2
@@ -1027,7 +1063,7 @@ export default function App() {
                 <Flag size={15} className="text-brand-primary" />
                 The finish line
               </h2>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+              <span className="font-mono text-[0.75rem] uppercase tracking-wider text-text-muted">
                 {linked}/4 deliverables linked
               </span>
             </div>
@@ -1037,7 +1073,7 @@ export default function App() {
                 return (
                   <div
                     key={anchor.id}
-                    className="min-w-0 rounded-xl border border-[#DFE3D8] bg-white/75 p-3.5"
+                    className="min-w-0 rounded-xl border border-line bg-surface-card/75 p-3.5"
                   >
                     <div className="flex items-center justify-between">
                       <Icon
@@ -1056,7 +1092,7 @@ export default function App() {
                           <ArrowUpRight size={16} />
                         </a>
                       ) : (
-                        <span className="text-[10px] text-text-muted">
+                        <span className="text-[0.75rem] text-text-muted">
                           Not linked
                         </span>
                       )}
@@ -1064,7 +1100,7 @@ export default function App() {
                     <h3 className="mt-3 text-sm font-semibold">
                       {anchor.label}
                     </h3>
-                    <p className="mt-1 truncate text-[11px] text-text-muted">
+                    <p className="mt-1 truncate text-[0.75rem] text-text-muted">
                       {anchorHints[anchor.id]}
                     </p>
                     <button
@@ -1096,15 +1132,16 @@ export default function App() {
                   <h2 id="board-title" className="font-editorial text-2xl">
                     The work in motion
                   </h2>
-                  <span className="rounded-full border border-stone-200 px-2 py-0.5 text-xs text-text-muted">
+                  <span className="rounded-full border border-line px-2 py-0.5 text-xs text-text-muted">
                     {tasks.length}
                   </span>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="inline-flex rounded-lg border border-stone-200 bg-white p-1">
+                  <div className="inline-flex rounded-lg border border-line bg-surface-card p-1">
                     <button
                       type="button"
                       aria-label="Board layout"
+                      disabled={prefs.textSize >= 150}
                       aria-pressed={layout === "board"}
                       onClick={() => setLayout("board")}
                       className={`rounded p-1.5 ${layout === "board" ? "bg-brand-accent text-brand-primary" : "text-text-muted"}`}
@@ -1131,9 +1168,15 @@ export default function App() {
                   </button>
                 </div>
               </div>
+              {prefs.textSize >= 150 && (
+                <p className="mt-3 text-sm text-text-muted">
+                  List layout keeps enlarged text readable without horizontal
+                  board scrolling. Reduce text size below 150% to use the board.
+                </p>
+              )}
               <div className="my-5 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <label className="relative">
+                <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
+                  <label className="relative min-w-0 max-w-full">
                     <span className="sr-only">Search tasks</span>
                     <Search
                       size={14}
@@ -1206,7 +1249,7 @@ export default function App() {
                   <span>
                     {doneCount} of {tasks.length} done
                   </span>
-                  <span className="h-1.5 w-16 overflow-hidden rounded-full bg-stone-200">
+                  <span className="h-1.5 w-16 overflow-hidden rounded-full bg-line">
                     <span
                       className="block h-full bg-brand-primary"
                       style={{
@@ -1264,7 +1307,7 @@ export default function App() {
                             setDragOver(null);
                           }}
                           aria-labelledby={`stage-${stage.id}`}
-                          className={`min-h-[370px] rounded-xl border p-2.5 transition-colors motion-reduce:transition-none ${dragOver === stage.id ? "border-brand-primary bg-brand-accent/60" : "border-transparent bg-[#ECEDE6]/70"}`}
+                          className={`min-h-[370px] rounded-xl border p-2.5 transition-colors motion-reduce:transition-none ${dragOver === stage.id ? "border-brand-primary bg-brand-accent/60" : "border-transparent bg-surface-subtle/70"}`}
                         >
                           <div className="mb-3 flex items-center gap-2 px-1.5 py-2">
                             <span
@@ -1276,13 +1319,13 @@ export default function App() {
                             >
                               {stage.label}
                             </h3>
-                            <span className="text-[11px] text-text-muted">
+                            <span className="text-[0.75rem] text-text-muted">
                               {columnTasks.length}
                             </span>
                             <button
                               type="button"
                               aria-label={`Add task to ${stage.label}`}
-                              className="ml-auto rounded p-1 text-text-muted hover:bg-white focus-visible:outline-brand-primary"
+                              className="ml-auto rounded p-1 text-text-muted hover:bg-surface-card focus-visible:outline-brand-primary"
                               onClick={() => addTask(stage.id)}
                             >
                               <Plus size={15} />
@@ -1305,11 +1348,11 @@ export default function App() {
                               />
                             ))}
                             {!columnTasks.length && (
-                              <div className="rounded-xl border border-dashed border-stone-300 px-4 py-9 text-center">
+                              <div className="rounded-xl border border-dashed border-line px-4 py-9 text-center">
                                 <Circle
                                   size={20}
                                   strokeWidth={1}
-                                  className="mx-auto text-stone-400"
+                                  className="mx-auto text-text-muted"
                                 />
                                 <p className="mt-3 text-xs text-text-muted">
                                   {search ||
@@ -1335,7 +1378,7 @@ export default function App() {
                   </div>
                 </div>
               )}
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[11px] text-text-muted">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[0.75rem] text-text-muted">
                 <p className="flex items-center gap-1.5">
                   <Clipboard size={13} />
                   {layout === "board"
@@ -1347,7 +1390,35 @@ export default function App() {
             </section>
           )}
         </main>
+        <footer className="flex flex-wrap items-center gap-4 border-t border-line px-5 py-5 text-xs text-text-muted sm:px-9">
+          <button
+            type="button"
+            className="underline"
+            onClick={() => setPanel("accessibility")}
+          >
+            Accessibility & reading preferences
+          </button>
+          <a
+            href="/design.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            Why this design?<span className="sr-only"> (opens a new tab)</span>
+          </a>
+          <span>
+            Every state has a text label. Every task can be moved without
+            dragging.
+          </span>
+        </footer>
       </div>
+      {panel === "accessibility" && (
+        <AccessibilityPanel
+          tasks={tasks}
+          briefing={briefing}
+          onClose={() => setPanel(null)}
+        />
+      )}
       {editing && (
         <TaskEditor
           key={editing.id || "new"}
@@ -1421,6 +1492,10 @@ export default function App() {
             { label: "Copy workspace briefing", run: () => setPanel("resume") },
             { label: "View activity history", run: () => setPanel("activity") },
             {
+              label: "Accessibility and reading preferences",
+              run: () => setPanel("accessibility"),
+            },
+            {
               label: "Backup and workspace settings",
               run: () => setPanel("settings"),
             },
@@ -1457,7 +1532,8 @@ export default function App() {
                 className={`${fieldClass} mt-2 h-72 font-mono text-xs leading-relaxed`}
               />
             </label>
-            <div className="mt-5 flex justify-end">
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
+              <ReadButton text={briefing} title="Workspace briefing" />
               <button
                 type="button"
                 className={primaryClass}
@@ -1491,7 +1567,7 @@ export default function App() {
               <ArrowDownToLine size={16} />
               Download workspace backup
             </button>
-            <p className="text-[11px] text-text-muted">
+            <p className="text-[0.75rem] text-text-muted">
               Includes tasks, deliverables and activity history. Keep it
               somewhere safe; it contains your saved context.
             </p>
@@ -1524,7 +1600,7 @@ export default function App() {
                 );
               }}
             />
-            <div className="rounded-xl bg-[#EAF0E2] p-4">
+            <div className="rounded-xl bg-surface-tint p-4">
               <h3 className="mb-2 text-sm font-semibold">A few shortcuts</h3>
               <p className="text-xs leading-6 text-text-muted">
                 <kbd>Ctrl / ⌘ K</kbd> Quick actions · <kbd>N</kbd> New task
@@ -1532,8 +1608,15 @@ export default function App() {
                 <kbd>F</kbd> Focus desk · <kbd>/</kbd> Search tasks ·{" "}
                 <kbd>Esc</kbd> Close dialog
               </p>
+              <button
+                type="button"
+                className="mt-3 text-sm underline"
+                onClick={() => setPanel("accessibility")}
+              >
+                Accessibility, themes & shortcut preferences
+              </button>
             </div>
-            <div className="border-t border-stone-200 pt-5">
+            <div className="border-t border-line pt-5">
               <h3 className="text-sm font-semibold">A fresh demo</h3>
               <p className="my-2 text-xs leading-relaxed text-text-muted">
                 Restore four sample tasks with dates relative to today. This
@@ -1597,7 +1680,7 @@ export default function App() {
       {toast && (
         <div
           role="status"
-          className="fixed bottom-6 left-1/2 z-50 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-3 rounded-xl bg-brand-primary px-5 py-3.5 text-sm text-white shadow-lg"
+          className="fixed bottom-6 left-1/2 z-50 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-3 rounded-xl bg-action px-5 py-3.5 text-sm text-action-ink shadow-lg"
         >
           <Check size={17} className="shrink-0" />
           {toast.message}
@@ -1605,7 +1688,7 @@ export default function App() {
             <button
               type="button"
               onClick={undoChange}
-              className="rounded border border-white/40 px-2 py-1 text-xs hover:bg-white/10"
+              className="rounded border border-white/40 px-2 py-1 text-xs hover:bg-surface-card/10"
             >
               Undo
             </button>

@@ -153,3 +153,56 @@ workspace flows. The upgraded production build passed with no new dependencies.
 No external AI provider is involved in the checklist or ranking. Neither
 heuristic claims correctness, and no competition result or user-study benefit
 is asserted.
+
+## Explained design and accessibility upgrade
+
+The next iteration responds to James’s request for an explicit reason behind
+each visual/UX choice and multiple access features. The published /design.html
+guide covers layout, hierarchy, typography, colours, components, imagery, the
+Relay logo and 18 icon families. Its shared content source also generates
+DESIGN_RATIONALE.md. W3C/WAI guidance and Nielsen’s usability heuristics are
+linked to the relevant decisions. Aesthetic choices and intended cognitive
+benefits are distinguished from measured results; no user study is invented.
+
+The labelled Accessibility panel offers light/dark/device appearance; 100–200%
+text sizing with reflow; blue/amber, teal/rose and monochrome alternatives;
+higher contrast; plain headings; link underlines; reduced motion; and optional
+single-character shortcuts, off by default. Native keyboard controls, skip
+links, heading structure, focus restoration and status announcements remain
+available independently of speech. Shared button targets aim for 44px minimum
+at standard text size, with stronger form-control boundaries.
+
+Browser SpeechSynthesis provides explicit task/workspace/guide/slide narration,
+voice and rate selection, pause/resume/stop, bounded utterances and a clear
+12,000-character limit. Errors and a startup timeout offer a recovery message.
+Late callbacks cannot restart cancelled speech. Controls remain available in
+dialogs and a reading dock; hiding the page or changing slides stops playback.
+Online voices are labelled; no microphone or external AI API was added.
+
+The workspace, design guide and eight-slide presentation share preference
+storage. Presentation is now a Vite HTML entry at presentation.html, preserving
+its public URL while bundling the shared preference controls. The pitch script
+includes the accessibility/design explanation within the five-minute outline.
+
+All 28 automated tests pass. Eight access tests cover defined text contrast
+pairs across 16 theme/palette/contrast combinations, strong boundary/focus
+contrast, preference validation and speech lifecycle/cancellation/error handling.
+The production build passes for all three HTML entries. No runtime dependency
+was added.
+
+Rendered checks covered light/dark and alternative palettes; preference
+persistence/reset; plain headings, link underlines and motion preferences;
+200% text at narrow mobile width; reflow into the task list; native dialog
+scrolling and focus return; disabled/enabled shortcuts and Ctrl/Command K;
+task editor access; and the published guide’s alt text and decorative SVG
+semantics. A real device engine emitted the speech-start event and the UI
+exercised pause, resume and stop. Eight-slide navigation and its access controls
+were checked. A three-frame 390px harness visually inspected the actual workspace,
+guide and pitch at 200%, rather than a static mockup. The tested main/pitch flows
+had no console errors; a development-only duplicate-root warning after hot updates
+was addressed with explicit HMR cleanup in the guide and pitch entry modules.
+
+ACCESSIBILITY.md records the test scope and limits. These checks do not establish
+full WCAG conformance, an NVDA/VoiceOver or braille audit, device audio quality,
+or universal colour-vision support. James’s timed rehearsal and the on-stage
+demonstration remain personal activities.

@@ -4,15 +4,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: { primary: "#264F3D", accent: "#DCE8C7" },
-        surface: { page: "#F6F5F0", card: "#FFFFFF" },
-        text: { primary: "#252B27", muted: "#647066" },
-        type: { feature: "#426746", bug: "#A44235" },
+        brand: {
+          primary: "rgb(var(--brand) / <alpha-value>)",
+          accent: "rgb(var(--accent) / <alpha-value>)",
+        },
+        surface: Object.fromEntries(
+          ["page", "card", "subtle", "tint"].map((key) => [
+            key,
+            `rgb(var(--${key}) / <alpha-value>)`,
+          ]),
+        ),
+        text: {
+          primary: "rgb(var(--ink) / <alpha-value>)",
+          muted: "rgb(var(--muted) / <alpha-value>)",
+        },
+        type: {
+          feature: "rgb(var(--feature) / <alpha-value>)",
+          bug: "rgb(var(--bug) / <alpha-value>)",
+        },
+        line: "rgb(var(--line) / <alpha-value>)",
+        "strong-line": "rgb(var(--strong-line) / <alpha-value>)",
+        action: "rgb(var(--action) / <alpha-value>)",
+        "action-ink": "rgb(var(--action-ink) / <alpha-value>)",
+        warning: "rgb(var(--warning) / <alpha-value>)",
+        focus: {
+          base: "rgb(var(--focus-bg) / <alpha-value>)",
+          ink: "rgb(var(--focus-ink) / <alpha-value>)",
+          muted: "rgb(var(--focus-muted) / <alpha-value>)",
+          accent: "rgb(var(--focus-accent) / <alpha-value>)",
+        },
         due: {
-          safe: "#E8EFE5",
-          warning: "#FBEDCB",
-          overdue: "#FBE5DF",
-          neutral: "#EDF0EC",
+          safe: "rgb(var(--safe) / <alpha-value>)",
+          warning: "rgb(var(--warning-bg) / <alpha-value>)",
+          overdue: "rgb(var(--overdue) / <alpha-value>)",
+          neutral: "rgb(var(--neutral) / <alpha-value>)",
         },
       },
       fontFamily: { editorial: ["Georgia", "serif"] },

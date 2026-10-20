@@ -2,13 +2,218 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
+:root {
+  --page: 246 245 240;
+  --card: 255 255 255;
+  --ink: 37 43 39;
+  --muted: 83 96 86;
+  --brand: 38 79 61;
+  --accent: 220 232 199;
+  --line: 176 186 173;
+  --strong-line: 113 131 108;
+  --subtle: 235 237 229;
+  --tint: 234 240 226;
+  --action: 38 79 61;
+  --action-ink: 255 255 255;
+  --feature: 54 91 59;
+  --bug: 152 58 44;
+  --warning: 118 80 12;
+  --safe: 232 239 229;
+  --warning-bg: 251 237 203;
+  --overdue: 251 229 223;
+  --neutral: 237 240 236;
+  --focus-bg: 32 62 49;
+  --focus-ink: 244 244 232;
+  --focus-muted: 213 223 210;
+  --focus-accent: 220 232 199;
+}
+
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f8fafc; /* slate-50 */
-  color: #0f172a;            /* slate-900 */
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  background-color: rgb(var(--page));
+  color: rgb(var(--ink));
+  line-height: 1.5;
+}
+
+/* Persistent user choices change semantic tokens, never invert the rendered page. */
+button,
+input:not([type="checkbox"]),
+select {
+  min-height: 2.75rem;
+}
+button {
+  min-width: 2.75rem;
+}
+button,
+a,
+p,
+h1,
+h2,
+h3,
+label,
+span {
+  overflow-wrap: anywhere;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+svg.lucide {
+  flex-shrink: 0;
+  width: 1.1em;
+  height: 1.1em;
+}
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+#board input {
+  width: min(14rem, 100%) !important;
+}
+input[type="checkbox"] {
+  accent-color: rgb(var(--brand));
+}
+dialog {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+html,
+dialog {
+  scroll-padding-top: 8rem;
+}
+:is(button, input, select, textarea, a) {
+  scroll-margin-block: 8rem 2rem;
+}
+:focus-visible {
+  outline: 3px solid rgb(var(--brand)) !important;
+  outline-offset: 3px;
+}
+.focus-hero :focus-visible {
+  outline-color: rgb(var(--focus-accent)) !important;
+}
+#workspace:focus {
+  outline: none;
+}
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  transform: translateY(-200%);
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: rgb(var(--action));
+  color: rgb(var(--action-ink));
+  border-radius: 0.5rem;
+}
+.skip-link:focus {
+  transform: none;
+}
+.reader-dock {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+[data-plain-font="true"] .font-editorial {
+  font-family: inherit;
+}
+[data-underline-links="true"] a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+[data-reduce-motion="true"] *,
+[data-reduce-motion="true"] *::before,
+[data-reduce-motion="true"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+[data-large-text="true"] .workspace-sidebar {
+  display: none;
+}
+[data-large-text="true"] .workspace-shell {
+  margin-left: 0;
+}
+[data-large-text="true"] .grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+[data-large-text="true"] .truncate,
+[data-large-text="true"] .line-clamp-3 {
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+  display: block;
+  -webkit-line-clamp: unset;
+}
+[data-large-text="true"] .font-editorial.text-4xl,
+[data-large-text="true"] h1 {
+  font-size: 2rem;
+}
+@media (max-width: 480px) {
+  .grid.grid-cols-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reader-dock {
+    position: static;
+  }
+  [data-large-text="true"] dialog {
+    width: calc(100% - 0.5rem);
+    max-height: 95dvh;
+    border-radius: 0.5rem;
+  }
+  [data-large-text="true"] dialog .p-6 {
+    padding: 0.75rem;
+  }
+  [data-large-text="true"] .dialog-header {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  [data-large-text="true"] .dialog-close {
+    align-self: flex-end;
+  }
+  [data-large-text="true"] .dialog-header h2 {
+    font-size: 1.25rem;
+  }
+  [data-large-text="true"] .workspace-shell header > div:first-child {
+    flex-wrap: wrap;
+  }
+}
+@media (forced-colors: active) {
+  button,
+  input,
+  select,
+  textarea,
+  dialog {
+    border: 1px solid ButtonText !important;
+  }
+  :focus-visible {
+    outline-color: Highlight !important;
+  }
+  [aria-pressed="true"] {
+    outline: 2px solid Highlight;
+  }
 }

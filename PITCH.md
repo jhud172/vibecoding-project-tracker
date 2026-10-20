@@ -2,9 +2,10 @@
 
 Prepared for James, solo project owner. This is a script and runbook, not a claim that a live pitch or rehearsal has occurred. Adapt the wording to your own voice.
 
-The seven-slide presentation is at `/presentation.html` on the deployed app (source:
-`public/presentation.html`). Use the Back/Next buttons or arrow keys. Printing
-includes all seven slides. The Open live demo link returns to the app.
+The eight-slide presentation is at `/presentation.html` on the deployed app (source:
+`presentation.html`). Use the Back/Next buttons or arrow keys. Printing
+includes all eight slides. The Open live demo link returns to the app. Appearance,
+text sizing and read-this-slide controls are available in its header.
 
 ## 0:00-0:40 - The problem
 
@@ -44,14 +45,26 @@ Open **Focus desk**. Show its suggested task and the explanation beneath it.
 
 Select another task in the queue to show that the user remains in control.
 
-## 3:50-4:30 - Trust it with real work
+## 3:50-4:15 - Trust it with real work
 
 Advance a focused task and click **Undo**. Open the task's earlier-context section
 if a version is available. Briefly point to the four deliverable links.
 
 "An accidental click should not erase the work. I can undo the last change, recover earlier context, or take a backup to another browser. Import validates the file first, and merging preserves existing tasks. The final deliverables stay linked above the board."
 
-## 4:30-5:00 - Tradeoffs and close
+## 4:15-4:40 - Design with a reason
+
+Open **Accessibility**. Change text size to 125% or appearance to Light/Dark,
+then point to **Why this design?** Avoid starting a long narration during the
+timed pitch; demonstrate a short task reading only if the audio setup is ready.
+
+"The design is explainable. Visible labels reduce the need to remember icons.
+Colour is an extra cue, not the only one. People can enlarge text, choose a
+palette or listen to a briefing. The guide documents each choice and its source.
+These features have specific checks; I am not claiming a complete accessibility
+certification or a measured psychological effect."
+
+## 4:40-5:00 - Tradeoffs and close
 
 "I built this as a solo project on the course starter. React, Vite, Tailwind and localStorage kept the scope manageable. It is not a shared backend: data stays on this browser, and handoff is an owner label rather than a notification. That is the deliberate hackathon tradeoff."
 
@@ -65,7 +78,9 @@ if a version is available. Briefly point to the four deliverable links.
 4. Add real links to the four deliverables. The repository's README, REPORT.md and this script can serve as documentation, report and pitch outline links.
 5. Check clipboard copying in the presentation browser. If blocked, use the manual-copy dialog.
 6. Have a text editor ready for the paste demonstration; never paste private context into a public screen.
-7. Run a timed rehearsal and adapt the script. Record the actual date, duration and anything to improve below.
+7. Test a short narration with the room’s output device if you intend to demonstrate it. Voices and playback depend on the browser and operating system.
+8. Set an appropriate appearance/text size for the projection; keep Accessibility available to show the choices.
+9. Run a timed rehearsal and adapt the script. Record the actual date, duration and anything to improve below.
 
 ## Rehearsal record
 

@@ -4,7 +4,7 @@
 
 A local-first vibecoding project tracker built on Ignacio Alvarez's university hackathon starter. James (`jhud172`) is the solo project owner. Demo Designer and Demo Reviewer are explicitly fictional demo identities used to demonstrate the required handoff flow.
 
-[Open Relay](https://relay-jhud172.vercel.app) · [Presentation](https://relay-jhud172.vercel.app/presentation.html) · [Implementation report](REPORT.md) · [Pitch script](PITCH.md)
+[Open Relay](https://relay-jhud172.vercel.app) · [Presentation](https://relay-jhud172.vercel.app/presentation.html) · [Why this design?](https://relay-jhud172.vercel.app/design.html) · [Accessibility](ACCESSIBILITY.md) · [Implementation report](REPORT.md) · [Pitch script](PITCH.md)
 
 ## Run locally
 
@@ -43,7 +43,10 @@ npm run preview -- --host 127.0.0.1
 - Import a backup with a validation preview; merge keeps existing task IDs and links, while replacement requires confirmation.
 - Switch between the Kanban board and a deadline-ordered list. Narrow screens start in list layout.
 - Drag cards by their grip or use the keyboard-accessible stage menus.
-- Press **Ctrl/⌘ K** for quick actions, **N** for a new task, **F** for Focus desk, or **/** to search.
+- Press **Ctrl/⌘ K** for quick actions. Optionally enable **N**, **F** and **/** shortcuts in Accessibility; they are off by default to avoid conflicts with assistive input.
+- Open **Accessibility** for light/dark/device appearance, 100-200% text sizing, colour-vision alternatives, monochrome, higher contrast, plain headings, link underlines and reduced motion.
+- Read a task, workspace briefing or presentation slide aloud with voice/speed selection and pause/resume/stop. Device/browser voice availability varies; speech starts only on request.
+- Read the published design rationale explaining layout, cognitive intentions, logo, icons, typography and their trade-offs.
 
 ## Data and limitations
 
@@ -72,7 +75,11 @@ Date-only deadlines use the local calendar day. Today and the next two days are 
 - `PRD.md`: specification and recorded solo-project decisions.
 - `DESIGN.md`: visual system and interface principles.
 - `PITCH.md`: five-minute script and demo runbook.
-- `public/presentation.html`: seven-slide, keyboard-operable presentation with print layout.
+- `presentation.html`: eight-slide, keyboard-operable presentation with print layout and shared access preferences.
+- `design.html`, `src/design-main.jsx`, `src/designRationale.js`: published design rationale and source content.
+- `src/Accessibility.jsx`, `src/accessibility.js`: saved preferences, semantic palettes and speech lifecycle.
+- `DESIGN_RATIONALE.md`, `ACCESSIBILITY.md`: design reasons, access features and verification limits.
+- `tests/accessibility.test.js`: contrast, preference validation and speech lifecycle regression tests.
 - `tests/studio.test.js`: recovery, import compatibility, focus ordering and checklist regression tests.
 - `REPORT.md`: implementation report and validation record.
 - `HACKATHON.md`: portal setup and verified milestone names.
@@ -89,6 +96,14 @@ The portal watches **commit messages** through the configured push webhook. Matc
 Hosted in James's Vercel account as `relay-jhud172`, connected to this GitHub fork. Deploy as a Vite application: install `npm ci`, build `npm run build`, output `dist`. Pushes to `main` update the deployed project through the Git connection. Browser localStorage is isolated by origin, so local testing data does not transfer to the deployment.
 
 The pitch materials are prepared. A real timed rehearsal and on-stage demonstration remain James's final PRD gates; a completed portal preparation milestone does not establish either.
+
+Accessibility preferences use `relay.accessibility:v1`, separately from task and
+backup data. Reload other open tabs to pick up changes made in a different tab.
+Text of 150% or larger uses the list automatically. The design guide and pitch
+share the same appearance/reading preferences. Read-aloud uses the browser’s
+speech engine, and selected online voices may use a network service. Relay adds
+no AI speech API, microphone access or server upload. See ACCESSIBILITY.md for
+tested behavior and limits; this is not a blanket conformance certification.
 
 ## Development dependency note
 
