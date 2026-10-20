@@ -1,0 +1,78 @@
+# Relay - five-minute pitch and demo
+
+Prepared for James, solo project owner. This is a script and runbook, not a claim that a live pitch or rehearsal has occurred. Adapt the wording to your own voice.
+
+The six-slide presentation is at `/presentation.html` on the deployed app (source:
+`public/presentation.html`). Use the Back/Next buttons or arrow keys. Printing
+includes all six slides. The Open live demo link returns to the app.
+
+## 0:00-0:40 - The problem
+
+"When I build with AI, the code is not the only thing I need to keep. I need to keep the reasoning: what I asked, what worked, what failed, and what I was going to do next. Ordinary task lists track the work, but the context gets left behind in a chat. Relay puts those two things back together."
+
+Show the board. Point out four exact stages and the finish-line deliverables.
+
+## 0:40-1:25 - One clear task
+
+"This is a deliberately small workspace. I can add a feature or bug, describe the outcome, choose an owner and set a deadline. It stays in my browser when I refresh."
+
+Create a task named **Polish the first-run experience**. Add a short description. Set today's date. Save and show its date label. Move it to In Progress using the stage dropdown.
+
+## 1:25-2:15 - Keep the useful context
+
+Open the new task and paste this briefing:
+
+> Decision: retain React, Vite and localStorage. The first-run board should explain the product through four labelled demo tasks. What works: task editing and reload persistence. Next: review the empty-state wording and test keyboard navigation. Done when a new user can create and move a task without guidance.
+
+Select ChatGPT as the source tool and save.
+
+"This is curated context, not an unfiltered chat dump. The task stores the next useful briefing and records when it changed."
+
+## 2:15-3:05 - The hero moment
+
+Click **Context** on the card. Paste the clipboard into an empty text editor or AI chat draft; sending it is unnecessary for the demo.
+
+"One click gives me the title, description, state, owner, deadline and context in a reusable Markdown prompt. I can continue in my preferred tool without reconstructing the conversation."
+
+Hand off to Demo Reviewer and explain that this is a sample identity. Mark the task Done; show that its date label becomes Completed.
+
+## 3:05-3:50 - Secret sauce: Resume work
+
+Open **Resume work**. Show the unfinished tasks ordered by deadline.
+
+"When I return tomorrow, I do not want to read every card. Relay prepares one briefing with the unfinished work, earliest deadlines first, plus my deliverable links. It works without a paid AI service because the valuable part is organising the context I already wrote."
+
+Copy the briefing and show that completed tasks are excluded.
+
+## 3:50-4:30 - Keep sight of the finish line
+
+Open a deliverable link editor, paste the project repository or a prepared document link, and save. Refresh to show persistence.
+
+"The board tracks the small steps. The anchor board keeps the final presentation, demo, report and documentation in sight."
+
+## 4:30-5:00 - Tradeoffs and close
+
+"I built this as a solo project on the course starter. React, Vite, Tailwind and localStorage kept the scope manageable. It is not a shared backend: data stays on this browser, and handoff is an owner label rather than a notification. That is the deliberate hackathon tradeoff."
+
+"Relay: keep the work moving, keep the context."
+
+## Before presenting
+
+1. Open the deployed URL in the browser you will use on stage.
+2. Export a backup if the workspace contains work you want to keep.
+3. Restore demo data only after confirming that replacement is intended.
+4. Add real links to the four deliverables. The repository's README, REPORT.md and this script can serve as documentation, report and pitch outline links.
+5. Check clipboard copying in the presentation browser. If blocked, use the manual-copy dialog.
+6. Have a text editor ready for the paste demonstration; never paste private context into a public screen.
+7. Run a timed rehearsal and adapt the script. Record the actual date, duration and anything to improve below.
+
+## Rehearsal record
+
+Not yet rehearsed by James. Record an actual run here before claiming the PRD's rehearsal gate is complete.
+
+## Demo recovery
+
+- Clipboard denied: use the manual-copy dialog.
+- Empty board: add a task or deliberately restore the sample workspace.
+- Different browser: it has separate local storage; initialise and check it before the pitch.
+- Network failure: run the local production preview from the already built project.

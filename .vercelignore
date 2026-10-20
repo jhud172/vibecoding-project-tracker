@@ -1,0 +1,5 @@
+qa
+tests
+node_modules
+.git
+.env*

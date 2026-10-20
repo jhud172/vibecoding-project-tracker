@@ -7,6 +7,21 @@
 - Portal: https://vc-hackathon-hub.vercel.app/dashboard
 - The portal displayed **Repo Connected** for this fork on 20 October 2026.
 - Local `origin` points to the fork; `upstream` retains the original starter.
+- An active JSON push webhook delivers to `https://vc-hackathon-hub.vercel.app/api/webhooks/github`.
+- A real `git-linked` commit pushed after configuring the webhook was recognised.
+- The live dashboard subsequently recognised milestones 1–12 and advanced to Pitch.
+- Vercel project `relay-jhud172` is owned by James's existing Hobby account and connected to the fork.
+- Live app: https://relay-jhud172.vercel.app
+- Presentation: https://relay-jhud172.vercel.app/presentation.html
+- Reusable course setup instructions: [LECTURER_SETUP.md](LECTURER_SETUP.md).
+
+## Pitch preparation
+
+The live portal's Pitch milestone asks for a prepared presentation and demo.
+`public/presentation.html` provides six slides; `PITCH.md` provides the five-minute
+script, live-demo sequence and recovery instructions. The `pitch-done` preparation
+commit records these deliverables. The PRD additionally requires James's actual
+timed rehearsal and on-stage copy demo. Neither is claimed to have happened.
 
 ## Milestone names verified in the portal
 

@@ -1,103 +1,84 @@
-# Vibecoding Project Tracker — Hackathon Starter
+# Relay
 
-You're forking this repo as the starting point for the **UXD Vibecoding Hackathon 2026**. The goal of the hackathon is to ship a Vibecoding Project Tracker in ~3 hours: a Kanban-style tool that tracks your vibecoding tasks and stores the prompts that produced them.
+**Keep the work moving. Keep the context.**
 
-This starter gives you:
+A local-first vibecoding project tracker built on Ignacio Alvarez's university hackathon starter. James (`jhud172`) is the solo project owner. Demo Designer and Demo Reviewer are explicitly fictional demo identities used to demonstrate the required handoff flow.
 
-- A pre-written **PRD** (`PRD.md`) — read it. You don't write the PRD this year; your Milestone 2 is to review, fill in the team-specific TODOs, and commit.
-- A pre-written **DESIGN.md** with the design-system slots Person B fills in during M3 (in parallel with M2).
-- A **Vite + React + Tailwind** scaffold with the boilerplate already configured.
-- The locked `Task` data model and `STAGES` constant in `src/App.jsx`.
-- A `useLocalStorage` hook so persistence is one line.
-- Empty TODO markers for every milestone, so AI tools can find them.
+[Open Relay](https://relay-jhud172.vercel.app) · [Presentation](https://relay-jhud172.vercel.app/presentation.html) · [Implementation report](REPORT.md) · [Pitch script](PITCH.md)
 
-What you build, starting at M4:
+## Run locally
 
-- The four-column Kanban board.
-- The add / edit / delete modal.
-- The Prompt Context field (the differentiator).
-- The "Copy as Prompt Context" button (the demo's hero moment).
-- And everything else through M13.
+Use Node.js 22.12 or newer (Node 24 LTS recommended).
 
-## Quick start
-
-```bash
-# 1. Fork this repo on GitHub. Then clone YOUR fork:
-git clone https://github.com/<your-team>/<your-fork>.git
-cd <your-fork>
-
-# 2. Install dependencies
-npm install
-
-# 3. Run the dev server
-npm run dev
+```sh
+npm ci
+npm run dev -- --host 127.0.0.1
 ```
 
-Open the URL Vite prints (typically `http://localhost:5173`). You should see a placeholder page with the team starter header and "Build the four-column board here · M3" in the middle. That's expected — M3 is your first build milestone.
+Open the URL printed by Vite. To verify or preview the production bundle:
 
-## Milestone workflow
-
-Every milestone ends with a git tag push. The Hackathon Portal dashboard watches your tags and updates the scoreboard in near real time.
-
-```bash
-git add .
-git commit -m "<tag-name>"
-git tag <tag-name>
-git push --tags
+```sh
+npm test
+npm run build
+npm run preview -- --host 127.0.0.1
 ```
 
-Replace `<tag-name>` with the tag for the milestone you just finished — see the table below. Tag names are lowercase, hyphenated, exact.
+## What you can do
 
-| # | Tag | What it means |
-|---|---|---|
-| 1 | `git-linked` | Repo registered on the portal, webhook delivers test ping |
-| 2 | `prd-done` | PRD reviewed, team-specific TODOs filled in |
-| 3 | `design-done` | DESIGN.md filled in, color tokens pasted into `tailwind.config.js` (parallel to M2) |
-| 4 | `data-model` | Four-column board renders with 3-4 mock tasks |
-| 5 | `crud-modal` | Add / edit / delete tasks via a modal, persisted to localStorage |
-| 6 | `tag-style` | Feature vs. bug visual distinction |
-| 7 | `task-owner` | Assignee badge on each card + "Hand off to..." dropdown |
-| 8 | `due-tint` | Cards change color as deadlines approach |
-| 9 | `context` | Curated Context field on the task modal (paste-ready briefing) |
-| 10 | `copy-prompt` | One-click copy formatted prompt to clipboard |
-| 11 | `project-deliverables` | Deliverable Anchor Board pinned above the Kanban |
-| 12 | `secret-sauce` | The one thing that makes your tracker uniquely yours (open-ended) |
-| 13 | `pitch-ready` | Demo dataset loaded, pitch rehearsed |
+- Track tasks in To Do, In Progress, Review and Done.
+- Add, edit and delete tasks with a keyboard-accessible modal.
+- Distinguish features and bugs through labels, icons and coloured stripes.
+- Change stage or hand off to one of three named identities from a card.
+- See overdue, due-today, upcoming and completed states; completed work is never marked overdue.
+- Save curated context, the source tool and the automatic last-context-update time.
+- Copy a task as a complete Markdown prompt context.
+- Link Presentation, Demo, Report and Documentation above the board.
+- Search titles, descriptions and context; filter by owner or task type.
+- Use **Resume work** to copy a deadline-ordered briefing of all unfinished work and deliverable links.
+- Download a JSON workspace backup and explicitly restore the sample workspace.
 
-## Repo map
+## Data and limitations
 
-```
-.
-├── PRD.md              ← READ THIS FIRST · review + fill in TODOs for M2
-├── DESIGN.md           ← Person B fills this in for M3 (parallel to M2)
-├── README.md           ← you are here
-├── package.json
-├── vite.config.js
-├── tailwind.config.js  ← M3 design tokens land here too
-├── postcss.config.js
-├── index.html
-├── .gitignore
-└── src/
-    ├── main.jsx        ← React entry point — don't change
-    ├── index.css       ← Tailwind directives — don't change
-    └── App.jsx         ← all your code goes here (or split into more files)
-```
+Tasks live under `vibetracker.tasks`; deliverables under `vibetracker.anchors` in browser localStorage. An empty saved board remains empty. Four labelled demo tasks are created only when no saved board exists. Their dates are relative to the first load, so use Workspace settings to refresh the demo before presenting.
 
-## Deploy (any time after M3)
+There is no server database, account system, AI API, or real-time collaboration. Handoff changes a local owner field; it sends no message. Another browser or device has a separate workspace. Clearing site data removes the stored workspace. JSON backup is an export for safekeeping; importing a backup is not part of this version.
 
-Vercel's free tier deploys a Vite + React app in one click:
+Corrupt or incompatible stored data is not silently overwritten. A warning explains that changes may not be persisted; an explicit demo reset replaces that data. Clipboard errors open a selectable manual-copy dialog. Only HTTP(S) deliverable links without embedded credentials are accepted.
 
-1. Go to [vercel.com](https://vercel.com), sign in with GitHub.
-2. Import your fork.
-3. Accept the defaults (Vite is auto-detected). Click Deploy.
-4. Drop the resulting URL into PRD §11 and into your team chat.
+Date-only deadlines use the local calendar day. Today and the next two days are highlighted, yesterday is overdue, and Done overrides urgency. A context timestamp changes when the context text or source tool changes, not when an owner or stage changes.
 
-Re-deploys happen automatically on every push to `main`.
+## Project map
 
-## A word about prompts
+- `src/App.jsx`: workspace UI, task editing, cards, anchors and briefings.
+- `src/model.js`: locked data model, validation, deadlines, demo data and Markdown formatting.
+- `src/useLocalStorage.js`: persistence and storage error handling.
+- `src/ui.jsx`: shared accessible fields and native dialog.
+- `tailwind.config.js`: Relay design tokens.
+- `tests/model.test.js`: focused tests for data and formatting behaviour.
+- `PRD.md`: specification and recorded solo-project decisions.
+- `DESIGN.md`: visual system and interface principles.
+- `PITCH.md`: five-minute script and demo runbook.
+- `public/presentation.html`: six-slide, keyboard-operable presentation with print layout.
+- `REPORT.md`: implementation report and validation record.
+- `HACKATHON.md`: portal setup and verified milestone names.
+- `LECTURER_SETUP.md`: reusable student instructions for GitHub login, fork registration and webhook setup.
 
-Once M9 (`context`) is done, keep the Context field of each real task up to date as you work. By the end of the hackathon you should have a handful of curated context blocks on real tasks — those become part of your Module 5 "Vibe Coding History" deliverable. Free credit, just by using your own tool.
+## Delivery and milestone tracking
 
----
+Repository: https://github.com/jhud172/vibecoding-project-tracker
 
-*UXD Vibecoding Hackathon 2026 · Prof. Dr. Ignacio Alvarez*
+Portal: https://vc-hackathon-hub.vercel.app/dashboard
+
+The portal watches **commit messages** through the configured push webhook. Matching Git tags are also created for the starter workflow. Verified identifiers are recorded in HACKATHON.md; several differ from the original README. Only mark a feature after verifying it.
+
+Hosted in James's Vercel account as `relay-jhud172`, connected to this GitHub fork. Deploy as a Vite application: install `npm ci`, build `npm run build`, output `dist`. Pushes to `main` update the deployed project through the Git connection. Browser localStorage is isolated by origin, so local testing data does not transfer to the deployment.
+
+The pitch materials are prepared. A real timed rehearsal and on-stage demonstration remain James's final PRD gates; a completed portal preparation milestone does not establish either.
+
+## Development dependency note
+
+Vite was updated from the starter's version 5 to version 7, and compatible dependency fixes were applied. React 18 and Tailwind 3 are retained. Remaining audit findings relate to Tailwind 3 build-time dependencies; the static production application does not ship these packages. Keep the development server on loopback and treat source files and build configuration as trusted input. See REPORT.md for the final audit result.
+
+## Attribution
+
+Based on https://github.com/ignacioalvmar/vibecoding-project-tracker by Prof. Dr. Ignacio Alvarez. The original PRD and four-stage task schema underpin this implementation.

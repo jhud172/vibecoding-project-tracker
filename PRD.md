@@ -145,7 +145,7 @@ Fill in:
 
 - **Team name:** Relay - James's solo studio
 - **Tagline (one sentence):** Keep the work moving. Keep the context.
-- **Tracker URL after deploy:** Pending deployment; record the verified URL before delivery.
+- **Tracker URL after deploy:** https://relay-jhud172.vercel.app
 
 ## 12. Out of scope (do not build)
 
