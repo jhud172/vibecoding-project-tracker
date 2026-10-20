@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { seedTasks, ANCHORS } from "../src/model.js";
+import { JUSTIFICATIONS } from "../src/designInventory.js";
 // Core data regressions run without GPU contention; motion.spec exercises real 3D separately.
 test.use({ reducedMotion: "reduce" });
 
@@ -507,7 +508,7 @@ test("design justification register supports finding, keyboard disclosure, indiv
   const search = page.getByRole("searchbox", { name: "Find a justification", exact: true });
   await search.fill("champagne");
   const register = page.locator("#register");
-  await expect(register.getByRole("status")).toHaveText("1 of 30 explanations");
+  await expect(register.getByRole("status")).toHaveText(`1 of ${JUSTIFICATIONS.length} explanations`);
   const book = page.locator("#why-journal-asset");
   await book.locator("summary").focus();
   await page.keyboard.press("Enter");
@@ -525,9 +526,9 @@ test("design justification register supports finding, keyboard disclosure, indiv
   await expect(register).toContainText("No explanations match.");
   await page.getByRole("button", { name: "Clear explanation search", exact: true }).click();
   await expect(search).toBeFocused();
-  await expect(register.getByRole("status")).toHaveText("30 of 30 explanations");
+  await expect(register.getByRole("status")).toHaveText(`${JUSTIFICATIONS.length} of ${JUSTIFICATIONS.length} explanations`);
   await search.fill("Clock3");
-  await expect(register.getByRole("status")).toHaveText("1 of 30 explanations");
+  await expect(register.getByRole("status")).toHaveText(`1 of ${JUSTIFICATIONS.length} explanations`);
   await expect(page.locator("#why-dates")).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Accessibility", exact: true }).click();

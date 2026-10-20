@@ -3,6 +3,41 @@
 Owner: James (`jhud172`). Built from the course's React, Vite and Tailwind starter.
 Review date: 20 October 2026.
 
+## Resume Capsules — latest core-purpose extension
+
+James explicitly requested capsules after the necessary-feature release. The
+landing page now explains team notes → handoff sections → evidence/review →
+save/resume. Original notes remain intact; heading extraction only fills empty
+sections. Saved snapshots are immutable in the UI; continuation drafts retain a
+parent reference and reset evidence outcomes to Not run. Revision comparison is
+an exact entered-text comparison, not Git inspection or test execution.
+
+Capsules and one explicitly saved draft use optional fields in the existing
+atomic version-3 project envelope. Old data remains valid. Complete backup,
+reviewed import, merge, Undo and recovery retain the new fields. Different
+capsules sharing an ID reject; current drafts are kept during workspace merge.
+The first-use choice is dismissed atomically when saving/importing capsule work,
+so a later empty-workspace choice cannot discard that new work.
+
+The shared justification register now has 31 decision families, 36 named UI
+components, 41 referenced Lucide symbols, three media assets and three pages.
+Capsule icon uses, sequence, labels, privacy, limits and access controls are
+explained in the same register. CAPSULES.md is the user guide; PITCH_OUTLINE.md
+and the eight-slide presentation centre the new purpose. No paid service, AI
+provider or new dependency was added. Cloud remains an explicitly limited preview.
+
+Observed local verification: 59 unit tests, lint, source/document generation,
+production build and all 38 browser workflows passed. These include seven new
+capsule workflows for first use, notes files/drop, section extraction, save
+validation, drafts/reload, immutable continuation, evidence labels, reviewed
+clipboard/download/import, search, failed writes, denied clipboard, Undo,
+cross-tab draft protection, heading/error focus, enlarged mobile layout and axe.
+The subsequent first-use dismissal safeguard has a targeted browser assertion;
+its result and exact-release Linux checks belong to the final GitHub workflow.
+Human usability benefit, screen-reader evaluation and James's rehearsal are not
+established by these checks. Individual speech is capped at 12,000 characters;
+complete handoffs remain selectable and downloadable.
+
 ## Justification audit
 
 The subsequent justification audit completes a structured 30-entry decision

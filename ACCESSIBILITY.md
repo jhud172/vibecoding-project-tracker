@@ -8,6 +8,13 @@ Other open tabs pick up preference changes on reload.
 
 ## Features and reasons
 
+Resume Capsules use the same preferences, semantic fields and native dialogs.
+Written numbered steps, current-step state, heading focus after step changes and
+focusable error feedback explain the capture sequence. Long previews wrap; the
+steps stack on narrow screens and at enlarged text sizes. Capsule narration has
+the same announced 12,000-character bound; selectable text and complete Markdown
+downloads retain the full handoff. Evidence states always use written labels.
+
 | Feature | Why it exists |
 |---|---|
 | Light / dark / device appearance | Let users choose luminance; device mode responds to operating-system changes. |

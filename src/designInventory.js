@@ -20,6 +20,18 @@ export const JUSTIFICATION_REFS = {
 
 export const JUSTIFICATIONS = [
   {
+    id: "capsules", area: "Core workflow", title: "Resume Capsules: team notes, stopping points, evidence and taking off",
+    need: "Return to a project or change assistants without losing the team's decisions, evidence and next action. New users need to understand the purpose before encountering a task board.",
+    choice: "Capsules are the landing area and first navigation item. A three-step notes/sections/review editor keeps original text separate, offers explicit heading extraction into empty sections, optional named contributors and task links, saved drafts, immutable snapshots and continuation drafts. Numbered steps stack at narrow/enlarged sizes. Search, example draft, written empty states and an expandable introduction explain the journey.",
+    why: "A sequence reduces the number of simultaneous decisions; Goal and Next step make the starting point explicit. Preserved raw notes let people check the curation. Immutable snapshots retain earlier reasoning. Labelled examples demonstrate the flow without inventing teammates or recorded checks. This is intended usability value, not a measured productivity benefit.",
+    basis: "Progressive disclosure, recognition and user control inform the design. The three steps, required fields, 40-capsule limit, text limits and 450 KB record bound are engineering/design choices. No worldwide uniqueness or measured reduction in errors is claimed.",
+    access: "Shared semantic fields/dialogs, numbered written steps, current-step state, heading focus after navigation, focusable error feedback, keyboard controls, readable wrapping, shared themes/text/motion and optional narration. User-reported status labels convey evidence without relying on colour. Per-reading speech remains limited to 12,000 characters, while the complete handoff is selectable/downloadable.",
+    tradeoff: "Capture still requires user input. Notes files are local text only; heading extraction does not interpret meaning. Reported results are never executed or independently verified. Freshness compares entered revision strings from the same repository, not code. Matching revisions do not prove validity. Original notes are excluded from copied Markdown unless selected, but full capsule JSON, backups and explicit cloud uploads include them. Saved drafts require Save draft; dirty-close and reload warnings protect unsaved typing. Recovery/Undo and explicit import preview preserve user control.",
+    implementation: ["src/Capsules.jsx", "src/capsules.js", "src/workspace.js", "src/transfer.js", "src/App.jsx", "src/Recovery.jsx"],
+    evidence: "Validation, extraction, immutable continuation, export/import, revision comparison and backup compatibility have targeted tests. Browser acceptance covers capture, saved drafts, errors, continuation, reviewed import/export, recovery and enlarged layouts. Test results are recorded in CAPSULE_PLAN.md and REPORT.md after actual execution; human benefit and screen-reader evaluation require people.",
+    sources: ["heuristics", "focus", "errors", "status", "reflow", "speech"],
+  },
+  {
     id: "identity", area: "Identity", title: "Name, connected-square logo, favicon and wordmark",
     need: "Identify the product and make its context-and-handoff purpose recognisable.",
     choice: "Relay names a continuation of work. Connected square nodes repeat in the SVG favicon, interface Workflow icon and embossed journal emblem; the serif relay. wordmark supplies the name.",
@@ -34,7 +46,7 @@ export const JUSTIFICATIONS = [
   {
     id: "layout", area: "Layout", title: "Workspace navigation, header, hierarchy and repeated entry points",
     need: "Know where work is saved and reach the board, focus, recovery and access controls without memorising their locations.",
-    choice: "A wide-screen sidebar, wrapping header, one main heading, named sections, breadcrumb, visible save status and footer access/design links. Main content is bounded at 1700px; the guide uses a narrower reading column.",
+    choice: "Capsules are the initial main area and first navigation item, with the existing task board below and separate board/focus views. A wide-screen sidebar, wrapping header, one main heading, named sections, breadcrumb, visible save status and footer access/design links supply orientation. Main content is bounded at 1700px; the guide uses a narrower reading column.",
     why: "Stable placement and headings provide recognition and orientation cues. Repeated access entries reduce the distance from common tasks to preferences. The width cap prevents the workspace spreading indefinitely.",
     basis: "Usability guidance plus layout judgment. Exact widths, margins and repeated entry placement have not been optimised in a user study.",
     access: "Skip links and main landmarks bypass repeated navigation. The sidebar hides on narrow/enlarged layouts; labelled header controls remain.",
@@ -383,6 +395,7 @@ export const JUSTIFICATIONS = [
 
 // This is a source inventory, not proof every component/state has been exercised.
 export const COMPONENT_REASONS = {
+  "src/Capsules.jsx": { CapsuleHome: "capsules", CapsuleEditor: "capsules", CapsuleDetail: "capsules" },
   "src/Accessibility.jsx": { AccessibilityProvider: "access-display", AccessButton: "access-display", ReadButton: "access-audio", Playback: "access-audio", ReadingDock: "access-audio", Toggle: "access-display", AccessibilityPanel: "access-display" },
   "src/App.jsx": { App: "layout", TaskEditor: "editor", AnchorEditor: "deliverables", TaskCard: "board" },
   "src/BriefingTools.jsx": { Inline: "preview-copy", MarkdownPreview: "preview-copy", BriefingTools: "briefing", ContextComparison: "history" },
@@ -408,11 +421,12 @@ export const ICON_REASONS = [
   { names: ["Workflow"], reason: "identity", why: "Connected nodes repeat Relay's handoff identity; the adjacent name supplies meaning." },
   { names: ["LayoutGrid", "List"], reason: "find", why: "Spatial versus sequential layout cues, accompanied by names and selected state." },
   { names: ["Target"], reason: "focus", why: "A chosen starting point, not a measured concentration score." },
-  { names: ["FolderOpen", "Flag", "Presentation", "Code2", "FileText", "BookOpen"], reason: "deliverables", why: "Workspace/finish-line/document metaphors distinguish the four written destination names." },
-  { names: ["Plus"], reason: "editor", why: "Addition cue for task creation and appended templates; wording names what is added." },
+  { names: ["FolderOpen", "Flag", "Presentation", "Code2", "FileText"], reason: "deliverables", why: "Workspace/finish-line/document metaphors distinguish the four written destination names." },
+  { names: ["BookOpen"], reason: "capsules", why: "A kept page/stopping-point metaphor identifies capsules and the empty-state journal. The same outline marks written documentation; adjacent labels specify each destination." },
+  { names: ["Plus"], reason: "editor", why: "Addition cue for task/capsule creation and appended templates; wording names what is added." },
   { names: ["Bug", "Check", "CheckCheck", "Circle"], reason: "board", why: "Reinforce written task type, completion, checklist and empty-state meaning without relying on hue." },
   { names: ["Clock3"], reason: "dates", why: "Signals time beside the actual date or written deadline state." },
-  { names: ["Clipboard"], reason: "preview-copy", why: "Names the copy/briefing action with success or a manual-copy alternative." },
+  { names: ["Clipboard"], reason: "preview-copy", why: "Supports the task/capsule copy/briefing action with success or a manual-copy alternative." },
   { names: ["Sparkles"], reason: "briefing", why: "Marks the distinctive curated-context feature; it does not imply an AI service is running." },
   { names: ["Search", "Command"], reason: "find", why: "Finding and keyboard-action cues with a visible name or shortcut." },
   { names: ["History", "RotateCcw", "RotateCw"], reason: "recovery", why: "Past changes, reversal/reset and redo are distinguished by their written action names. The arrow alone is ambiguous." },

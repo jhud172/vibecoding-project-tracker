@@ -304,6 +304,28 @@ Used for: Delete task / close or dismiss. Trash is tied to a deletion confirmati
 
 The register covers implemented interface/component families and the asset/icon inventory. Guidance supports principles; exact timings, spacing, colour/material choices and aesthetic details remain design judgments unless a specific observation is recorded. Source coverage is not proof of psychological benefit or full accessibility. The live guide provides search, expandable entries and individual narration.
 
+### Resume Capsules: team notes, stopping points, evidence and taking off (capsules)
+
+Area: Core workflow.
+
+**User need:** Return to a project or change assistants without losing the team's decisions, evidence and next action. New users need to understand the purpose before encountering a task board.
+
+**Implemented choice:** Capsules are the landing area and first navigation item. A three-step notes/sections/review editor keeps original text separate, offers explicit heading extraction into empty sections, optional named contributors and task links, saved drafts, immutable snapshots and continuation drafts. Numbered steps stack at narrow/enlarged sizes. Search, example draft, written empty states and an expandable introduction explain the journey.
+
+**Reason / intended benefit:** A sequence reduces the number of simultaneous decisions; Goal and Next step make the starting point explicit. Preserved raw notes let people check the curation. Immutable snapshots retain earlier reasoning. Labelled examples demonstrate the flow without inventing teammates or recorded checks. This is intended usability value, not a measured productivity benefit.
+
+**Basis and psychological claim limits:** Progressive disclosure, recognition and user control inform the design. The three steps, required fields, 40-capsule limit, text limits and 450 KB record bound are engineering/design choices. No worldwide uniqueness or measured reduction in errors is claimed.
+
+**Accessibility:** Shared semantic fields/dialogs, numbered written steps, current-step state, heading focus after navigation, focusable error feedback, keyboard controls, readable wrapping, shared themes/text/motion and optional narration. User-reported status labels convey evidence without relying on colour. Per-reading speech remains limited to 12,000 characters, while the complete handoff is selectable/downloadable.
+
+**Trade-offs and limits:** Capture still requires user input. Notes files are local text only; heading extraction does not interpret meaning. Reported results are never executed or independently verified. Freshness compares entered revision strings from the same repository, not code. Matching revisions do not prove validity. Original notes are excluded from copied Markdown unless selected, but full capsule JSON, backups and explicit cloud uploads include them. Saved drafts require Save draft; dirty-close and reload warnings protect unsaved typing. Recovery/Undo and explicit import preview preserve user control.
+
+**Verification and remaining checks:** Validation, extraction, immutable continuation, export/import, revision comparison and backup compatibility have targeted tests. Browser acceptance covers capture, saved drafts, errors, continuation, reviewed import/export, recovery and enlarged layouts. Test results are recorded in CAPSULE_PLAN.md and REPORT.md after actual execution; human benefit and screen-reader evaluation require people.
+
+**Implementation:** `src/Capsules.jsx`, `src/capsules.js`, `src/workspace.js`, `src/transfer.js`, `src/App.jsx`, `src/Recovery.jsx`.
+
+**Guidance:** [Usability heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/), [Focus order](https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html), [Error identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html), [Status messages](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html), [Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html), [Browser speech synthesis](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis).
+
 ### Name, connected-square logo, favicon and wordmark (identity)
 
 Area: Identity.
@@ -332,7 +354,7 @@ Area: Layout.
 
 **User need:** Know where work is saved and reach the board, focus, recovery and access controls without memorising their locations.
 
-**Implemented choice:** A wide-screen sidebar, wrapping header, one main heading, named sections, breadcrumb, visible save status and footer access/design links. Main content is bounded at 1700px; the guide uses a narrower reading column.
+**Implemented choice:** Capsules are the initial main area and first navigation item, with the existing task board below and separate board/focus views. A wide-screen sidebar, wrapping header, one main heading, named sections, breadcrumb, visible save status and footer access/design links supply orientation. Main content is bounded at 1700px; the guide uses a narrower reading column.
 
 **Reason / intended benefit:** Stable placement and headings provide recognition and orientation cues. Repeated access entries reduce the distance from common tasks to preferences. The width cap prevents the workspace spreading indefinitely.
 
@@ -970,6 +992,7 @@ Static source coverage checks declared component names, referenced Lucide import
 
 ### Components
 
+- `src/Capsules.jsx`: `CapsuleHome` → capsules; `CapsuleEditor` → capsules; `CapsuleDetail` → capsules.
 - `src/Accessibility.jsx`: `AccessibilityProvider` → access-display; `AccessButton` → access-display; `ReadButton` → access-audio; `Playback` → access-audio; `ReadingDock` → access-audio; `Toggle` → access-display; `AccessibilityPanel` → access-display.
 - `src/App.jsx`: `App` → layout; `TaskEditor` → editor; `AnchorEditor` → deliverables; `TaskCard` → board.
 - `src/BriefingTools.jsx`: `Inline` → preview-copy; `MarkdownPreview` → preview-copy; `BriefingTools` → briefing; `ContextComparison` → history.
@@ -989,11 +1012,12 @@ Static source coverage checks declared component names, referenced Lucide import
 - **Workflow** → identity: Connected nodes repeat Relay's handoff identity; the adjacent name supplies meaning.
 - **LayoutGrid, List** → find: Spatial versus sequential layout cues, accompanied by names and selected state.
 - **Target** → focus: A chosen starting point, not a measured concentration score.
-- **FolderOpen, Flag, Presentation, Code2, FileText, BookOpen** → deliverables: Workspace/finish-line/document metaphors distinguish the four written destination names.
-- **Plus** → editor: Addition cue for task creation and appended templates; wording names what is added.
+- **FolderOpen, Flag, Presentation, Code2, FileText** → deliverables: Workspace/finish-line/document metaphors distinguish the four written destination names.
+- **BookOpen** → capsules: A kept page/stopping-point metaphor identifies capsules and the empty-state journal. The same outline marks written documentation; adjacent labels specify each destination.
+- **Plus** → editor: Addition cue for task/capsule creation and appended templates; wording names what is added.
 - **Bug, Check, CheckCheck, Circle** → board: Reinforce written task type, completion, checklist and empty-state meaning without relying on hue.
 - **Clock3** → dates: Signals time beside the actual date or written deadline state.
-- **Clipboard** → preview-copy: Names the copy/briefing action with success or a manual-copy alternative.
+- **Clipboard** → preview-copy: Supports the task/capsule copy/briefing action with success or a manual-copy alternative.
 - **Sparkles** → briefing: Marks the distinctive curated-context feature; it does not imply an AI service is running.
 - **Search, Command** → find: Finding and keyboard-action cues with a visible name or shortcut.
 - **History, RotateCcw, RotateCw** → recovery: Past changes, reversal/reset and redo are distinguished by their written action names. The arrow alone is ambiguous.

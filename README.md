@@ -4,6 +4,12 @@
 
 A local-first vibecoding project tracker built on Ignacio Alvarez's university hackathon starter. James (`jhud172`) is the solo project owner. Demo Designer and Demo Reviewer are explicitly fictional demo identities used to demonstrate the required handoff flow.
 
+**Resume Capsules are Relay's main workflow:** add team/session notes, shape the
+decisions and next action, record evidence, then save a stopping point you can
+resume with any AI tool. The task board supports the work around those handoffs.
+See [the capsule walkthrough](CAPSULES.md) for the full flow and its honest limits.
+Use [the short five-minute pitch outline](PITCH_OUTLINE.md) to prepare your demo.
+
 [Open Relay](https://relay-jhud172.vercel.app) · [Presentation](https://relay-jhud172.vercel.app/presentation.html) · [Why this design?](https://relay-jhud172.vercel.app/design.html) · [Accessibility](ACCESSIBILITY.md) · [Implementation report](REPORT.md) · [Pitch script](PITCH.md)
 
 The competition release scope was narrowed at James's request to completing and

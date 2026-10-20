@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Numbered steps explain sequence; the same flow stacks when reading space shrinks. */
+.capsule-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.capsule-steps > li { min-width: 0; }
+.capsule-preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .75rem; line-height: 1.7; }
+@media (max-width: 640px) { .capsule-steps { grid-template-columns: minmax(0, 1fr); } }
+[data-large-text="true"] .capsule-steps { grid-template-columns: minmax(0, 1fr); }
+
 /* Motion is an interaction language: lift = actionable, opening = a new chapter. */
 :root {
   --motion-quick: 160ms;

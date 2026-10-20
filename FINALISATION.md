@@ -1,5 +1,10 @@
 # Competition release scope
 
+Subsequent authorised extension: Resume Capsules are now the main purpose.
+CAPSULE_PLAN.md records the new build; CAPSULES.md explains operation and limits.
+The earlier necessary-feature release below remains historical evidence, with
+its existing functionality preserved. Unrelated optional suggestions stay deferred.
+
 James narrowed the programme on 20 October 2026: finish necessary features and
 checks, and skip unnecessary additions. This supersedes the commitment to build
 all 75 suggestions in IMPLEMENTATION_PLAN.md. ROADMAP.md remains the historical

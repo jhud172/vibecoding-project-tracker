@@ -1,5 +1,11 @@
 # Vibecoding Project Tracker — PRD
 
+Latest extension: James explicitly requested Resume Capsules as the main purpose
+on 20 October 2026, after the narrowed release. CAPSULE_PLAN.md and CAPSULES.md
+define the new notes → sections → evidence → save/resume workflow. Existing
+task/anchor requirements stay intact; optional unrelated roadmap items remain
+deferred. This extension needs no paid service.
+
 **Status:** Reviewed for Relay, James Hudson's solo project, on 20 October 2026. The supplied product scope and data model are retained.
 
 ---

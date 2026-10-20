@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "./ErrorBoundary.jsx";
 import { Journal } from "./Journal.jsx";
+import { CapsuleHome } from "./Capsules.jsx";
 import { turnWorkspacePage } from "./motion.js";
 import WorkspaceTransfer from "./WorkspaceTransfer.jsx";
 import { workspaceBackup } from "./transfer.js";
@@ -746,7 +747,8 @@ export default function App() {
   const activityError = "";
   const [editing, setEditing] = useState(null);
   const undo = workspace.state.undo.length > 0;
-  const [view, setView] = useState("board");
+  const [view, setView] = useState("capsules");
+  const [capsuleRequest, setCapsuleRequest] = useState(0);
   const [chosenLayout, setLayout] = useState(() =>
     window.matchMedia("(max-width: 767px)").matches ? "list" : "board",
   );
@@ -790,6 +792,11 @@ export default function App() {
   const showFocus = () => {
     turnWorkspacePage(() => setView("focus"));
     window.scrollTo({ top: 0, behavior: "instant" });
+  };
+  const showCapsules = () => {
+    setCapsuleRequest(0);
+    turnWorkspacePage(() => setView("capsules"));
+    requestAnimationFrame(() => document.getElementById("capsules")?.scrollIntoView({ behavior: "instant" }));
   };
   const addTask = (status = "todo") =>
     setEditing({
@@ -893,6 +900,7 @@ export default function App() {
         editingAnchor ||
         panel ||
         clipboardFallback ||
+        document.querySelector("dialog[open]") ||
         event.isComposing
       )
         return;
@@ -950,6 +958,10 @@ export default function App() {
           Your workspace
         </p>
         <nav aria-label="Workspace" className="mt-3 space-y-1 text-sm">
+          <button type="button" onClick={showCapsules} aria-pressed={view === "capsules"}
+            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium text-brand-primary ${view === "capsules" ? "bg-brand-accent" : "hover:bg-surface-card/60"}`}>
+            <BookOpen size={16} /> Resume Capsules
+          </button>
           <button
             type="button"
             onClick={showBoard}
@@ -1145,25 +1157,25 @@ export default function App() {
             <div className="studio-hero-copy">
               <p className="mb-3 flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-[0.22em] text-type-feature">
                 <span className="h-1.5 w-1.5 rounded-full bg-type-feature" />{" "}
-                The context-first project studio
+                Notes → decisions → your next session
               </p>
               <h1 className="studio-hero-title font-editorial tracking-tight">
-                {view === "focus"
+                {view === "capsules" ? "Pick up exactly where you left off." : view === "focus"
                   ? "Less noise. Your next move."
                   : "Good work deserves a clear next step."}
               </h1>
               <p className="studio-hero-description text-text-muted">
-                {view === "focus"
+                {view === "capsules" ? "Turn team notes into a clear, portable handoff. Keep the decisions, record the evidence and know where to take off next." : view === "focus"
                   ? "Pick up the thinking, not just the task."
                   : "Plan it. Build it. Leave the context for what comes next."}
               </p>
               <button
                 type="button"
                 className={`${primaryClass} studio-resume`}
-                onClick={() => setPanel("resume")}
+                onClick={() => { setView("capsules"); setCapsuleRequest(value => value + 1); }}
               >
                 <Sparkles size={16} />
-                Resume work
+                Create a Resume Capsule
                 <ArrowUpRight size={16} />
               </button>
               <p className="studio-hero-footnote">
@@ -1179,6 +1191,10 @@ export default function App() {
           </div>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div className="inline-flex max-w-full flex-wrap rounded-xl border border-line bg-surface-subtle p-1">
+              <button type="button" aria-pressed={view === "capsules"} onClick={showCapsules}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium ${view === "capsules" ? "bg-surface-card text-brand-primary shadow-sm" : "text-text-muted"}`}>
+                <BookOpen size={14} /> Capsules
+              </button>
               <button
                 type="button"
                 aria-pressed={view === "board"}
@@ -1206,6 +1222,7 @@ export default function App() {
               <span className="hidden sm:inline">Activity</span>
             </button>
           </div>
+          {view === "capsules" && <CapsuleHome workspace={workspace} startRequest={capsuleRequest} onCopy={copy} onNotify={notify} onTask={setEditing} onBoard={showBoard} onFocus={showFocus} />}
           <WorkspacePulse
             tasks={tasks}
             anchors={anchors}
@@ -1330,7 +1347,7 @@ export default function App() {
               })}
             </div>
           </section>
-          {view === "board" && (
+          {view !== "focus" && (
             <section
               id="board"
               aria-labelledby="board-title"
@@ -1773,6 +1790,8 @@ export default function App() {
           onClose={() => setPanel(null)}
           onEdit={setEditing}
           actions={[
+            { label: "Open Resume Capsules", run: showCapsules },
+            { label: "Create a Resume Capsule", run: () => { setView("capsules"); setCapsuleRequest(value => value + 1); } },
             { label: "Create a task", key: "N", run: () => addTask() },
             { label: "Open focus desk", key: "F", run: showFocus },
             { label: "Open task board", run: showBoard },

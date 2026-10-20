@@ -1,6 +1,7 @@
 import { validData, newData, newProject } from "./workspace.js";
 import { parseBackup } from "./competition.js";
 import { validAccess } from "./accessibility.js";
+import { addCapsule } from "./capsules.js";
 const clone = (value) => JSON.parse(JSON.stringify(value));
 export function workspaceBackup(data, preferences, now = new Date()) {
   return {
@@ -100,6 +101,9 @@ export function mergeWorkspace(current, incoming, choices = {}) {
       else if (choices[`${p.id}:task:${task.id}`] === "incoming")
         present.tasks[index] = clone(task);
     }
+    for (const capsule of p.capsules || []) present.capsules = addCapsule(present.capsules, clone(capsule));
+    // Keep the current saved draft during merge; full replacement remains explicit.
+    if (!present.capsuleDraft && p.capsuleDraft) present.capsuleDraft = clone(p.capsuleDraft);
     present.anchors = present.anchors.map((anchor) => {
       const next = p.anchors.find((a) => a.id === anchor.id);
       return !anchor.url || choices[`${p.id}:link:${anchor.id}`] === "incoming"
@@ -110,6 +114,7 @@ export function mergeWorkspace(current, incoming, choices = {}) {
   for (const template of incoming.templates)
     if (!data.templates.some((t) => t.id === template.id))
       data.templates.push(clone(template));
+  if (data.projects.some(p => p.capsules?.length || p.capsuleDraft)) data.welcome = false;
   if (!validData(data))
     throw new Error(
       "The merged workspace exceeds supported limits. Choose fewer projects or tasks before importing.",

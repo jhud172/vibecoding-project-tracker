@@ -32,6 +32,13 @@ for demonstrating the required owner/handoff dropdown; they are not real teammat
 
 ## Requirements James added later
 
+- **Resume Capsules (latest core purpose):** capture team/session notes; preserve
+  original text; curate decisions, working state, next step and verification;
+  record explicitly user-reported evidence; compare entered revisions; save
+  immutable snapshots and continuation drafts; review copy/download/import;
+  preserve complete backups and recovery. Provide a clear first-use journey.
+  See CAPSULES.md, tests/capsules.test.js and e2e/capsules.spec.js.
+
 - **Accessibility and control:** light/dark/device appearance, enlarged text,
   alternate palettes/contrast, keyboard controls, read-aloud and controllable
   motion. Speech supplements a screen reader; it does not replace one.

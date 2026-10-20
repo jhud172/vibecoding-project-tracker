@@ -1,6 +1,7 @@
 import { ANCHORS, validAnchors, validTasks } from "./model.js";
 import { validActivity } from "./competition.js";
 import { validTemplates } from "./briefing.js";
+import { validCapsules, validCapsuleDraft } from "./capsules.js";
 
 export const WORKSPACE_KEY = "relay.workspace:v3";
 export const MAX_HISTORY = 12;
@@ -57,6 +58,8 @@ export function validProject(p) {
         object(entry) && validTasks([entry.task]) && date(entry.deletedAt),
     ) &&
     object(p.taskMeta) &&
+    (p.capsules === undefined || validCapsules(p.capsules)) &&
+    (p.capsuleDraft === undefined || p.capsuleDraft === null || validCapsuleDraft(p.capsuleDraft)) &&
     Object.keys(p.taskMeta).length <= 1000 &&
     (p.cloud === undefined ||
       (object(p.cloud) &&

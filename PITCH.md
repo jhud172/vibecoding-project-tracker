@@ -1,94 +1,93 @@
-# Relay - five-minute pitch and demo
+# Relay — five-minute capsule pitch and demo
 
-Prepared for James, solo project owner. This is a script and runbook, not a claim that a live pitch or rehearsal has occurred. Adapt the wording to your own voice.
+Prepared script for James, solo owner. This is preparation, not a recorded
+rehearsal. The eight slides at /presentation.html now centre Resume Capsules.
+Use Back/Next or arrow keys. Print includes all eight slides.
 
-The eight-slide presentation is at `/presentation.html` on the deployed app (source:
-`presentation.html`). Use the Back/Next buttons or arrow keys. Printing
-includes all eight slides. The Open live demo link returns to the app. Appearance,
-text sizing and read-this-slide controls are available in its header.
+## 0:00–0:40 — Why Relay exists
 
-## 0:00-0:40 - The problem
+“When I return to an AI coding project, the task list is only part of the story.
+I also need yesterday's decisions, failed approaches, what was checked and what
+to do next. Relay preserves that stopping point as a Resume Capsule.”
 
-"When I build with AI, the code is not the only thing I need to keep. I need to keep the reasoning: what I asked, what worked, what failed, and what I was going to do next. Ordinary task lists track the work, but the context gets left behind in a chat. Relay puts those two things back together."
+Show the capsule landing page. Point to the three written steps. Be explicit:
+Relay prepares context; it does not monitor conversations or execute code.
 
-Show the board. Point out four exact stages and the finish-line deliverables.
+## 0:40–1:50 — Team notes in
 
-## 0:40-1:25 - One clear task
+Click Create a Resume Capsule. Use these non-private demo notes:
 
-"This is a deliberately small workspace. I can add a feature or bug, describe the outcome, choose an owner and set a deadline. It stays in my browser when I refresh."
+```text
+Goal: Make the mobile menu usable with keyboard and touch.
+Decisions: Keep the existing React components.
+Tried / rejected: Hover-only navigation failed on touch screens.
+What works: Desktop links open correctly.
+Next step: Add a labelled menu toggle and restore focus when it closes.
+Verify: Test Tab, Enter and Escape at a narrow width.
+Risks: Touch and screen-reader behaviour remain untested.
+```
 
-Create a task named **Polish the first-run experience**. Add a short description. Set today's date. Save and show its date label. Move it to In Progress using the stage dropdown.
+Title: Mobile menu — ready for keyboard work. Click Use headings from notes,
+then Continue to handoff sections. Show that original notes are preserved and
+sections are editable. This extracts recognised headings, not AI-generated facts.
 
-## 1:25-2:15 - Keep the useful context
+## 1:50–2:40 — Honest evidence
 
-Open the new task and paste this briefing:
+Continue to review. Enter a clearly labelled demo revision, `demo-revision-1`.
+Add an evidence item named Keyboard test, leave its outcome Not run. Explain
+that pass/failure needs a recorded result and is always user-reported. Save.
 
-> Decision: retain React, Vite and localStorage. The first-run board should explain the product through four labelled demo tasks. What works: task editing and reload persistence. Next: review the empty-state wording and test keyboard navigation. Done when a new user can create and move a task without guidance.
+“A blank result is not a pass. Relay makes that uncertainty visible. Different
+entered revisions suggest checking earlier evidence again; matching labels are
+not proof the code is correct.”
 
-Select ChatGPT as the source tool and save.
+## 2:40–3:30 — The handoff moment
 
-"This is curated context, not an unfiltered chat dump. Relay checks for a brief, useful context, a next step and a verification instruction. It is a transparent checklist, not an AI quality score. Templates help me get started without replacing what I already wrote."
+Show Take off here. Enter `demo-revision-2` as the comparison to expose the
+recheck warning. Review the handoff, click Copy capsule handoff and paste into a
+text editor. Sending a message or paying for an AI API is unnecessary.
 
-## 2:15-3:05 - The hero moment
+“I can take this briefing to my chosen assistant. Original notes are excluded
+unless I choose them. A full capsule download includes the original notes.”
 
-Click **Context** on the card. Paste the clipboard into an empty text editor or AI chat draft; sending it is unnecessary for the demo.
+## 3:30–4:05 — Continue without rewriting history
 
-"One click gives me the title, description, state, owner, deadline and context in a reusable Markdown prompt. I can continue in my preferred tool without reconstructing the conversation."
+Click Start next session from this capsule. Change the next step. Check names
+carry forward, but outcomes reset to Not run. Save a second capsule if time
+allows; the earlier snapshot stays unchanged. Use Save draft if stopping midway.
 
-Hand off to Demo Reviewer and explain that this is a sample identity. Mark the task Done; show that its date label becomes Completed.
+“The next session has somewhere to take off, without turning yesterday's passing
+check into an unsupported claim about today's changes.”
 
-## 3:05-3:50 - Secret sauce: Focus desk
+## 4:05–4:35 — The rest of the project
 
-Open **Focus desk**. Show its suggested task and the explanation beneath it.
+Show the task board, four stages and deliverable links. Briefly open a prepared
+task and use its Context copy button if the assignment requires that exact
+on-stage demonstration. Existing task management and Focus desk support capsules.
+Point to Recovery and downloaded backups. Local work needs no account.
 
-"When I return tomorrow, I do not want to read every card. Focus desk suggests the next task and explains why. Deadlines come first; work in progress breaks ties. I can choose another task, improve its handoff, or copy its briefing immediately. Resume work also prepares one briefing for the whole workspace."
+## 4:35–5:00 — Explainable and accessible
 
-Select another task in the queue to show that the user remains in control.
+Open Accessibility; show one appearance/text choice. Point to Why this design?
+and the capsules entry. Mention shared keyboard/read-aloud controls and the
+original decorative Blender journal. Do not claim complete accessibility
+certification, measured productivity gains or worldwide uniqueness.
 
-## 3:50-4:15 - Trust it with real work
-
-Advance a focused task and click **Undo**. Open the task's earlier-context section
-if a version is available. Briefly point to the four deliverable links.
-
-"An accidental click should not erase the work. I can undo the last change, recover earlier context, or take a backup to another browser. Import validates the file first, and merging preserves existing tasks. The final deliverables stay linked above the board."
-
-## 4:15-4:40 - Design with a reason
-
-Open **Accessibility**. Change text size to 125% or appearance to Light/Dark,
-then point to **Why this design?** Avoid starting a long narration during the
-timed pitch; demonstrate a short task reading only if the audio setup is ready.
-
-"The design is explainable. Visible labels reduce the need to remember icons.
-Colour is an extra cue, not the only one. People can enlarge text, choose a
-palette or listen to a briefing. The guide documents each choice and its source.
-These features have specific checks; I am not claiming a complete accessibility
-certification or a measured psychological effect."
-
-## 4:40-5:00 - Tradeoffs and close
-
-"I built this as a solo project on the course starter. The competition workspace runs locally without an account. Optional cloud controls are a preview: database permissions are tested, while real-account email and cross-device acceptance remain open. The local assignee labels demonstrate handoffs and send no notification. Human accessibility evaluation is still needed."
-
-"Relay: keep the work moving, keep the context."
+“Built solo on the supplied starter. Optional cloud remains a preview. Relay
+keeps the decisions and next action ready for the next session.”
 
 ## Before presenting
 
-1. Open the deployed URL in the browser you will use on stage.
-2. Export a backup if the workspace contains work you want to keep.
-3. Restore demo data only after confirming that replacement is intended.
-4. Add real links to the four deliverables. The repository's README, REPORT.md and this script can serve as documentation, report and pitch outline links.
-5. Check clipboard copying in the presentation browser. If blocked, use the manual-copy dialog.
-6. Have a text editor ready for the paste demonstration; never paste private context into a public screen.
-7. Test a short narration with the room’s output device if you intend to demonstrate it. Voices and playback depend on the browser and operating system.
-8. Set an appropriate appearance/text size for the projection; keep Accessibility available to show the choices.
-9. Run a timed rehearsal and adapt the script. Record the actual date, duration and anything to improve below.
+1. Download a complete workspace backup. Verify its file exists.
+2. Check the four real deliverable destinations in the presentation browser.
+3. Have the sample notes and a text editor ready. Test the clipboard fallback.
+4. Rehearse with a timer. Record the real duration; trim the second capsule save
+   if necessary. Keep private context off the projector.
+5. Test speakers only if demonstrating narration. Voices depend on the device.
+6. Keep a built local preview available for network failure. A new browser has
+   separate local storage; import your reviewed backup if needed.
 
 ## Rehearsal record
 
-Not yet rehearsed by James. Record an actual run here before claiming the PRD's rehearsal gate is complete.
-
-## Demo recovery
-
-- Clipboard denied: use the manual-copy dialog.
-- Empty board: add a task or deliberately restore the sample workspace.
-- Different browser: it has separate local storage; initialise and check it before the pitch.
-- Network failure: run the local production preview from the already built project.
+James has not recorded an actual timed rehearsal or on-stage demonstration.
+Add the real date, duration and observations before claiming these gates complete.

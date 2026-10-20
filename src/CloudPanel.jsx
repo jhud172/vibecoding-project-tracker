@@ -143,7 +143,7 @@ export default function CloudPanel({ workspace, onClose }) {
       throw new Error("Recover local storage before connecting this work.");
     if (
       !window.confirm(
-        "Upload this project’s tasks, context, links, history and deleted-task recovery to your authenticated cloud account? Review private details first.",
+        "Upload this project’s tasks, capsules (including original team notes and saved capsule draft), context, links, history and deleted-task recovery to your authenticated cloud account? Review private details first.",
       )
     )
       return;

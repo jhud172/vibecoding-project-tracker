@@ -1,5 +1,11 @@
 # Relay justification audit
 
+Latest extension: the capsule decision adds a 31st family and maps three new
+components (36 total); the 41 referenced symbols, three assets and three pages
+remain accounted for. CAPSULES.md and REPORT.md record the notes-first flow,
+evidence/continuation rules, privacy, limits and new verification. The original
+30-family audit below is retained as historical context, not the latest count.
+
 Reviewed 20 October 2026 against the implemented necessary-feature release.
 The earlier request to avoid optional product expansion remains in force. This
 work completes explanations and makes the existing guide inspectable; it does

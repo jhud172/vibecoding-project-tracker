@@ -29,11 +29,12 @@ export function WelcomePanel({ onChoose }) {
         Welcome to Relay
       </p>
       <h2 id="welcome-title" className="mt-2 font-editorial text-2xl">
-        Start with your work, or explore an example.
+        Keep a stopping point. Return with a plan.
       </h2>
       <p className="my-3 max-w-2xl text-sm leading-relaxed text-text-muted">
-        Create a task, leave the decisions and next step in its context, then
-        copy the briefing when you return. Everything saves in this browser.
+        Start empty or explore labelled sample tasks. Then create a Resume
+        Capsule: add team notes, shape the handoff and save your next step.
+        Capsules and tasks stay in this browser; backups let you carry them elsewhere.
       </p>
       <div className="flex flex-wrap gap-3">
         <button
