@@ -10,6 +10,10 @@ The competition release scope was narrowed at James's request to completing and
 checking the existing product. [FINALISATION.md](FINALISATION.md) lists the required
 release work and optional suggestions removed from the build commitment.
 
+[Requirements in plain English](REQUIREMENTS.md) separates the original assignment,
+later requested improvements, technical constraints, acceptance checks and design
+justifications, with a short explanation for the lecturer.
+
 ## Run locally
 
 Use Node.js 22.12 or newer (Node 24 LTS recommended).
