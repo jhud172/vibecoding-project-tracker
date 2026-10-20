@@ -10,7 +10,37 @@ const download = (text, filename, type) => {
   const link = document.createElement("a"); link.href = url; link.download = filename; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
-const example = () => ({ ...emptyCapsule(), title: "Example — continue the mobile menu", notes: "Team notes — fictional example\n\nGoal: Make the mobile menu usable with keyboard and touch.\nDecisions: Keep the existing React components.\nTried / rejected: Hover-only navigation did not work on touch screens.\nWhat works: Desktop links open correctly.\nNext step: Add a labelled menu toggle and restore focus when it closes.\nHow to verify: Test Tab, Enter and Escape at a narrow width.\nRisks: Mobile keyboard behaviour still needs checking.\nChanged files: src/Navigation.jsx (illustrative; not a Relay test result)", goal: "Make the mobile menu usable with keyboard and touch.", nextStep: "Add a labelled menu toggle and restore focus when it closes." });
+const example = () => {
+  const sections = {
+    goal: "Make the mobile navigation usable with keyboard and touch.",
+    decisions: "Keep the existing React components. Use a visible Menu button with a written label. Keep navigation links in a predictable order.",
+    rejected: "Hover-only navigation was rejected because touch users cannot rely on hovering. An icon without a label was rejected because its meaning could be unclear.",
+    works: "In this fictional demo scenario, the desktop navigation is implemented. Mobile interaction still needs verification.",
+    nextStep: "Add the mobile Menu toggle, support Escape to close it, and return focus to the toggle.",
+    verify: "At a narrow screen width, use Tab to reach Menu, press Enter to open it, navigate the links, then press Escape. Confirm focus returns to Menu.",
+    risks: "Touch behaviour and screen-reader announcements have not been tested. Long service names may wrap.",
+  };
+  const files = "src/components/MobileMenu.jsx\nsrc/styles/navigation.css\nIllustrative paths for this fictional project; not Relay implementation files.";
+  return {
+    ...emptyCapsule(), ...sections,
+    title: "Campus Companion — mobile menu handoff",
+    notes: [
+      "FICTIONAL DEMO PROJECT: Campus Companion, a website helping students find university services.",
+      ...SECTIONS.map(([key, label]) => `${label}: ${sections[key]}`),
+      `Changed files: ${files}`,
+    ].join("\n\n"),
+    people: "James — solo developer",
+    repository: "Campus Companion — fictional demonstration project",
+    revision: "demo-revision-1",
+    files,
+    evidence: [{
+      label: "Mobile menu keyboard navigation",
+      command: "Manual check: Tab to Menu, press Enter, navigate links, press Escape, and inspect returned focus.",
+      status: "not-run",
+      result: "Not run during this demonstration. Keyboard, touch and screen-reader checks remain outstanding.",
+    }],
+  };
+};
 
 export function CapsuleEditor({ workspace, initial, onClose, onSaved, onNotify }) {
   const [draft, setDraft] = useState(() => structuredClone(initial));
@@ -209,6 +239,7 @@ export function CapsuleHome({ workspace, startRequest = 0, onCopy, onNotify, onT
         {workspace.project.capsuleDraft && <button type="button" className={buttonClass} onClick={() => open(workspace.project.capsuleDraft)}>Continue saved capsule draft</button>}
         <button type="button" className={buttonClass} onClick={() => open(example())}>Try an example draft</button>
       </div>
+      <p className="mt-3 text-xs text-text-muted">The fictional example has notes, handoff sections, revision and an unrun check already filled in. Walk through all three steps without typing.</p>
       <details className="mt-5 border-t border-line pt-4"><summary className="cursor-pointer text-sm font-semibold">New here? How Relay fits your work</summary>
         <div className="mt-3 max-w-3xl space-y-3 text-sm leading-relaxed text-text-muted"><p>Before leaving a meeting or coding session, create a capsule. Keep rough notes in step 1, clarify the next action in step 2 and record real check results in step 3. Save draft if you are not ready.</p><p>When you return, open a capsule, compare the current revision if you know it, review the briefing and copy it into your preferred tool. Relay does not read your chats, execute code or update your tasks automatically.</p><p>Use the task board below for ongoing work and Focus desk for deadline-based ordering. Deliverable links keep your final outputs together. Named contributors are notes, not invited accounts. Download backups from workspace settings; clearing site data removes local work.</p><div className="flex flex-wrap gap-3"><button className={buttonClass} type="button" onClick={onBoard}>Go to task board</button><button className={buttonClass} type="button" onClick={onFocus}>Open Focus desk</button><a href="/design.html#why-capsules" className="self-center text-brand-primary underline">Why capsules work this way</a></div></div>
       </details>

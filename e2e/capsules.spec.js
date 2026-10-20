@@ -151,3 +151,23 @@ test("hero starts capture directly and a real notes drop preserves original text
   await expect(page.getByRole("button", { name: "Start an empty workspace", exact: true })).toHaveCount(0);
   expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).data.welcome, KEY)).toBe(false);
 });
+
+test("the fully prefilled example can be reviewed and saved without entering any data", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Try an example draft", exact: true }).click();
+  await expect(page.getByLabel("Capsule title", { exact: true })).toHaveValue("Campus Companion — mobile menu handoff");
+  await expect(page.getByLabel("Team / session notes", { exact: true })).toHaveValue(/FICTIONAL DEMO PROJECT/);
+  expect((await project(page)).capsules).toBeUndefined();
+  await page.getByRole("button", { name: "Continue to handoff sections", exact: true }).click();
+  for (const label of ["Goal (required)", "Decisions", "Tried / rejected", "What works", "Next step (required)", "How to verify", "Risks / unknowns"])
+    await expect(page.getByLabel(label, { exact: true })).not.toHaveValue("");
+  await page.getByRole("button", { name: "Continue to review", exact: true }).click();
+  await expect(page.getByLabel("Recorded revision", { exact: true })).toHaveValue("demo-revision-1");
+  await expect(page.getByLabel("Reported outcome 1", { exact: true })).toHaveValue("not-run");
+  await page.getByRole("button", { name: "Save capsule", exact: true }).click();
+  await expect(page.getByRole("dialog")).toContainText("Take off here");
+  const saved = (await project(page)).capsules;
+  expect(saved).toHaveLength(1); expect(saved[0].people).toBe("James — solo developer");
+  expect(saved[0].evidence[0].status).toBe("not-run");
+  await expect(page.getByLabel("Review the handoff before sharing", { exact: true })).toHaveValue(/demo-revision-1/);
+});

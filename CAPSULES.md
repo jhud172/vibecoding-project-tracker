@@ -9,7 +9,10 @@ explicitly requested after the earlier necessary-feature release.
 1. Open Relay. Capsules is the initial view. Existing tasks are retained below;
    Task board and Focus desk remain available in navigation.
 2. Select Create a Resume Capsule in the hero or Create capsule in the landing
-   area. Try an example draft provides fictional notes without saving a capsule.
+   area. Try an example draft prefills the fictional Campus Companion title,
+   original notes, all handoff sections, contributor, illustrative file paths,
+   project reference, demo revision and a Not run evidence item. Walk through and
+   save without typing; opening the example alone does not save a capsule.
 3. Add a recognisable title. Paste team notes or drop/load one plain .txt/.md
    file. Names are optional context, not invitations or account identities.
 4. Use headings from notes optionally copies recognised headings into empty
