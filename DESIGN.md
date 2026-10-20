@@ -58,7 +58,7 @@ At standard size: page heading 36-44 px, task title 15 px semibold, body 14 px a
 | Add task | New task |
 | Empty column | Room for your next move. |
 | Copy success | Copied. Pick up where you left off. |
-| Delete confirmation | Remove this task from the board? Undo is available until your next change or reload. |
+| Delete confirmation | Move this task to Recovery? Restore it there or use persistent Undo. |
 | Handoff toast | Handed off to {name}. |
 | Persistence | Saved in this browser |
 | Extra feature | Resume work |

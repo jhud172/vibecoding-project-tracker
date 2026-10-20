@@ -19,7 +19,10 @@ Open the URL printed by Vite. To verify or preview the production bundle:
 
 ```sh
 npm test
+npm run lint
 npm run build
+npx playwright install chromium
+npm run test:e2e
 npm run preview -- --host 127.0.0.1
 ```
 
@@ -39,7 +42,7 @@ npm run preview -- --host 127.0.0.1
 - Open **Focus desk** for an explained next-task suggestion and a queue ordered by deadline, with in-progress work breaking ties.
 - Use the four-part **handoff checklist** and additive build, debug and handoff templates to improve your saved briefing.
 - Review activity and recover earlier context versions into a draft before saving.
-- Undo the last task, deliverable, import or demo-reset change until the next change or page reload.
+- Undo and redo saved changes across reloads; recover deleted tasks and recent workspace versions from **Recovery**.
 - Import a backup with a validation preview; merge keeps existing task IDs and links, while replacement requires confirmation.
 - Switch between the Kanban board and a deadline-ordered list. Narrow screens start in list layout.
 - Drag cards by their grip or use the keyboard-accessible stage menus.
@@ -47,18 +50,27 @@ npm run preview -- --host 127.0.0.1
 - Open **Accessibility** for light/dark/device appearance, 100-200% text sizing, colour-vision alternatives, monochrome, higher contrast, plain headings, link underlines and reduced motion.
 - Read a task, workspace briefing or presentation slide aloud with voice/speed selection and pause/resume/stop. Device/browser voice availability varies; speech starts only on request.
 - Read the published design rationale explaining layout, cognitive intentions, logo, icons, typography and their trade-offs.
+- Edit named briefing sections, inspect a safe Markdown preview, compare earlier context and append individual passages into the draft.
+- Preview concise or detailed handoffs; save custom templates and use research, accessibility, deployment and pitch scaffolds.
+- Keep unfinished task drafts through refresh, and explicitly continue them when returning to the editor.
+- Export complete workspace bundles with optional accessibility preferences and inspect task/link conflicts before import.
+- Open Workspace settings → **Accounts, cloud sync & collaboration** for optional authenticated cloud copies, explicit cross-device sync, project comments and viewer/editor access.
 
 ## Data and limitations
 
-Tasks live under `vibetracker.tasks`; deliverables under `vibetracker.anchors` in browser localStorage. An empty saved board remains empty. Four labelled demo tasks are created only when no saved board exists. Their dates are relative to the first load, so use Workspace settings to refresh the demo before presenting.
+The authoritative workspace is one localStorage value, `relay.workspace:v3`. Tasks, links and history migrate together from the original keys; legacy values are retained. An empty saved board remains empty. First use offers an explicit choice between an empty workspace and labelled samples. Demo dates are relative to the time samples are requested.
 
-There is no server database, account system, AI API, or real-time collaboration. Handoff changes a local owner field; it sends no message. Another browser or device has a separate workspace. Clearing site data removes the stored workspace. Export a JSON backup to move data between browsers. Import accepts original Relay backups and version 2 backups, up to 2 MB and 1,000 tasks. Imports validate the locked schema and safe URLs before changing anything.
+Local work requires no account. The dedicated Relay Supabase project is in London on the existing organization's Free plan. Cloud controls load on demand; publishing requires sign-in and explicit upload confirmation. Sync is currently manual: preview and load cloud work, edit locally, then save the linked version. Concurrent saves reject stale versions; collaborators compare and merge locally. Comments refresh when the cloud preview is refreshed. This is not simultaneous live editing. Viewer/editor permissions are enforced by row-level database policies. The local owner dropdown remains the three PRD identities and sends no message.
 
-Activity is stored under `relay.activity:v1`, bounded to 80 entries. Context changes retain the previous task snapshot; the editor offers the latest eight available context versions for that task. Undo is a one-step in-memory snapshot and does not survive reload. Activity and backups can contain task context; treat them with the same care as the original tasks.
+Cloud account creation and password recovery need a working email provider. The Free project's default email service has delivery limits; external-user confirmation and a complete real-account cross-device workflow remain acceptance gates. No paid service was enabled. No AI API is connected.
+
+Clearing site data removes local work and unfinished drafts. Complete version 3 backups include all projects, templates, task metadata, current activity and deleted-task recovery. Accessibility preferences are opt-in; drafts and undo stacks require the raw recovery download. Imports accept original/version 2 files (2 MB) and version 3 bundles (8 MB), up to 1,000 active tasks per project and 30 projects. Matching changed tasks/links have explicit conflict choices; merge defaults to keeping current content. Import/reset operations create a prior recovery version. Accessibility preference persistence uses a separate browser key and reports its own failure.
+
+Each project keeps 80 activity entries and up to 50 deleted tasks. The editor offers up to eight available earlier context versions. Persistent undo/redo retains up to twelve recent versions per stack within a 1.2-million-character stack budget; large workspaces retain fewer versions. Quota recovery prunes optional undo/redo snapshots only and reports it. Task drafts use separate per-editor keys, a 350 ms delay and visibility/unload flushing. Cross-tab Web Locks serialize browser writes where available; a revision check rejects stale actions. Older browsers without Web Locks have a revision check but cannot guarantee simultaneous-write exclusion. Activity, drafts, cloud copies and backups can contain private context.
 
 The handoff checklist checks for a task brief, sufficient context text, a labelled next step and a verification instruction. It ignores bracketed template placeholders. These are transparent presence checks, not an AI judgment of correctness. Focus ordering is deterministic and can be overridden by selecting any unfinished task.
 
-Corrupt or incompatible stored data is not silently overwritten. A warning explains that changes may not be persisted; an explicit demo reset replaces that data. Clipboard errors open a selectable manual-copy dialog. Only HTTP(S) deliverable links without embedded credentials are accepted.
+Corrupt or incompatible workspace storage opens in protected mode. Recovery offers the original raw value before explicit reset. A failed workspace write keeps the prior complete value, while unfinished editor text stays available. Stale task saves keep the draft and require comparing with the latest task. Clipboard errors open a selectable manual-copy dialog. Only HTTP(S) links without embedded credentials are accepted; Markdown preview never renders raw HTML.
 
 Date-only deadlines use the local calendar day. Today and the next two days are highlighted, yesterday is overdue, and Done overrides urgency. A context timestamp changes when the context text or source tool changes, not when an owner or stage changes.
 
@@ -66,7 +78,13 @@ Date-only deadlines use the local calendar day. Today and the next two days are 
 
 - `src/App.jsx`: workspace UI, task editing, cards, anchors and briefings.
 - `src/model.js`: locked data model, validation, deadlines, demo data and Markdown formatting.
-- `src/useLocalStorage.js`: persistence and storage error handling.
+- `src/workspace.js`, `src/useWorkspace.js`: atomic workspace transactions, migration, cross-tab checks and persistent recovery.
+- `src/drafts.js`, `src/useDraft.js`: bounded, isolated unfinished-editor recovery.
+- `src/BriefingTools.jsx`, `src/briefing.js`: section editing, previews, comparisons and reusable templates.
+- `src/WorkspaceTransfer.jsx`, `src/transfer.js`: complete bundles, preference opt-in and import conflict review.
+- `src/CloudPanel.jsx`, `supabase/migrations/`: optional cloud accounts, version checks, comments and database permissions.
+- `src/ErrorBoundary.jsx`: recoverable render failures without resetting saved data.
+- `src/useLocalStorage.js`: accessibility preference persistence and storage warnings.
 - `src/ui.jsx`: shared accessible fields and native dialog.
 - `src/Studio.jsx`: Focus desk, handoff coaching, quick actions, list layout, activity and import preview.
 - `src/competition.js`: focus ordering, checklist rules, activity validation and backup parsing/merging.
@@ -81,6 +99,8 @@ Date-only deadlines use the local calendar day. Today and the next two days are 
 - `DESIGN_RATIONALE.md`, `ACCESSIBILITY.md`: design reasons, access features and verification limits.
 - `tests/accessibility.test.js`: contrast, preference validation and speech lifecycle regression tests.
 - `tests/studio.test.js`: recovery, import compatibility, focus ordering and checklist regression tests.
+- `e2e/workspace.spec.js`, `.github/workflows/verify.yml`: isolated Chromium/axe regression checks and CI validation.
+- `IMPLEMENTATION_PLAN.md`, `ROADMAP.md`: all 75 requested improvements and evidence-based completion status.
 - `REPORT.md`: implementation report and validation record.
 - `HACKATHON.md`: portal setup and verified milestone names.
 - `LECTURER_SETUP.md`: reusable student instructions for GitHub login, fork registration and webhook setup.

@@ -1,5 +1,8 @@
 qa
 tests
+e2e
+playwright-report
+test-results
 node_modules
 .git
 .env*

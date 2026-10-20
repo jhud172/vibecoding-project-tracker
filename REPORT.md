@@ -19,8 +19,7 @@ identities rather than invented collaborators.
 The existing React entry point and Tailwind stylesheet remain in place.
 `App.jsx` implements the interface; `model.js` contains the task schema,
 validation, calendar dates, sample tasks and Markdown formatting.
-`useLocalStorage.js` persists data while surfacing failures rather than silently
-claiming success. Native dialogs provide modal keyboard behaviour and restore
+`workspace.js` persists the complete workspace as one transaction with persistent recovery; `useLocalStorage.js` retains accessibility preferences separately. Native dialogs provide modal keyboard behaviour and restore
 focus when closed. Fields have explicit label associations and hint descriptions.
 
 Task IDs and creation dates remain stable. The original four stage IDs and the
@@ -29,9 +28,7 @@ briefing or tool changes, rather than on unrelated edits. Calendar-day deadline
 arithmetic avoids daylight-saving hour offsets. Urgency is communicated through
 card tint, a date badge and text; completed tasks override urgency.
 
-There is no database, authentication, AI provider API, shared backend or live
-GitHub integration inside Relay. The separate course portal receives real GitHub
-push events for milestone tracking.
+Optional Supabase accounts, explicitly synchronised project copies, comments and viewer/editor permissions now supplement local work. The dedicated Relay project uses the organization's Free plan in London. Cloud updates require the expected version; stale saves are rejected. No AI provider is connected. GitHub milestone tracking remains in the separate course portal.
 
 ## Distinctive feature
 
@@ -90,7 +87,7 @@ implementation commit. Deployment verification is recorded separately below.
 - Source: `jhud172/vibecoding-project-tracker`, connected through Vercel's Git integration.
 - The initial hosted app rendered the complete board and successfully copied
   a task's prompt over HTTPS; clipboard contents were read back to verify it.
-- `public/presentation.html` now supplies seven slides, Back/Next controls, arrow-key
+- `presentation.html` supplies eight slides, Back/Next controls, arrow-key
   navigation, a live-demo link and an all-slides print layout. Browser checks
   traversed the slides and verified navigation stops at the final slide.
 - Pitch preparation is complete; the rehearsal record remains explicitly open.
@@ -106,12 +103,10 @@ server publicly or build untrusted source/configuration.
 
 ## Limitations and honest completion gates
 
-- Browser storage is not shared and can be cleared. JSON export and validated
-  import provide manual portability, not automatic synchronisation.
+- Browser storage can be cleared. Complete backup/import and optional explicit cloud sync provide portability. Live simultaneous editing and automatic background sync are not implemented.
 - Demo identities do not represent real teammates or notifications.
 - Context quality depends on what the user writes.
-- Clipboard fallback and storage-error handling exist, but OS permission failure
-  and storage-quota failure have not been induced in the browser checks above.
+- Browser regression tests inject rejected clipboard access, quota failure, damaged storage, stale concurrent edits and invalid imports. This does not replace testing every operating-system permission or storage implementation.
 - No user study or performance benchmark is claimed.
 - PITCH.md supplies the five-minute script and demo procedure. James's rehearsal
   and the on-stage demonstration remain human activities and are not claimed
@@ -124,12 +119,7 @@ deadline ordering; a four-part handoff presence checklist; non-destructive
 briefing templates; and filtering for incomplete handoffs. The user can copy
 the focused task, advance it and choose a different priority.
 
-Recovery features include one-step undo, an 80-entry local activity history,
-up to eight available earlier context versions in the editor, and versioned
-backup export. Import supports original and version 2 Relay backups, rejects
-invalid shapes and unsafe links, previews the contents, and offers either a
-non-overwriting merge or confirmed replacement. Unknown imported properties
-are discarded. Undo lasts until the next mutation or page reload.
+Recovery includes persistent undo/redo within a twelve-version per-stack budget, up to fifty deleted tasks per project, an eighty-entry activity history, editor drafts and eight available earlier context versions. Complete version 3 bundles preserve projects, templates, metadata and recovery entries; original/version 2 imports remain supported. Import conflicts are inspectable and keep current content by default. Accessibility preferences are opt-in. A single atomic storage value prevents partly saved related collections, and failed writes preserve the previous complete value.
 
 The interface adds actionable workspace counts, board/list layouts, drag grips
 with stage-menu alternatives, a command palette, shortcuts and a compact mobile

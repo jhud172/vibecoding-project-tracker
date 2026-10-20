@@ -18,6 +18,42 @@ export const PRINCIPLES = [
 ];
 export const DECISIONS = [
   {
+    title: "Recovery and inspectable handoffs",
+    items: [
+      ["Complete backup and conflict review", "Export names what it includes and makes accessibility preferences optional. Import separates current and incoming text, defaults to keeping current content and labels the scope of replacement. A prior workspace version provides a recovery route after an import."],
+      ["Optional cloud controls and explicit sync", "Account, sharing and comments load in a separate panel so everyday local work is not gated by sign-in. Cloud preview precedes loading, and upload names the data it sends. Visible versions and stale-save rejection make conflicts inspectable. Account IDs enable deliberate sharing without searching or exposing an email directory."],
+      ["Recoverable error screen", "A render failure presents a raw-download and reload action, preserving saved work. The message describes what happened without displaying implementation stack traces or inventing a successful recovery."],
+      [
+        "Explicit first-use choice",
+        "An empty workspace is offered alongside labelled samples. The choice establishes what is the user’s work and what is an example; a short introduction explains the task-context-handoff sequence.",
+      ],
+      [
+        "Recovery beside save status",
+        "A labelled header control keeps recovery discoverable. Deleted tasks and persistent undo/redo reduce the cost of accidental edits. Storage estimates and last backup-request dates describe observed browser state without promising that a download completed.",
+      ],
+      [
+        "Draft status and deliberate recovery",
+        "A saved-time message acknowledges unfinished input. Recovered drafts are offered explicitly and never silently replace the editor. Stale-task checks preserve the draft when another tab has saved newer work.",
+      ],
+      [
+        "Section editor alongside free text",
+        "Named decisions, progress, next-step, verification and risk fields provide recognition cues. Editing a section preserves unknown headings and existing prose. The full context remains visible so the structure is optional and inspectable.",
+      ],
+      [
+        "Preview before sharing",
+        "Markdown and handoff previews let people check the actual text before copying. Concise export foregrounds ownership, next action and verification; detailed export retains the complete task. Missing sections are stated explicitly rather than invented.",
+      ],
+      [
+        "Versions and passage recovery",
+        "Text labels identify added and removed lines, with coloured edges as a secondary cue. A paragraph can be appended to the draft without replacing unrelated context. The comparison states that it checks line presence rather than promising a full edit diff.",
+      ],
+      [
+        "Templates and session wrap-up",
+        "Templates sit in an optional disclosure to keep the everyday editor manageable. A wrap-up view prompts progress, next action, verification and risks before the session is saved. Presence checks describe measurable text or populated sections, never quality or correctness.",
+      ],
+    ],
+  },
+  {
     title: "Layout, navigation & visual hierarchy",
     items: [
       [

@@ -140,6 +140,7 @@ export function AccessibilityProvider({ children }) {
       value={{
         prefs,
         update,
+        restore: (value) => (validAccess(value) ? replacePrefs(value) : false),
         isDark,
         systemMotion,
         storageError,
@@ -296,7 +297,6 @@ export function AccessibilityPanel({
     systemMotion,
     supported,
     voices,
-    speech,
     storageError,
     reset,
     read,

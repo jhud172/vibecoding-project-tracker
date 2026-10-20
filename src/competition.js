@@ -8,6 +8,22 @@ import {
 } from "./model.js";
 
 export const CONTEXT_TEMPLATES = {
+  research: {
+    label: "Research",
+    text: "## Decisions\n[State the question and source selection]\n\n## Evidence\n[Links, dates and observations; distinguish inference]\n\n## Next step\n[One unanswered question]\n\n## Verify\n[Check the primary source and contradictory evidence]",
+  },
+  accessibility: {
+    label: "Accessibility review",
+    text: "## Decisions\n[Define the workflow and supported devices]\n\n## What works\n[Record browser, assistive technology and observed results]\n\n## Next step\n[One reproducible barrier to fix]\n\n## Verify\n[Repeat keyboard, zoom and screen-reader checks]\n\n## Risks\n[Unverified human evaluations]",
+  },
+  deployment: {
+    label: "Deployment",
+    text: "## Decisions\n[Target environment and rollback version]\n\n## What works\n[Passing checks and configuration references, never secret values]\n\n## Next step\n[Deploy and confirm the production URL]\n\n## Verify\n[Smoke test saved data and main workflows]\n\n## Risks\n[Service or migration dependencies]",
+  },
+  pitch: {
+    label: "Pitch preparation",
+    text: "## Decisions\n[Audience, problem and central claim]\n\n## What works\n[Demonstrable evidence and user feedback]\n\n## Next step\n[Rehearse one timed run]\n\n## Verify\n[Record actual duration and questions]\n\n## Risks\n[Claims without supporting evidence]",
+  },
   build: {
     label: "Build a feature",
     text: "## Decisions\n[Record the approach and constraints]\n\n## What works\n[Summarise the current implementation]\n\n## Next step\n[Describe one concrete action]\n\n## Verify\n[Describe how to check the result]",
@@ -53,25 +69,25 @@ export function contextChecklist(task) {
   return [
     {
       id: "brief",
-      label: "A clear task brief",
+      label: "Brief text present (20+ characters)",
       done: (task.description || "").trim().length >= 20,
       hint: "Add at least a sentence describing the outcome.",
     },
     {
       id: "context",
-      label: "Useful saved context",
+      label: "Context text present (60+ characters)",
       done: prose.length >= 60,
       hint: "Capture decisions, progress or constraints in your own words.",
     },
     {
       id: "next",
-      label: "A concrete next step",
+      label: "Next-step section populated",
       done: hasSection("next step|next action|next"),
       hint: "Add “Next step:” followed by an action.",
     },
     {
       id: "verify",
-      label: "A way to verify it",
+      label: "Verification section populated",
       done: hasSection(
         "verify|verification|acceptance criteria|done when|test",
       ),

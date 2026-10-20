@@ -3,7 +3,7 @@
 Implemented for James’s request that visual and interaction choices be justified,
 with multiple ways to see, navigate and listen. Use the labelled Accessibility
 button in the app, guide or presentation. Choices persist in this browser under
-`relay.accessibility:v1`; task/anchor schemas and workspace backups are unchanged.
+`relay.accessibility:v1`; complete workspace backups can optionally include validated preferences.
 Other open tabs pick up preference changes on reload.
 
 ## Features and reasons

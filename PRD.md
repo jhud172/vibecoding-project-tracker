@@ -217,3 +217,14 @@ rate, pause, resume and stop. Device speech engines are an external dependency.
 Semantics, focus, keyboard controls and non-colour state labels remain independent
 of speech. ACCESSIBILITY.md distinguishes checked behavior from broader
 assistive-technology testing and full conformance, which are not claimed.
+
+## 17. Complete roadmap authorisation
+
+On 20 October 2026 James requested implementation and finalisation of the full
+75-item improvement roadmap. The scope now includes the additional metadata,
+offline, project-management and connected-service extensions listed in ROADMAP.md.
+This supersedes the earlier restriction against those extensions for this phase.
+Preserve existing data and compatibility through explicit versioned migrations.
+The dependency order and evidence requirements are in IMPLEMENTATION_PLAN.md.
+Actual human evaluations/rehearsals and service-dependent capabilities cannot be
+marked complete by simulated data or interface placeholders.

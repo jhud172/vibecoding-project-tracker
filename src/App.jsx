@@ -1,4 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { ErrorBoundary } from "./ErrorBoundary.jsx";
+import WorkspaceTransfer from "./WorkspaceTransfer.jsx";
+import { workspaceBackup } from "./transfer.js";
+import { validAccess } from "./accessibility.js";
+const CloudPanel = lazy(() => import("./CloudPanel.jsx"));
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -20,6 +25,7 @@ import {
   Plus,
   Presentation,
   RotateCcw,
+  RotateCw,
   Search,
   Settings2,
   Sparkles,
@@ -44,11 +50,14 @@ import {
   saveTask,
   seedTasks,
   taskPrompt,
-  validAnchors,
-  validTasks,
   validateTask,
 } from "./model";
 import { useLocalStorage } from "./useLocalStorage";
+import { useWorkspace } from "./useWorkspace";
+import { useDraft } from "./useDraft";
+import { addActivity, newData, newProject } from "./workspace";
+import { RecoveryPanel, WelcomePanel } from "./Recovery.jsx";
+import { BriefingTools, ContextComparison } from "./BriefingTools.jsx";
 import {
   AccessButton,
   AccessibilityPanel,
@@ -58,19 +67,12 @@ import {
 } from "./Accessibility.jsx";
 import { spokenTask } from "./accessibility";
 import { Field, Modal, buttonClass, fieldClass, primaryClass } from "./ui";
-import {
-  contextChecklist,
-  describeChange,
-  makeBackup,
-  mergeBackup,
-  validActivity,
-} from "./competition";
+import { contextChecklist, describeChange } from "./competition";
 import {
   ActivityPanel,
   CommandMenu,
   ContextCoach,
   FocusDesk,
-  ImportBackup,
   TaskList,
   WorkspacePulse,
 } from "./Studio";
@@ -107,11 +109,23 @@ const anchorHints = {
   documentation: "Everything the next person needs",
 };
 
-function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
+function TaskEditor({
+  task,
+  projectId,
+  onClose,
+  onSave,
+  onDelete,
+  onCopy,
+  activity,
+  templates,
+  onSaveTemplate,
+  onDeleteTemplate,
+}) {
   const [draft, setDraft] = useState(task);
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
   const versions = activity
     .filter(
       (entry) =>
@@ -123,8 +137,21 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
   const change = (key, value) =>
     setDraft((current) => ({ ...current, [key]: value }));
   const dirty = JSON.stringify(draft) !== JSON.stringify(task);
+  const recovery = useDraft(projectId, task, draft, dirty);
   const close = () => {
-    if (!dirty || window.confirm("Discard your unsaved changes?")) onClose();
+    if (!dirty) {
+      onClose();
+      return;
+    }
+    const saved = recovery.flush();
+    if (
+      window.confirm(
+        saved
+          ? "Close this editor? A recovery draft will be kept so you can continue later."
+          : "The recovery draft could not be saved. Have you copied your text before closing?",
+      )
+    )
+      onClose();
   };
   return (
     <Modal
@@ -139,13 +166,74 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
     >
       <form
         className="space-y-5 p-6"
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
           const message = validateTask(draft);
           setError(message);
-          if (!message) onSave(draft);
+          if (message) {
+            event.currentTarget.querySelector("input")?.focus();
+            return;
+          }
+          setSaving(true);
+          const result = await onSave(draft);
+          if (result) {
+            setError(result);
+            setSaving(false);
+          } else recovery.clear();
         }}
       >
+        {recovery.recovery && (
+          <div
+            role="status"
+            className="rounded-xl border border-line bg-surface-tint p-4"
+          >
+            <p className="text-sm font-semibold">
+              An unfinished draft is available.
+            </p>
+            <p className="my-2 text-xs text-text-muted">
+              Saved {new Date(recovery.recovery.at).toLocaleString("en-GB")}.
+              Loading it changes this draft only; saving still checks the latest
+              task version.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                className={buttonClass}
+                onClick={() => {
+                  if (
+                    dirty &&
+                    !window.confirm(
+                      "Replace your current editor text with the recovered draft? Copy any text you want to keep first.",
+                    )
+                  )
+                    return;
+                  const saved = recovery.restore();
+                  if (saved) setDraft({ ...task, ...saved });
+                }}
+              >
+                Continue recovered draft
+              </button>
+              <button
+                type="button"
+                className={buttonClass}
+                onClick={recovery.dismiss}
+              >
+                Keep editing current task
+              </button>
+            </div>
+          </div>
+        )}
+        {recovery.error && (
+          <p role="alert" className="text-sm text-type-bug">
+            {recovery.error}
+          </p>
+        )}
+        {recovery.savedAt && dirty && (
+          <p className="text-xs text-text-muted">
+            Recovery draft saved{" "}
+            {new Date(recovery.savedAt).toLocaleTimeString("en-GB")}
+          </p>
+        )}
         <Field label="Task title">
           <input
             data-autofocus
@@ -226,6 +314,14 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
               title={draft.title || "Task draft"}
             />
           </div>
+          <BriefingTools
+            task={draft}
+            onChange={(text) => change("context", text)}
+            templates={templates}
+            onSaveTemplate={onSaveTemplate}
+            onDeleteTemplate={onDeleteTemplate}
+            onCopy={onCopy}
+          />
           <Field
             label="Curated context"
             hint="Capture decisions, what worked, what failed, and the next step. Avoid passwords or API keys."
@@ -297,6 +393,16 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
                       <p className="my-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs text-text-muted">
                         {entry.previous.context || "Empty context"}
                       </p>
+                      <ContextComparison
+                        before={entry.previous.context || ""}
+                        current={draft.context || ""}
+                        onAppend={(passage) =>
+                          change(
+                            "context",
+                            `${draft.context || ""}${draft.context ? "\n\n" : ""}${passage}`,
+                          )
+                        }
+                      />
                       <button
                         type="button"
                         className="text-xs font-medium text-brand-primary underline"
@@ -338,14 +444,21 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
         {deleting ? (
           <div className="rounded-xl border border-line bg-due-overdue p-4">
             <p className="text-sm font-medium">
-              Remove this task from the board? Undo is available until your next
-              change or reload.
+              Move this task to Recovery? You can restore it there or use Undo.
             </p>
             <div className="mt-3 flex gap-2">
               <button
                 type="button"
                 className={`${buttonClass} !border-type-bug !text-type-bug`}
-                onClick={() => onDelete(task.id)}
+                onClick={async () => {
+                  setSaving(true);
+                  const result = await onDelete(task.id);
+                  if (result) {
+                    setError(result);
+                    setSaving(false);
+                  } else recovery.clear();
+                }}
+                disabled={saving}
               >
                 Yes, delete task
               </button>
@@ -386,8 +499,8 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
               <button type="button" className={buttonClass} onClick={close}>
                 Cancel
               </button>
-              <button className={primaryClass} type="submit">
-                {task.id ? "Save changes" : "Create task"}
+              <button className={primaryClass} type="submit" disabled={saving}>
+                {saving ? "Saving…" : task.id ? "Save changes" : "Create task"}
                 <ArrowRight size={16} />
               </button>
             </div>
@@ -409,7 +522,7 @@ function AnchorEditor({ anchor, onClose, onSave }) {
     >
       <form
         className="space-y-5 p-6"
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
           const parsed = safeUrl(url);
           if (url.trim() && !parsed) {
@@ -418,7 +531,8 @@ function AnchorEditor({ anchor, onClose, onSave }) {
             );
             return;
           }
-          onSave(parsed);
+          const failure = await onSave(parsed);
+          if (failure) setError(failure);
         }}
       >
         <Field
@@ -601,20 +715,14 @@ function TaskCard({
 
 export default function App() {
   const { prefs } = useAccess();
-  const [tasks, setTasks, taskError, replaceTasks] = useLocalStorage(
-    "vibetracker.tasks",
-    seedTasks,
-    validTasks,
-  );
-  const [anchors, setAnchors, anchorError, replaceAnchors] = useLocalStorage(
-    "vibetracker.anchors",
-    ANCHORS,
-    validAnchors,
-  );
+  const workspace = useWorkspace();
+  const { project, updateProject } = workspace;
+  const { tasks, anchors, activity } = project;
+  const taskError = workspace.error;
+  const anchorError = "";
+  const activityError = "";
   const [editing, setEditing] = useState(null);
-  const [activity, setActivity, activityError, replaceActivity] =
-    useLocalStorage("relay.activity:v1", [], validActivity);
-  const [undo, setUndo] = useState(null);
+  const undo = workspace.state.undo.length > 0;
   const [view, setView] = useState("board");
   const [chosenLayout, setLayout] = useState(() =>
     window.matchMedia("(max-width: 767px)").matches ? "list" : "board",
@@ -642,28 +750,13 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [toast]);
   const notify = (message) => setToast({ message });
-  const checkpoint = () => setUndo({ tasks, anchors, activity });
-  const record = (action, title, taskId = "", previous = null) =>
-    setActivity((current) =>
-      [
-        {
-          id: crypto.randomUUID(),
-          action,
-          title,
-          taskId,
-          previous,
-          at: new Date().toISOString(),
-        },
-        ...current,
-      ].slice(0, 80),
-    );
-  const undoChange = () => {
-    if (!undo) return;
-    replaceTasks(undo.tasks);
-    replaceAnchors(undo.anchors);
-    replaceActivity(undo.activity);
-    setUndo(null);
-    notify("Last change undone.");
+  const undoChange = async () => {
+    const result = await workspace.undo();
+    notify(result.ok ? "Change undone. Redo is available." : result.error);
+  };
+  const redoChange = async () => {
+    const result = await workspace.redo();
+    notify(result.ok ? "Change reapplied." : result.error);
   };
   const showBoard = () => {
     setView("board");
@@ -684,16 +777,29 @@ export default function App() {
       context: "",
       contextTool: null,
     });
-  const updateTask = (task, updates) => {
+  const updateTask = async (task, updates) => {
     if (Object.entries(updates).every(([key, value]) => task[key] === value))
       return;
-    checkpoint();
-    record(describeChange(task, { ...task, ...updates }), task.title, task.id);
-    setTasks((current) =>
-      current.map((item) =>
+    const result = await updateProject((p) => {
+      const current = p.tasks.find((item) => item.id === task.id);
+      if (!current || JSON.stringify(current) !== JSON.stringify(task))
+        throw new Error(
+          "This task changed elsewhere. Review its latest version before retrying.",
+        );
+      p.tasks = p.tasks.map((item) =>
         item.id === task.id ? { ...item, ...updates } : item,
-      ),
-    );
+      );
+      return addActivity(
+        p,
+        describeChange(task, { ...task, ...updates }),
+        task.title,
+        task.id,
+      );
+    }, "Change task stage or owner");
+    if (!result.ok) {
+      notify(result.error);
+      return;
+    }
     notify(
       updates.assignee
         ? `Handed off to ${updates.assignee}.`
@@ -710,9 +816,18 @@ export default function App() {
       setClipboardFallback(text);
     }
   };
-  const downloadBackup = () => {
+  const downloadBackup = async (preferences) => {
     const blob = new Blob(
-      [JSON.stringify(makeBackup(tasks, anchors, activity), null, 2)],
+      [
+        JSON.stringify(
+          workspaceBackup(
+            workspace.state.data,
+            validAccess(preferences) ? preferences : undefined,
+          ),
+          null,
+          2,
+        ),
+      ],
       { type: "application/json" },
     );
     const url = URL.createObjectURL(blob);
@@ -721,6 +836,11 @@ export default function App() {
     link.download = `relay-backup-${localDate()}.json`;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    await workspace.mutate(
+      (data) => ({ ...data, lastBackupAt: new Date().toISOString() }),
+      "Record backup download",
+      false,
+    );
   };
   const filtered = tasks.filter(
     (task) =>
@@ -903,6 +1023,13 @@ export default function App() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <AccessButton onClick={() => setPanel("accessibility")} />
+            <button
+              type="button"
+              className={`${buttonClass} !text-xs !py-2`}
+              onClick={() => setPanel("recovery")}
+            >
+              <History size={16} /> Recovery
+            </button>
             {undo && (
               <button
                 type="button"
@@ -911,6 +1038,15 @@ export default function App() {
               >
                 <RotateCcw size={13} />
                 Undo
+              </button>
+            )}
+            {workspace.state.redo.length > 0 && (
+              <button
+                type="button"
+                onClick={redoChange}
+                className="flex items-center gap-1.5 rounded text-xs text-brand-primary"
+              >
+                <RotateCw size={14} /> Redo
               </button>
             )}
             <button
@@ -948,6 +1084,37 @@ export default function App() {
           tabIndex={-1}
           className="mx-auto max-w-[1700px] px-5 pb-10 pt-8 sm:px-9"
         >
+          {workspace.state.data.welcome && !workspace.readOnly && (
+            <WelcomePanel
+              onChoose={async (demo) => {
+                const result = await workspace.mutate(
+                  (data) => ({
+                    ...data,
+                    welcome: false,
+                    projects: [newProject(demo ? seedTasks() : [])],
+                    activeProject: "studio",
+                  }),
+                  demo ? "Choose sample workspace" : "Choose empty workspace",
+                );
+                if (!result.ok) notify(result.error);
+              }}
+            />
+          )}
+          {workspace.notice && (
+            <div
+              role="status"
+              className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface-tint p-4 text-sm"
+            >
+              <p>{workspace.notice}</p>
+              <button
+                type="button"
+                className="underline"
+                onClick={() => workspace.store.clearMessage()}
+              >
+                Dismiss update
+              </button>
+            </div>
+          )}
           <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="mb-3 flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-[0.22em] text-type-feature">
@@ -1034,9 +1201,16 @@ export default function App() {
                 Download the current workspace backup
               </button>
               <p className="mt-2 text-xs">
-                Open Workspace settings to explicitly replace unreadable saved
-                data with demo data.
+                Open Recovery to download protected raw data or choose an
+                explicit recovery action.
               </p>
+              <button
+                type="button"
+                className="mt-2 underline"
+                onClick={() => setPanel("recovery")}
+              >
+                Open recovery tools
+              </button>
             </div>
           )}
           {view === "focus" && (
@@ -1412,6 +1586,32 @@ export default function App() {
           </span>
         </footer>
       </div>
+      {panel === "recovery" && (
+        <RecoveryPanel
+          workspace={workspace}
+          onClose={() => setPanel(null)}
+          onBackup={downloadBackup}
+          onNotify={notify}
+        />
+      )}
+      {panel === "cloud" && (
+        <ErrorBoundary onClose={() => setPanel(null)}>
+          <Suspense
+            fallback={
+              <Modal
+                title="Opening cloud controls…"
+                onClose={() => setPanel(null)}
+              >
+                <p role="status" className="p-6 text-sm">
+                  Loading account and sharing tools.
+                </p>
+              </Modal>
+            }
+          >
+            <CloudPanel workspace={workspace} onClose={() => setPanel(null)} />
+          </Suspense>
+        </ErrorBoundary>
+      )}
       {panel === "accessibility" && (
         <AccessibilityPanel
           tasks={tasks}
@@ -1423,26 +1623,54 @@ export default function App() {
         <TaskEditor
           key={editing.id || "new"}
           task={editing}
+          projectId={project.id}
           activity={activity}
+          templates={workspace.state.data.templates}
+          onSaveTemplate={(template) =>
+            workspace.mutate((data) => {
+              data.templates.push(template);
+              return data;
+            }, "Save reusable template")
+          }
+          onDeleteTemplate={(id) =>
+            workspace.mutate((data) => {
+              data.templates = data.templates.filter(
+                (template) => template.id !== id,
+              );
+              return data;
+            }, "Remove reusable template")
+          }
           onClose={() => setEditing(null)}
-          onSave={(draft) => {
+          onSave={async (draft) => {
             const saved = saveTask(draft, editing.id ? editing : null);
-            checkpoint();
-            record(
-              describeChange(editing.id ? editing : null, saved),
-              saved.title,
-              saved.id,
-              editing.id &&
-                (editing.context !== saved.context ||
-                  editing.contextTool !== saved.contextTool)
-                ? editing
-                : null,
+            const result = await updateProject(
+              (p) => {
+                if (
+                  editing.id &&
+                  JSON.stringify(p.tasks.find((t) => t.id === editing.id)) !==
+                    JSON.stringify(editing)
+                )
+                  throw new Error(
+                    "This task changed in another tab. Your draft is kept. Copy its text, close the editor, and reopen the latest task before merging your changes.",
+                  );
+                p.tasks = editing.id
+                  ? p.tasks.map((task) => (task.id === saved.id ? saved : task))
+                  : [...p.tasks, saved];
+                return addActivity(
+                  p,
+                  describeChange(editing.id ? editing : null, saved),
+                  saved.title,
+                  saved.id,
+                  editing.id &&
+                    (editing.context !== saved.context ||
+                      editing.contextTool !== saved.contextTool)
+                    ? editing
+                    : null,
+                );
+              },
+              editing.id ? "Save task changes" : "Create task",
             );
-            setTasks((current) =>
-              editing.id
-                ? current.map((task) => (task.id === saved.id ? saved : task))
-                : [...current, saved],
-            );
+            if (!result.ok) return result.error;
             setEditing(null);
             notify(
               editing.id
@@ -1450,12 +1678,21 @@ export default function App() {
                 : "One clear next step. Task created.",
             );
           }}
-          onDelete={(id) => {
-            checkpoint();
-            record("Deleted task", editing.title, id);
-            setTasks((current) => current.filter((task) => task.id !== id));
+          onDelete={async (id) => {
+            const result = await updateProject((p) => {
+              const task = p.tasks.find((t) => t.id === id);
+              if (!task)
+                throw new Error("This task is no longer on the board.");
+              p.tasks = p.tasks.filter((t) => t.id !== id);
+              p.trash = [
+                { task, deletedAt: new Date().toISOString() },
+                ...p.trash.filter((entry) => entry.task.id !== id),
+              ].slice(0, 50);
+              return addActivity(p, "Deleted task", task.title, id);
+            }, "Move task to recovery");
+            if (!result.ok) return result.error;
             setEditing(null);
-            notify("Task deleted.");
+            notify("Task moved to Recovery. Restore it there or use Undo.");
           }}
           onCopy={copy}
         />
@@ -1464,17 +1701,26 @@ export default function App() {
         <AnchorEditor
           anchor={editingAnchor}
           onClose={() => setEditingAnchor(null)}
-          onSave={(url) => {
-            checkpoint();
-            record(
-              url ? "Linked deliverable" : "Removed deliverable link",
-              editingAnchor.label,
-            );
-            setAnchors((current) =>
-              current.map((anchor) =>
+          onSave={async (url) => {
+            const result = await updateProject((p) => {
+              if (
+                JSON.stringify(
+                  p.anchors.find((a) => a.id === editingAnchor.id),
+                ) !== JSON.stringify(editingAnchor)
+              )
+                throw new Error(
+                  "This link changed in another tab. Reopen it to review the saved value.",
+                );
+              p.anchors = p.anchors.map((anchor) =>
                 anchor.id === editingAnchor.id ? { ...anchor, url } : anchor,
-              ),
-            );
+              );
+              return addActivity(
+                p,
+                url ? "Linked deliverable" : "Removed deliverable link",
+                editingAnchor.label,
+              );
+            }, "Update deliverable");
+            if (!result.ok) return result.error;
             setEditingAnchor(null);
             notify(url ? "Deliverable linked." : "Link removed.");
           }}
@@ -1492,6 +1738,10 @@ export default function App() {
             { label: "Copy workspace briefing", run: () => setPanel("resume") },
             { label: "View activity history", run: () => setPanel("activity") },
             {
+              label: "Recovery, deleted tasks and saved snapshots",
+              run: () => setPanel("recovery"),
+            },
+            {
               label: "Accessibility and reading preferences",
               run: () => setPanel("accessibility"),
             },
@@ -1500,6 +1750,9 @@ export default function App() {
               run: () => setPanel("settings"),
             },
             ...(undo ? [{ label: "Undo last change", run: undoChange }] : []),
+            ...(workspace.state.redo.length
+              ? [{ label: "Redo last change", run: redoChange }]
+              : []),
           ]}
         />
       )}
@@ -1555,10 +1808,18 @@ export default function App() {
           <div className="space-y-5 p-6">
             <p className="text-sm leading-relaxed text-text-muted">
               Relay saves tasks and deliverable links in this browser. Data does
-              not sync between devices. Clearing browser data removes it. James
-              is the solo owner; Demo Designer and Demo Reviewer are sample
-              identities for trying handoffs.
+              not leave this browser until you open cloud controls and choose to
+              upload. Clearing browser data removes local work. James is the
+              solo owner; Demo Designer and Demo Reviewer are sample identities
+              for trying handoffs.
             </p>
+            <button
+              type="button"
+              className={primaryClass}
+              onClick={() => setPanel("cloud")}
+            >
+              Accounts, cloud sync & collaboration
+            </button>
             <button
               type="button"
               className={buttonClass}
@@ -1568,37 +1829,13 @@ export default function App() {
               Download workspace backup
             </button>
             <p className="text-[0.75rem] text-text-muted">
-              Includes tasks, deliverables and activity history. Keep it
-              somewhere safe; it contains your saved context.
+              Includes all projects, templates, metadata and recovery entries.
+              Keep it somewhere safe; it contains your saved context.
             </p>
-            <ImportBackup
-              tasks={tasks}
-              onImport={(incoming, mode) => {
-                checkpoint();
-                if (mode === "replace") {
-                  replaceTasks(incoming.tasks);
-                  replaceAnchors(incoming.anchors);
-                  replaceActivity(incoming.activity);
-                } else {
-                  const merged = mergeBackup(tasks, anchors, incoming);
-                  replaceTasks(merged.tasks);
-                  replaceAnchors(merged.anchors);
-                  record(
-                    "Merged backup",
-                    `${merged.tasks.length - tasks.length} new tasks`,
-                  );
-                }
-                setPanel(null);
-                setSearch("");
-                setOwner("all");
-                setKind("all");
-                setContextFilter("all");
-                notify(
-                  mode === "replace"
-                    ? "Backup restored. Undo is available."
-                    : "Backup merged. Existing work kept.",
-                );
-              }}
+            <WorkspaceTransfer
+              workspace={workspace}
+              onBackup={downloadBackup}
+              onNotify={notify}
             />
             <div className="rounded-xl bg-surface-tint p-4">
               <h3 className="mb-2 text-sm font-semibold">A few shortcuts</h3>
@@ -1625,17 +1862,24 @@ export default function App() {
               <button
                 type="button"
                 className={`${buttonClass} !text-type-bug`}
-                onClick={() => {
+                onClick={async () => {
                   if (
                     !window.confirm(
                       "Replace all current tasks and deliverable links with demo data? Download a backup first if you need to keep them.",
                     )
                   )
                     return;
-                  checkpoint();
-                  replaceTasks(seedTasks());
-                  replaceAnchors(ANCHORS);
-                  replaceActivity([]);
+                  const replacement = newProject(seedTasks());
+                  const result = workspace.readOnly
+                    ? await workspace.recover(newData(replacement, false))
+                    : await updateProject(
+                        (p) => ({ ...replacement, id: p.id, name: p.name }),
+                        "Before sample workspace reset",
+                      );
+                  if (!result.ok) {
+                    notify(result.error);
+                    return;
+                  }
                   setSearch("");
                   setOwner("all");
                   setKind("all");

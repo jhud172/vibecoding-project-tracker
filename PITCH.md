@@ -66,7 +66,7 @@ certification or a measured psychological effect."
 
 ## 4:40-5:00 - Tradeoffs and close
 
-"I built this as a solo project on the course starter. React, Vite, Tailwind and localStorage kept the scope manageable. It is not a shared backend: data stays on this browser, and handoff is an owner label rather than a notification. That is the deliberate hackathon tradeoff."
+"I built this as a solo project on the course starter. Local work needs no account. Optional cloud projects add authenticated cross-device sync, comments and viewer/editor permissions. Sync is explicit, and stale cloud saves are rejected. The local assignee labels remain a demonstration; they send no notification. Real-account email delivery and human accessibility evaluation are separate acceptance checks."
 
 "Relay: keep the work moving, keep the context."
 
