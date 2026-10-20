@@ -107,7 +107,8 @@ Date-only deadlines use the local calendar day. Today and the next two days are 
 - `tests/accessibility.test.js`: contrast, preference validation and speech lifecycle regression tests.
 - `tests/studio.test.js`: recovery, import compatibility, focus ordering and checklist regression tests.
 - `e2e/workspace.spec.js`, `.github/workflows/verify.yml`: isolated Chromium/axe regression checks and CI validation.
-- `IMPLEMENTATION_PLAN.md`, `ROADMAP.md`: all 75 requested improvements and evidence-based completion status.
+- `FINALISATION.md`: current necessary-feature release scope and personal demo checks.
+- `IMPLEMENTATION_PLAN.md`, `ROADMAP.md`: historical 75-suggestion programme and evidence-based status; superseded by the narrowed release scope.
 - `src/Journal.jsx`, `src/journalScene.js`, `src/motion.js`: accessible journal navigation, on-demand Three.js rendering and view transitions.
 - `assets/source/relay-journal.blend`, `assets/source/create_journal.py`: original editable Blender model and reproducible animation/export script; see assets/source/README.md.
 - `REPORT.md`: implementation report and validation record.

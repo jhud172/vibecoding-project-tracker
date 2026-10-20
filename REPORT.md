@@ -32,6 +32,9 @@ scope and result; these checks are not an accessibility certification.
 
 Local checks passed: lint, 48 units, the full 29-workflow suite before the raw
 recovery correction, and the added raw-download regression after that correction.
+The full finalisation implementation at `7be4738` also passed Linux/Node 24 CI:
+48 units, all 30 browser workflows, lint, generated-doc consistency and build.
+[Verified workflow and logs](https://github.com/jhud172/vibecoding-project-tracker/actions/runs/39425053699).
 The Windows device voice emitted a real Reading event in manual inspection.
 No audible listening study is claimed. Runtime npm audit reports zero findings;
 seven previously reviewed Tailwind 3 development-tool findings remain. A tooling

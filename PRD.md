@@ -218,7 +218,7 @@ Semantics, focus, keyboard controls and non-colour state labels remain independe
 of speech. ACCESSIBILITY.md distinguishes checked behavior from broader
 assistive-technology testing and full conformance, which are not claimed.
 
-## 17. Complete roadmap authorisation
+## 17. Complete roadmap authorisation (historical)
 
 On 20 October 2026 James requested implementation and finalisation of the full
 75-item improvement roadmap. The scope now includes the additional metadata,
@@ -228,3 +228,19 @@ Preserve existing data and compatibility through explicit versioned migrations.
 The dependency order and evidence requirements are in IMPLEMENTATION_PLAN.md.
 Actual human evaluations/rehearsals and service-dependent capabilities cannot be
 marked complete by simulated data or interface placeholders.
+
+## 18. Necessary-feature release scope (latest instruction)
+
+Later on 20 October 2026 James asked to minimise remaining work to necessary
+features and skip unnecessary additions. This supersedes section 17's all-75
+build commitment. FINALISATION.md defines the release scope: preserve the PRD
+flows and saved data, finish checking existing features, correct concrete
+reliability/accessibility problems, retain the original Blender motion work,
+and publish a verified build with accurate documentation.
+
+Do not add optional AI, languages, advanced project-management views or further
+integrations solely because they were suggested. Existing cloud tools are
+explicitly a preview pending real-account/email acceptance; the local competition
+flows work without sign-in. Human evaluation and James's actual rehearsal remain
+personal checks and must never be claimed from automated tests. No paid plan or
+charge is authorised.
