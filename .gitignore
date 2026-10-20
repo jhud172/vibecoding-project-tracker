@@ -11,3 +11,4 @@ qa/
 .vercel
 playwright-report/
 test-results/
+supabase/.temp/
