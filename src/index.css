@@ -506,7 +506,10 @@ h1,
 h2,
 h3,
 label,
-span {
+span,
+dt,
+dd,
+summary {
   overflow-wrap: anywhere;
 }
 button:disabled {

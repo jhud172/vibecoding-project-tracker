@@ -536,6 +536,10 @@ test("design justification register supports finding, keyboard disclosure, indiv
   await search.fill("champagne");
   await book.locator("summary").click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  // A wider fallback font exposed unbroken terms in definition rows on Linux.
+  const wideFont = await page.addStyleTag({ content: "body { font-family: Verdana, sans-serif; }" });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await wideFont.evaluate(element => element.remove());
   results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
   expect(results.violations, JSON.stringify(results.violations)).toEqual([]);
   await page.getByText("Asset, icon and page inventory", { exact: true }).click();

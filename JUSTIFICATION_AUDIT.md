@@ -51,6 +51,11 @@ every CSS declaration or claim a numerical value is scientifically optimal.
   characters. Search, result/empty states and native disclosures make the longer
   reference navigable. Inventory links clear filtering and focus the opened
   explanation.
+- The new enlarged-text check exposed long definition-list text overflowing on
+  Linux. A wider Verdana fallback reproduced it locally. Extended the existing
+  word-wrapping rule to definition labels/descriptions and disclosure summaries;
+  the focused guide checks pass locally with default and wider fonts at 200%.
+  Text wraps rather than being clipped or reduced in size.
 
 ## Evidence and limits
 
@@ -68,7 +73,7 @@ dynamically loaded component, or certify every runtime/visual state. New inline
 elements, CSS changes, anonymous components or external assets still require
 manual rationale review within their parent component's scope.
 
-Local verification passed:
+Local Windows verification passed:
 
 - Design generation/source coverage, ESLint and whitespace checks.
 - The design/presentation navigation and axe workflow.
