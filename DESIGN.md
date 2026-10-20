@@ -1,6 +1,6 @@
 # Relay - design system
 
-Status: ready for implementation. Owner: James. 20 October 2026.
+Status: implemented and extended for competition. Owner: James. 20 October 2026.
 
 ## Mood
 
@@ -58,7 +58,7 @@ Page heading: 36-44 px. Section heading: 18 px. Task title: 15 px semibold. Body
 | Add task | New task |
 | Empty column | Room for your next move. |
 | Copy success | Copied. Pick up where you left off. |
-| Delete confirmation | Delete this task? This removes its saved context too. |
+| Delete confirmation | Remove this task from the board? Undo is available until your next change or reload. |
 | Handoff toast | Handed off to {name}. |
 | Persistence | Saved in this browser |
 | Extra feature | Resume work |
@@ -70,3 +70,21 @@ Page heading: 36-44 px. Section heading: 18 px. Task title: 15 px semibold. Body
 - Tagline: Keep the work moving. Keep the context.
 - Wordmark: lowercase serif lettering beside a Lucide workflow icon.
 - One light theme. No theme picker or decorative animation.
+
+## Competition extension
+
+- Focus desk uses a deep forest surface to give one task clear visual priority.
+  Its suggestion includes the reason, a user-selectable queue, a briefing action
+  and a stage-appropriate next action.
+- Four actionable workspace indicators lead to the relevant view: completion,
+  overdue work, handoff essentials and deliverable links. Counts describe saved
+  data; they do not claim productivity gains.
+- The checklist distinguishes missing from present with text and icons. Templates
+  append rather than replace user context; placeholder text does not pass checks.
+- Board and list layouts share the same filters. List layout is the default
+  below 768 pixels; deliverables use a compact two-column grid on small screens.
+- Dragging has a visible grip and highlighted destination. Stage menus remain
+  available for keyboard and touch interaction.
+- Quick actions use a labelled native dialog and standard Tab/Enter navigation.
+- Recovery is visible: undo in the header and toast, earlier context in the
+  editor, import preview before mutation, and confirmation for replacement.

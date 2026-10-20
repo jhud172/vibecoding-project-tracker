@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -26,6 +26,11 @@ import {
   Trash2,
   Workflow,
   X,
+  Target,
+  History,
+  Command,
+  List,
+  GripVertical,
 } from "lucide-react";
 import {
   ANCHORS,
@@ -45,6 +50,22 @@ import {
 } from "./model";
 import { useLocalStorage } from "./useLocalStorage";
 import { Field, Modal, buttonClass, fieldClass, primaryClass } from "./ui";
+import {
+  contextChecklist,
+  describeChange,
+  makeBackup,
+  mergeBackup,
+  validActivity,
+} from "./competition";
+import {
+  ActivityPanel,
+  CommandMenu,
+  ContextCoach,
+  FocusDesk,
+  ImportBackup,
+  TaskList,
+  WorkspacePulse,
+} from "./Studio";
 
 export { STAGES, TEAM, useLocalStorage };
 const toneClasses = {
@@ -78,10 +99,19 @@ const anchorHints = {
   documentation: "Everything the next person needs",
 };
 
-function TaskEditor({ task, onClose, onSave, onDelete, onCopy }) {
+function TaskEditor({ task, onClose, onSave, onDelete, onCopy, activity }) {
   const [draft, setDraft] = useState(task);
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const versions = activity
+    .filter(
+      (entry) =>
+        entry.taskId === task.id &&
+        entry.action === "Updated context" &&
+        entry.previous,
+    )
+    .slice(0, 8);
   const change = (key, value) =>
     setDraft((current) => ({ ...current, [key]: value }));
   const dirty = JSON.stringify(draft) !== JSON.stringify(task);
@@ -216,6 +246,70 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy }) {
               {new Date(task.contextUpdatedAt).toLocaleString("en-GB")}
             </p>
           )}
+          <div className="mt-4">
+            <ContextCoach
+              task={draft}
+              onTemplate={(text) =>
+                change(
+                  "context",
+                  draft.context?.trim()
+                    ? `${draft.context.trim()}\n\n${text}`
+                    : text,
+                )
+              }
+            />
+          </div>
+          {versions.length > 0 && (
+            <div className="mt-4 border-t border-[#CCD8C3] pt-3">
+              <button
+                type="button"
+                aria-expanded={historyOpen}
+                onClick={() => setHistoryOpen(!historyOpen)}
+                className="flex items-center gap-2 text-xs font-medium text-brand-primary"
+              >
+                <History size={14} /> Earlier context ({versions.length})
+              </button>
+              {historyOpen && (
+                <div className="mt-3 space-y-3">
+                  {versions.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="rounded-lg border border-stone-200 bg-white p-3"
+                    >
+                      <p className="text-[10px] text-text-muted">
+                        Before {new Date(entry.at).toLocaleString("en-GB")} ·{" "}
+                        {entry.previous.contextTool || "No tool set"}
+                      </p>
+                      <p className="my-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs text-text-muted">
+                        {entry.previous.context || "Empty context"}
+                      </p>
+                      <button
+                        type="button"
+                        className="text-xs font-medium text-brand-primary underline"
+                        onClick={() => {
+                          if (
+                            dirty &&
+                            !window.confirm(
+                              "Replace your draft context with this earlier version? Other draft fields will stay unchanged.",
+                            )
+                          )
+                            return;
+                          setDraft((current) => ({
+                            ...current,
+                            context: entry.previous.context || "",
+                            contextTool: entry.previous.contextTool || null,
+                          }));
+                          setHistoryOpen(false);
+                        }}
+                      >
+                        Use this version in the draft
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </section>
         {task.id && (
           <p className="text-xs text-text-muted">
@@ -230,7 +324,8 @@ function TaskEditor({ task, onClose, onSave, onDelete, onCopy }) {
         {deleting ? (
           <div className="rounded-xl border border-red-200 bg-due-overdue p-4">
             <p className="text-sm font-medium">
-              Delete this task? This removes its saved context too.
+              Remove this task from the board? Undo is available until your next
+              change or reload.
             </p>
             <div className="mt-3 flex gap-2">
               <button
@@ -342,9 +437,20 @@ function AnchorEditor({ anchor, onClose, onSave }) {
   );
 }
 
-function TaskCard({ task, now, onEdit, onUpdate, onCopy }) {
+function TaskCard({
+  task,
+  now,
+  onEdit,
+  onUpdate,
+  onCopy,
+  onDragStart,
+  onDragEnd,
+}) {
   const due = deadline(task, now);
   const TypeIcon = task.type === "bug" ? Bug : Sparkles;
+  const contextCount = contextChecklist(task).filter(
+    (item) => item.done,
+  ).length;
   return (
     <article
       data-testid="task-card"
@@ -353,6 +459,21 @@ function TaskCard({ task, now, onEdit, onUpdate, onCopy }) {
     >
       <div className="p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
+          <span
+            draggable
+            onClick={(event) => event.stopPropagation()}
+            onDragStart={(event) => {
+              event.dataTransfer.setData("text/plain", task.id);
+              event.dataTransfer.effectAllowed = "move";
+              onDragStart(task.id);
+            }}
+            onDragEnd={onDragEnd}
+            title="Drag to another stage, or use the stage dropdown"
+            aria-hidden="true"
+            className="cursor-grab text-stone-400 active:cursor-grabbing"
+          >
+            <GripVertical size={14} />
+          </span>
           <span
             className={`inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider ${task.type === "bug" ? "text-type-bug" : "text-type-feature"}`}
           >
@@ -456,9 +577,9 @@ function TaskCard({ task, now, onEdit, onUpdate, onCopy }) {
         <span
           className={`h-1.5 w-1.5 rounded-full ${task.context?.trim() ? "bg-type-feature" : "bg-stone-400"}`}
         />
-        {task.context?.trim()
-          ? "Context ready for the next step"
-          : "A little context goes a long way"}
+        {contextCount === 4
+          ? "Handoff essentials present"
+          : `${contextCount}/4 handoff essentials · refine context`}
       </div>
     </article>
   );
@@ -467,7 +588,7 @@ function TaskCard({ task, now, onEdit, onUpdate, onCopy }) {
 export default function App() {
   const [tasks, setTasks, taskError, replaceTasks] = useLocalStorage(
     "vibetracker.tasks",
-    seedTasks(),
+    seedTasks,
     validTasks,
   );
   const [anchors, setAnchors, anchorError, replaceAnchors] = useLocalStorage(
@@ -476,6 +597,17 @@ export default function App() {
     validAnchors,
   );
   const [editing, setEditing] = useState(null);
+  const [activity, setActivity, activityError, replaceActivity] =
+    useLocalStorage("relay.activity:v1", [], validActivity);
+  const [undo, setUndo] = useState(null);
+  const [view, setView] = useState("board");
+  const [layout, setLayout] = useState(() =>
+    window.matchMedia("(max-width: 767px)").matches ? "list" : "board",
+  );
+  const [contextFilter, setContextFilter] = useState("all");
+  const [dragging, setDragging] = useState(null);
+  const [dragOver, setDragOver] = useState(null);
+  const searchRef = useRef(null);
   const [editingAnchor, setEditingAnchor] = useState(null);
   const [panel, setPanel] = useState(null);
   const [search, setSearch] = useState("");
@@ -490,10 +622,41 @@ export default function App() {
   }, []);
   useEffect(() => {
     if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 4500);
+    const timer = setTimeout(() => setToast(null), 8000);
     return () => clearTimeout(timer);
   }, [toast]);
   const notify = (message) => setToast({ message });
+  const checkpoint = () => setUndo({ tasks, anchors, activity });
+  const record = (action, title, taskId = "", previous = null) =>
+    setActivity((current) =>
+      [
+        {
+          id: crypto.randomUUID(),
+          action,
+          title,
+          taskId,
+          previous,
+          at: new Date().toISOString(),
+        },
+        ...current,
+      ].slice(0, 80),
+    );
+  const undoChange = () => {
+    if (!undo) return;
+    replaceTasks(undo.tasks);
+    replaceAnchors(undo.anchors);
+    replaceActivity(undo.activity);
+    setUndo(null);
+    notify("Last change undone.");
+  };
+  const showBoard = () => {
+    setView("board");
+    setContextFilter("all");
+  };
+  const showFocus = () => {
+    setView("focus");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
   const addTask = (status = "todo") =>
     setEditing({
       title: "",
@@ -506,6 +669,10 @@ export default function App() {
       contextTool: null,
     });
   const updateTask = (task, updates) => {
+    if (Object.entries(updates).every(([key, value]) => task[key] === value))
+      return;
+    checkpoint();
+    record(describeChange(task, { ...task, ...updates }), task.title, task.id);
     setTasks((current) =>
       current.map((item) =>
         item.id === task.id ? { ...item, ...updates } : item,
@@ -529,13 +696,7 @@ export default function App() {
   };
   const downloadBackup = () => {
     const blob = new Blob(
-      [
-        JSON.stringify(
-          { exportedAt: new Date().toISOString(), tasks, anchors },
-          null,
-          2,
-        ),
-      ],
+      [JSON.stringify(makeBackup(tasks, anchors, activity), null, 2)],
       { type: "application/json" },
     );
     const url = URL.createObjectURL(blob);
@@ -549,6 +710,11 @@ export default function App() {
     (task) =>
       (owner === "all" || task.assignee === owner) &&
       (kind === "all" || task.type === kind) &&
+      (contextFilter === "all" ||
+        (task.status !== "done" &&
+          (contextFilter === "ready"
+            ? contextChecklist(task).every((item) => item.done)
+            : !contextChecklist(task).every((item) => item.done)))) &&
       `${task.title} ${task.description} ${task.context || ""}`
         .toLowerCase()
         .includes(search.toLowerCase().trim()),
@@ -559,11 +725,48 @@ export default function App() {
   ).length;
   const linked = anchors.filter((anchor) => anchor.url).length;
   const briefing = resumePrompt(tasks, anchors, now);
+  useEffect(() => {
+    const handleKey = (event) => {
+      if (
+        editing ||
+        editingAnchor ||
+        panel ||
+        clipboardFallback ||
+        event.isComposing
+      )
+        return;
+      const typing = event.target.closest?.(
+        "input, textarea, select, [contenteditable='true']",
+      );
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setPanel("commands");
+        return;
+      }
+      if (typing || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key.toLowerCase() === "n") {
+        event.preventDefault();
+        addTask();
+      }
+      if (event.key === "/") {
+        event.preventDefault();
+        setView("board");
+        requestAnimationFrame(() => searchRef.current?.focus());
+      }
+      if (event.key.toLowerCase() === "f") {
+        event.preventDefault();
+        showFocus();
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [editing, editingAnchor, panel, clipboardFallback]);
   return (
     <div className="min-h-screen bg-surface-page text-text-primary selection:bg-brand-accent">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-52 flex-col border-r border-[#DFE3D8] bg-[#EEEEE5] p-6 xl:flex">
         <a
           href="#board"
+          onClick={showBoard}
           aria-label="Relay task board"
           className="flex items-center gap-2.5 text-brand-primary"
         >
@@ -576,13 +779,27 @@ export default function App() {
           Your workspace
         </p>
         <nav aria-label="Workspace" className="mt-3 space-y-1 text-sm">
-          <a
-            href="#board"
-            className="flex items-center gap-2.5 rounded-lg bg-brand-accent px-3 py-2.5 font-medium text-brand-primary"
+          <button
+            type="button"
+            onClick={showBoard}
+            aria-pressed={view === "board"}
+            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium text-brand-primary ${view === "board" ? "bg-brand-accent" : "hover:bg-white/60"}`}
           >
             <LayoutGrid size={16} />
             Task board<span className="ml-auto text-xs">{tasks.length}</span>
-          </a>
+          </button>
+          <button
+            type="button"
+            onClick={showFocus}
+            aria-pressed={view === "focus"}
+            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium text-brand-primary ${view === "focus" ? "bg-brand-accent" : "hover:bg-white/60"}`}
+          >
+            <Target size={16} />
+            Focus desk
+            <span className="ml-auto rounded border border-[#CCD8C3] px-1.5 text-[10px]">
+              F
+            </span>
+          </button>
           <a
             href="#deliverables"
             className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-white/60"
@@ -597,6 +814,22 @@ export default function App() {
           >
             <Sparkles size={16} />
             Resume work
+          </button>
+          <button
+            type="button"
+            onClick={() => setPanel("activity")}
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-white/60"
+          >
+            <History size={16} />
+            Activity
+          </button>
+          <button
+            type="button"
+            onClick={() => setPanel("commands")}
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-text-muted hover:bg-white/60"
+          >
+            <Command size={16} />
+            Quick actions
           </button>
         </nav>
         <div className="mt-auto">
@@ -640,32 +873,60 @@ export default function App() {
               Vibecoding project
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => setPanel("settings")}
-            className="inline-flex items-center gap-2 rounded-md text-xs text-text-muted focus-visible:outline-brand-primary"
-          >
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${taskError || anchorError ? "bg-type-bug" : "bg-type-feature"}`}
-            />
-            {taskError || anchorError
-              ? "Storage needs attention"
-              : "Saved in this browser"}
-            <Settings2 size={14} />
-          </button>
+          <div className="flex items-center gap-4">
+            {undo && (
+              <button
+                type="button"
+                onClick={undoChange}
+                className="flex items-center gap-1.5 rounded text-xs text-brand-primary"
+              >
+                <RotateCcw size={13} />
+                Undo
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setPanel("commands")}
+              aria-label="Open quick actions"
+              className="flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-2.5 py-1.5 text-text-muted"
+            >
+              <Search size={14} />
+              <span className="hidden text-xs sm:inline">Quick actions</span>
+              <kbd className="hidden rounded border border-stone-200 px-1 text-[10px] sm:inline">
+                Ctrl K
+              </kbd>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPanel("settings")}
+              className="inline-flex items-center gap-2 rounded-md text-xs text-text-muted focus-visible:outline-brand-primary"
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${taskError || anchorError || activityError ? "bg-type-bug" : "bg-type-feature"}`}
+              />
+              {taskError || anchorError || activityError
+                ? "Storage needs attention"
+                : "Saved in this browser"}
+              <Settings2 size={14} />
+            </button>
+          </div>
         </header>
         <main className="mx-auto max-w-[1700px] px-5 pb-10 pt-8 sm:px-9">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-type-feature">
-                Less restarting. More making.
+              <p className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-type-feature">
+                <span className="h-1.5 w-1.5 rounded-full bg-type-feature" />{" "}
+                The context-first project studio
               </p>
               <h1 className="font-editorial text-4xl tracking-tight sm:text-[44px]">
-                A little structure.
-                <br className="sm:hidden" /> A lot of possibility.
+                {view === "focus"
+                  ? "Less noise. Your next move."
+                  : "Good work deserves a clear next step."}
               </h1>
               <p className="mt-3 text-sm text-text-muted">
-                Keep the work moving. Keep the context.
+                {view === "focus"
+                  ? "Pick up the thinking, not just the task."
+                  : "Plan it. Build it. Leave the context for what comes next."}
               </p>
             </div>
             <button
@@ -678,12 +939,57 @@ export default function App() {
               <ArrowUpRight size={16} />
             </button>
           </div>
-          {(taskError || anchorError) && (
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <div className="inline-flex rounded-xl border border-stone-200 bg-[#EEEFE6] p-1">
+              <button
+                type="button"
+                aria-pressed={view === "board"}
+                onClick={showBoard}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium ${view === "board" ? "bg-white text-brand-primary shadow-sm" : "text-text-muted"}`}
+              >
+                <LayoutGrid size={14} /> Board
+              </button>
+              <button
+                type="button"
+                aria-pressed={view === "focus"}
+                onClick={showFocus}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium ${view === "focus" ? "bg-white text-brand-primary shadow-sm" : "text-text-muted"}`}
+              >
+                <Target size={14} /> Focus desk
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => setPanel("activity")}
+              aria-label="Activity"
+              className="flex items-center gap-1.5 text-xs text-text-muted"
+            >
+              <History size={14} />
+              <span className="hidden sm:inline">Activity</span>
+            </button>
+          </div>
+          <WorkspacePulse
+            tasks={tasks}
+            anchors={anchors}
+            now={now}
+            onFocus={showFocus}
+            onBoard={showBoard}
+            onContext={() => {
+              setView("board");
+              setContextFilter("missing");
+              requestAnimationFrame(() =>
+                document
+                  .getElementById("board")
+                  ?.scrollIntoView({ behavior: "instant" }),
+              );
+            }}
+          />
+          {(taskError || anchorError || activityError) && (
             <div
               role="alert"
               className="mb-5 rounded-lg border border-red-200 bg-due-overdue p-4 text-sm text-type-bug"
             >
-              <p>{taskError || anchorError}</p>
+              <p>{taskError || anchorError || activityError}</p>
               <button
                 type="button"
                 onClick={downloadBackup}
@@ -696,6 +1002,17 @@ export default function App() {
                 data with demo data.
               </p>
             </div>
+          )}
+          {view === "focus" && (
+            <FocusDesk
+              tasks={tasks}
+              now={now}
+              onEdit={setEditing}
+              onUpdate={updateTask}
+              onCopy={copy}
+              onAdd={() => addTask()}
+              onBoard={showBoard}
+            />
           )}
           <section
             id="deliverables"
@@ -714,7 +1031,7 @@ export default function App() {
                 {linked}/4 deliverables linked
               </span>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {anchors.map((anchor) => {
                 const Icon = anchorIcons[anchor.id];
                 return (
@@ -768,193 +1085,288 @@ export default function App() {
               })}
             </div>
           </section>
-          <section
-            id="board"
-            aria-labelledby="board-title"
-            className="mt-8 scroll-mt-5"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <h2 id="board-title" className="font-editorial text-2xl">
-                  The work in motion
-                </h2>
-                <span className="rounded-full border border-stone-200 px-2 py-0.5 text-xs text-text-muted">
-                  {tasks.length}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => addTask()}
-                className={`${primaryClass} !py-2`}
-              >
-                <Plus size={16} />
-                New task
-              </button>
-            </div>
-            <div className="my-5 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <label className="relative">
-                  <span className="sr-only">Search tasks</span>
-                  <Search
-                    size={14}
-                    className="pointer-events-none absolute left-3 top-2.5 text-text-muted"
-                  />
-                  <input
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    placeholder="Find a task or context…"
-                    className={`${fieldClass} !w-56 !py-2 !pl-9 !text-xs`}
-                  />
-                </label>
-                <select
-                  aria-label="Filter by owner"
-                  value={owner}
-                  onChange={(event) => setOwner(event.target.value)}
-                  className={`${fieldClass} !w-auto !py-2 !text-xs`}
-                >
-                  <option value="all">All owners</option>
-                  {TEAM.map((member) => (
-                    <option key={member}>{member}</option>
-                  ))}
-                </select>
-                <select
-                  aria-label="Filter by type"
-                  value={kind}
-                  onChange={(event) => setKind(event.target.value)}
-                  className={`${fieldClass} !w-auto !py-2 !text-xs`}
-                >
-                  <option value="all">All types</option>
-                  <option value="feature">Features</option>
-                  <option value="bug">Bugs</option>
-                </select>
-                {(search || owner !== "all" || kind !== "all") && (
+          {view === "board" && (
+            <section
+              id="board"
+              aria-labelledby="board-title"
+              className="mt-8 scroll-mt-5"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <h2 id="board-title" className="font-editorial text-2xl">
+                    The work in motion
+                  </h2>
+                  <span className="rounded-full border border-stone-200 px-2 py-0.5 text-xs text-text-muted">
+                    {tasks.length}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="inline-flex rounded-lg border border-stone-200 bg-white p-1">
+                    <button
+                      type="button"
+                      aria-label="Board layout"
+                      aria-pressed={layout === "board"}
+                      onClick={() => setLayout("board")}
+                      className={`rounded p-1.5 ${layout === "board" ? "bg-brand-accent text-brand-primary" : "text-text-muted"}`}
+                    >
+                      <LayoutGrid size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="List layout"
+                      aria-pressed={layout === "list"}
+                      onClick={() => setLayout("list")}
+                      className={`rounded p-1.5 ${layout === "list" ? "bg-brand-accent text-brand-primary" : "text-text-muted"}`}
+                    >
+                      <List size={15} />
+                    </button>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setSearch("");
-                      setOwner("all");
-                      setKind("all");
-                    }}
-                    className="rounded px-2 py-1 text-xs text-brand-primary hover:underline"
+                    onClick={() => addTask()}
+                    className={`${primaryClass} !py-2`}
                   >
-                    Clear filters
+                    <Plus size={16} />
+                    New task
                   </button>
-                )}
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-xs text-text-muted">
-                {overdue > 0 && (
-                  <span className="flex items-center gap-1 text-type-bug">
-                    <Clock3 size={13} />
-                    {overdue} overdue
-                  </span>
-                )}
-                <span>
-                  {doneCount} of {tasks.length} done
-                </span>
-                <span className="h-1.5 w-16 overflow-hidden rounded-full bg-stone-200">
-                  <span
-                    className="block h-full bg-brand-primary"
-                    style={{
-                      width: `${tasks.length ? (doneCount / tasks.length) * 100 : 0}%`,
-                    }}
-                  />
-                </span>
-              </div>
-            </div>
-            <div
-              className="overflow-x-auto pb-4"
-              role="region"
-              aria-label="Kanban board, scroll horizontally on smaller screens"
-              tabIndex={0}
-            >
-              <div className="grid min-w-[980px] grid-cols-4 gap-4">
-                {STAGES.map((stage, index) => {
-                  const columnTasks = filtered.filter(
-                    (task) => task.status === stage.id,
-                  );
-                  return (
-                    <section
-                      key={stage.id}
-                      aria-labelledby={`stage-${stage.id}`}
-                      className="min-h-[370px] rounded-xl bg-[#ECEDE6]/70 p-2.5"
+              <div className="my-5 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <label className="relative">
+                    <span className="sr-only">Search tasks</span>
+                    <Search
+                      size={14}
+                      className="pointer-events-none absolute left-3 top-2.5 text-text-muted"
+                    />
+                    <input
+                      ref={searchRef}
+                      value={search}
+                      onChange={(event) => setSearch(event.target.value)}
+                      placeholder="Find a task or context…"
+                      className={`${fieldClass} !w-56 !py-2 !pl-9 !text-xs`}
+                    />
+                  </label>
+                  <select
+                    aria-label="Filter by owner"
+                    value={owner}
+                    onChange={(event) => setOwner(event.target.value)}
+                    className={`${fieldClass} !w-auto !py-2 !text-xs`}
+                  >
+                    <option value="all">All owners</option>
+                    {TEAM.map((member) => (
+                      <option key={member}>{member}</option>
+                    ))}
+                  </select>
+                  <select
+                    aria-label="Filter by type"
+                    value={kind}
+                    onChange={(event) => setKind(event.target.value)}
+                    className={`${fieldClass} !w-auto !py-2 !text-xs`}
+                  >
+                    <option value="all">All types</option>
+                    <option value="feature">Features</option>
+                    <option value="bug">Bugs</option>
+                  </select>
+                  <select
+                    aria-label="Filter by handoff readiness"
+                    value={contextFilter}
+                    onChange={(event) => setContextFilter(event.target.value)}
+                    className={`${fieldClass} !w-auto !py-2 !text-xs`}
+                  >
+                    <option value="all">All context</option>
+                    <option value="missing">Open: needs essentials</option>
+                    <option value="ready">Open: essentials present</option>
+                  </select>
+                  {(search ||
+                    owner !== "all" ||
+                    kind !== "all" ||
+                    contextFilter !== "all") && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearch("");
+                        setOwner("all");
+                        setKind("all");
+                        setContextFilter("all");
+                      }}
+                      className="rounded px-2 py-1 text-xs text-brand-primary hover:underline"
                     >
-                      <div className="mb-3 flex items-center gap-2 px-1.5 py-2">
-                        <span
-                          className={`h-2 w-2 rounded-full ${stageColours[index]}`}
-                        />
-                        <h3
-                          id={`stage-${stage.id}`}
-                          className="text-xs font-semibold"
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 text-xs text-text-muted">
+                  {overdue > 0 && (
+                    <span className="flex items-center gap-1 text-type-bug">
+                      <Clock3 size={13} />
+                      {overdue} overdue
+                    </span>
+                  )}
+                  <span>
+                    {doneCount} of {tasks.length} done
+                  </span>
+                  <span className="h-1.5 w-16 overflow-hidden rounded-full bg-stone-200">
+                    <span
+                      className="block h-full bg-brand-primary"
+                      style={{
+                        width: `${tasks.length ? (doneCount / tasks.length) * 100 : 0}%`,
+                      }}
+                    />
+                  </span>
+                </div>
+              </div>
+              {layout === "list" ? (
+                <TaskList
+                  tasks={filtered}
+                  now={now}
+                  onEdit={setEditing}
+                  onUpdate={updateTask}
+                  onCopy={copy}
+                />
+              ) : (
+                <div
+                  className="overflow-x-auto pb-4"
+                  role="region"
+                  aria-label="Kanban board, scroll horizontally on smaller screens"
+                  tabIndex={0}
+                >
+                  <div className="grid min-w-[980px] grid-cols-4 gap-4">
+                    {STAGES.map((stage, index) => {
+                      const columnTasks = filtered.filter(
+                        (task) => task.status === stage.id,
+                      );
+                      return (
+                        <section
+                          key={stage.id}
+                          onDragOver={(event) => {
+                            if (!dragging) return;
+                            event.preventDefault();
+                            event.dataTransfer.dropEffect = "move";
+                            setDragOver(stage.id);
+                          }}
+                          onDragLeave={(event) => {
+                            if (
+                              !event.currentTarget.contains(event.relatedTarget)
+                            )
+                              setDragOver(null);
+                          }}
+                          onDrop={(event) => {
+                            event.preventDefault();
+                            const task = tasks.find(
+                              (item) =>
+                                item.id === dragging &&
+                                item.id ===
+                                  event.dataTransfer.getData("text/plain"),
+                            );
+                            if (task) updateTask(task, { status: stage.id });
+                            setDragging(null);
+                            setDragOver(null);
+                          }}
+                          aria-labelledby={`stage-${stage.id}`}
+                          className={`min-h-[370px] rounded-xl border p-2.5 transition-colors motion-reduce:transition-none ${dragOver === stage.id ? "border-brand-primary bg-brand-accent/60" : "border-transparent bg-[#ECEDE6]/70"}`}
                         >
-                          {stage.label}
-                        </h3>
-                        <span className="text-[11px] text-text-muted">
-                          {columnTasks.length}
-                        </span>
-                        <button
-                          type="button"
-                          aria-label={`Add task to ${stage.label}`}
-                          className="ml-auto rounded p-1 text-text-muted hover:bg-white focus-visible:outline-brand-primary"
-                          onClick={() => addTask(stage.id)}
-                        >
-                          <Plus size={15} />
-                        </button>
-                      </div>
-                      <div className="space-y-3">
-                        {columnTasks.map((task) => (
-                          <TaskCard
-                            key={task.id}
-                            task={task}
-                            now={now}
-                            onEdit={setEditing}
-                            onUpdate={updateTask}
-                            onCopy={copy}
-                          />
-                        ))}
-                        {!columnTasks.length && (
-                          <div className="rounded-xl border border-dashed border-stone-300 px-4 py-9 text-center">
-                            <Circle
-                              size={20}
-                              strokeWidth={1}
-                              className="mx-auto text-stone-400"
+                          <div className="mb-3 flex items-center gap-2 px-1.5 py-2">
+                            <span
+                              className={`h-2 w-2 rounded-full ${stageColours[index]}`}
                             />
-                            <p className="mt-3 text-xs text-text-muted">
-                              {search || owner !== "all" || kind !== "all"
-                                ? "No tasks match these filters."
-                                : "Room for your next move."}
-                            </p>
+                            <h3
+                              id={`stage-${stage.id}`}
+                              className="text-xs font-semibold"
+                            >
+                              {stage.label}
+                            </h3>
+                            <span className="text-[11px] text-text-muted">
+                              {columnTasks.length}
+                            </span>
                             <button
                               type="button"
+                              aria-label={`Add task to ${stage.label}`}
+                              className="ml-auto rounded p-1 text-text-muted hover:bg-white focus-visible:outline-brand-primary"
                               onClick={() => addTask(stage.id)}
-                              className="mt-3 text-xs font-medium text-brand-primary hover:underline"
                             >
-                              Add a task
+                              <Plus size={15} />
                             </button>
                           </div>
-                        )}
-                      </div>
-                    </section>
-                  );
-                })}
+                          <div className="space-y-3">
+                            {columnTasks.map((task) => (
+                              <TaskCard
+                                key={task.id}
+                                task={task}
+                                now={now}
+                                onEdit={setEditing}
+                                onUpdate={updateTask}
+                                onCopy={copy}
+                                onDragStart={setDragging}
+                                onDragEnd={() => {
+                                  setDragging(null);
+                                  setDragOver(null);
+                                }}
+                              />
+                            ))}
+                            {!columnTasks.length && (
+                              <div className="rounded-xl border border-dashed border-stone-300 px-4 py-9 text-center">
+                                <Circle
+                                  size={20}
+                                  strokeWidth={1}
+                                  className="mx-auto text-stone-400"
+                                />
+                                <p className="mt-3 text-xs text-text-muted">
+                                  {search ||
+                                  owner !== "all" ||
+                                  kind !== "all" ||
+                                  contextFilter !== "all"
+                                    ? "No tasks match these filters."
+                                    : "Room for your next move."}
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => addTask(stage.id)}
+                                  className="mt-3 text-xs font-medium text-brand-primary hover:underline"
+                                >
+                                  Add a task
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </section>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[11px] text-text-muted">
+                <p className="flex items-center gap-1.5">
+                  <Clipboard size={13} />
+                  {layout === "board"
+                    ? "Drag the grip to move a card, or use its stage menu."
+                    : "Earliest deadlines first. Completed work follows."}
+                </p>
+                <p>Solo studio · Demo teammates are sample identities</p>
               </div>
-            </div>
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[11px] text-text-muted">
-              <p className="flex items-center gap-1.5">
-                <Clipboard size={13} />
-                Every task carries its context. Nothing starts from zero.
-              </p>
-              <p>Solo studio · Demo teammates are sample identities</p>
-            </div>
-          </section>
+            </section>
+          )}
         </main>
       </div>
       {editing && (
         <TaskEditor
           key={editing.id || "new"}
           task={editing}
+          activity={activity}
           onClose={() => setEditing(null)}
           onSave={(draft) => {
             const saved = saveTask(draft, editing.id ? editing : null);
+            checkpoint();
+            record(
+              describeChange(editing.id ? editing : null, saved),
+              saved.title,
+              saved.id,
+              editing.id &&
+                (editing.context !== saved.context ||
+                  editing.contextTool !== saved.contextTool)
+                ? editing
+                : null,
+            );
             setTasks((current) =>
               editing.id
                 ? current.map((task) => (task.id === saved.id ? saved : task))
@@ -968,6 +1380,8 @@ export default function App() {
             );
           }}
           onDelete={(id) => {
+            checkpoint();
+            record("Deleted task", editing.title, id);
             setTasks((current) => current.filter((task) => task.id !== id));
             setEditing(null);
             notify("Task deleted.");
@@ -980,6 +1394,11 @@ export default function App() {
           anchor={editingAnchor}
           onClose={() => setEditingAnchor(null)}
           onSave={(url) => {
+            checkpoint();
+            record(
+              url ? "Linked deliverable" : "Removed deliverable link",
+              editingAnchor.label,
+            );
             setAnchors((current) =>
               current.map((anchor) =>
                 anchor.id === editingAnchor.id ? { ...anchor, url } : anchor,
@@ -988,6 +1407,33 @@ export default function App() {
             setEditingAnchor(null);
             notify(url ? "Deliverable linked." : "Link removed.");
           }}
+        />
+      )}
+      {panel === "commands" && (
+        <CommandMenu
+          tasks={tasks}
+          onClose={() => setPanel(null)}
+          onEdit={setEditing}
+          actions={[
+            { label: "Create a task", key: "N", run: () => addTask() },
+            { label: "Open focus desk", key: "F", run: showFocus },
+            { label: "Open task board", run: showBoard },
+            { label: "Copy workspace briefing", run: () => setPanel("resume") },
+            { label: "View activity history", run: () => setPanel("activity") },
+            {
+              label: "Backup and workspace settings",
+              run: () => setPanel("settings"),
+            },
+            ...(undo ? [{ label: "Undo last change", run: undoChange }] : []),
+          ]}
+        />
+      )}
+      {panel === "activity" && (
+        <ActivityPanel
+          activity={activity}
+          tasks={tasks}
+          onClose={() => setPanel(null)}
+          onEdit={setEditing}
         />
       )}
       {panel === "resume" && (
@@ -1045,6 +1491,48 @@ export default function App() {
               <ArrowDownToLine size={16} />
               Download workspace backup
             </button>
+            <p className="text-[11px] text-text-muted">
+              Includes tasks, deliverables and activity history. Keep it
+              somewhere safe; it contains your saved context.
+            </p>
+            <ImportBackup
+              tasks={tasks}
+              onImport={(incoming, mode) => {
+                checkpoint();
+                if (mode === "replace") {
+                  replaceTasks(incoming.tasks);
+                  replaceAnchors(incoming.anchors);
+                  replaceActivity(incoming.activity);
+                } else {
+                  const merged = mergeBackup(tasks, anchors, incoming);
+                  replaceTasks(merged.tasks);
+                  replaceAnchors(merged.anchors);
+                  record(
+                    "Merged backup",
+                    `${merged.tasks.length - tasks.length} new tasks`,
+                  );
+                }
+                setPanel(null);
+                setSearch("");
+                setOwner("all");
+                setKind("all");
+                setContextFilter("all");
+                notify(
+                  mode === "replace"
+                    ? "Backup restored. Undo is available."
+                    : "Backup merged. Existing work kept.",
+                );
+              }}
+            />
+            <div className="rounded-xl bg-[#EAF0E2] p-4">
+              <h3 className="mb-2 text-sm font-semibold">A few shortcuts</h3>
+              <p className="text-xs leading-6 text-text-muted">
+                <kbd>Ctrl / ⌘ K</kbd> Quick actions · <kbd>N</kbd> New task
+                <br />
+                <kbd>F</kbd> Focus desk · <kbd>/</kbd> Search tasks ·{" "}
+                <kbd>Esc</kbd> Close dialog
+              </p>
+            </div>
             <div className="border-t border-stone-200 pt-5">
               <h3 className="text-sm font-semibold">A fresh demo</h3>
               <p className="my-2 text-xs leading-relaxed text-text-muted">
@@ -1061,11 +1549,14 @@ export default function App() {
                     )
                   )
                     return;
+                  checkpoint();
                   replaceTasks(seedTasks());
                   replaceAnchors(ANCHORS);
+                  replaceActivity([]);
                   setSearch("");
                   setOwner("all");
                   setKind("all");
+                  setContextFilter("all");
                   setPanel(null);
                   notify("Demo workspace restored.");
                 }}
@@ -1110,6 +1601,15 @@ export default function App() {
         >
           <Check size={17} className="shrink-0" />
           {toast.message}
+          {undo && (
+            <button
+              type="button"
+              onClick={undoChange}
+              className="rounded border border-white/40 px-2 py-1 text-xs hover:bg-white/10"
+            >
+              Undo
+            </button>
+          )}
           <button
             type="button"
             aria-label="Dismiss notification"

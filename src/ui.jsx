@@ -8,6 +8,7 @@ export const buttonClass =
 export const primaryClass = `${buttonClass} !border-brand-primary !bg-brand-primary !text-white hover:!bg-[#193A2B]`;
 
 export function Modal({ title, subtitle, children, onClose, wide = false }) {
+  const id = useId();
   const ref = useRef(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -27,8 +28,8 @@ export function Modal({ title, subtitle, children, onClose, wide = false }) {
   return (
     <dialog
       ref={ref}
-      aria-labelledby="dialog-title"
-      aria-describedby={subtitle ? "dialog-subtitle" : undefined}
+      aria-labelledby={`${id}-title`}
+      aria-describedby={subtitle ? `${id}-subtitle` : undefined}
       onCancel={(event) => {
         event.preventDefault();
         closeRef.current();
@@ -37,11 +38,11 @@ export function Modal({ title, subtitle, children, onClose, wide = false }) {
     >
       <div className="flex items-start justify-between gap-6 border-b border-stone-200 px-6 py-5">
         <div>
-          <h2 id="dialog-title" className="font-editorial text-2xl">
+          <h2 id={`${id}-title`} className="font-editorial text-2xl">
             {title}
           </h2>
           {subtitle && (
-            <p id="dialog-subtitle" className="mt-1 text-sm text-text-muted">
+            <p id={`${id}-subtitle`} className="mt-1 text-sm text-text-muted">
               {subtitle}
             </p>
           )}

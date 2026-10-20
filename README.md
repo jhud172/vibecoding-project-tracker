@@ -36,12 +36,24 @@ npm run preview -- --host 127.0.0.1
 - Search titles, descriptions and context; filter by owner or task type.
 - Use **Resume work** to copy a deadline-ordered briefing of all unfinished work and deliverable links.
 - Download a JSON workspace backup and explicitly restore the sample workspace.
+- Open **Focus desk** for an explained next-task suggestion and a queue ordered by deadline, with in-progress work breaking ties.
+- Use the four-part **handoff checklist** and additive build, debug and handoff templates to improve your saved briefing.
+- Review activity and recover earlier context versions into a draft before saving.
+- Undo the last task, deliverable, import or demo-reset change until the next change or page reload.
+- Import a backup with a validation preview; merge keeps existing task IDs and links, while replacement requires confirmation.
+- Switch between the Kanban board and a deadline-ordered list. Narrow screens start in list layout.
+- Drag cards by their grip or use the keyboard-accessible stage menus.
+- Press **Ctrl/⌘ K** for quick actions, **N** for a new task, **F** for Focus desk, or **/** to search.
 
 ## Data and limitations
 
 Tasks live under `vibetracker.tasks`; deliverables under `vibetracker.anchors` in browser localStorage. An empty saved board remains empty. Four labelled demo tasks are created only when no saved board exists. Their dates are relative to the first load, so use Workspace settings to refresh the demo before presenting.
 
-There is no server database, account system, AI API, or real-time collaboration. Handoff changes a local owner field; it sends no message. Another browser or device has a separate workspace. Clearing site data removes the stored workspace. JSON backup is an export for safekeeping; importing a backup is not part of this version.
+There is no server database, account system, AI API, or real-time collaboration. Handoff changes a local owner field; it sends no message. Another browser or device has a separate workspace. Clearing site data removes the stored workspace. Export a JSON backup to move data between browsers. Import accepts original Relay backups and version 2 backups, up to 2 MB and 1,000 tasks. Imports validate the locked schema and safe URLs before changing anything.
+
+Activity is stored under `relay.activity:v1`, bounded to 80 entries. Context changes retain the previous task snapshot; the editor offers the latest eight available context versions for that task. Undo is a one-step in-memory snapshot and does not survive reload. Activity and backups can contain task context; treat them with the same care as the original tasks.
+
+The handoff checklist checks for a task brief, sufficient context text, a labelled next step and a verification instruction. It ignores bracketed template placeholders. These are transparent presence checks, not an AI judgment of correctness. Focus ordering is deterministic and can be overridden by selecting any unfinished task.
 
 Corrupt or incompatible stored data is not silently overwritten. A warning explains that changes may not be persisted; an explicit demo reset replaces that data. Clipboard errors open a selectable manual-copy dialog. Only HTTP(S) deliverable links without embedded credentials are accepted.
 
@@ -53,12 +65,15 @@ Date-only deadlines use the local calendar day. Today and the next two days are 
 - `src/model.js`: locked data model, validation, deadlines, demo data and Markdown formatting.
 - `src/useLocalStorage.js`: persistence and storage error handling.
 - `src/ui.jsx`: shared accessible fields and native dialog.
+- `src/Studio.jsx`: Focus desk, handoff coaching, quick actions, list layout, activity and import preview.
+- `src/competition.js`: focus ordering, checklist rules, activity validation and backup parsing/merging.
 - `tailwind.config.js`: Relay design tokens.
 - `tests/model.test.js`: focused tests for data and formatting behaviour.
 - `PRD.md`: specification and recorded solo-project decisions.
 - `DESIGN.md`: visual system and interface principles.
 - `PITCH.md`: five-minute script and demo runbook.
-- `public/presentation.html`: six-slide, keyboard-operable presentation with print layout.
+- `public/presentation.html`: seven-slide, keyboard-operable presentation with print layout.
+- `tests/studio.test.js`: recovery, import compatibility, focus ordering and checklist regression tests.
 - `REPORT.md`: implementation report and validation record.
 - `HACKATHON.md`: portal setup and verified milestone names.
 - `LECTURER_SETUP.md`: reusable student instructions for GitHub login, fork registration and webhook setup.

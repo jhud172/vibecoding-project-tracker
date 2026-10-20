@@ -18,10 +18,14 @@
 ## Pitch preparation
 
 The live portal's Pitch milestone asks for a prepared presentation and demo.
-`public/presentation.html` provides six slides; `PITCH.md` provides the five-minute
+`public/presentation.html` now provides seven slides; `PITCH.md` provides the five-minute
 script, live-demo sequence and recovery instructions. The `pitch-done` preparation
 commit records these deliverables. The PRD additionally requires James's actual
 timed rehearsal and on-stage copy demo. Neither is claimed to have happened.
+
+All 13 portal milestones were recognised after the pitch-preparation commit.
+The competition upgrade extends the finished product without reusing milestone
+tags to claim additional assessment credit.
 
 ## Milestone names verified in the portal
 

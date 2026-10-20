@@ -2,9 +2,9 @@
 
 Prepared for James, solo project owner. This is a script and runbook, not a claim that a live pitch or rehearsal has occurred. Adapt the wording to your own voice.
 
-The six-slide presentation is at `/presentation.html` on the deployed app (source:
+The seven-slide presentation is at `/presentation.html` on the deployed app (source:
 `public/presentation.html`). Use the Back/Next buttons or arrow keys. Printing
-includes all six slides. The Open live demo link returns to the app.
+includes all seven slides. The Open live demo link returns to the app.
 
 ## 0:00-0:40 - The problem
 
@@ -26,7 +26,7 @@ Open the new task and paste this briefing:
 
 Select ChatGPT as the source tool and save.
 
-"This is curated context, not an unfiltered chat dump. The task stores the next useful briefing and records when it changed."
+"This is curated context, not an unfiltered chat dump. Relay checks for a brief, useful context, a next step and a verification instruction. It is a transparent checklist, not an AI quality score. Templates help me get started without replacing what I already wrote."
 
 ## 2:15-3:05 - The hero moment
 
@@ -36,19 +36,20 @@ Click **Context** on the card. Paste the clipboard into an empty text editor or 
 
 Hand off to Demo Reviewer and explain that this is a sample identity. Mark the task Done; show that its date label becomes Completed.
 
-## 3:05-3:50 - Secret sauce: Resume work
+## 3:05-3:50 - Secret sauce: Focus desk
 
-Open **Resume work**. Show the unfinished tasks ordered by deadline.
+Open **Focus desk**. Show its suggested task and the explanation beneath it.
 
-"When I return tomorrow, I do not want to read every card. Relay prepares one briefing with the unfinished work, earliest deadlines first, plus my deliverable links. It works without a paid AI service because the valuable part is organising the context I already wrote."
+"When I return tomorrow, I do not want to read every card. Focus desk suggests the next task and explains why. Deadlines come first; work in progress breaks ties. I can choose another task, improve its handoff, or copy its briefing immediately. Resume work also prepares one briefing for the whole workspace."
 
-Copy the briefing and show that completed tasks are excluded.
+Select another task in the queue to show that the user remains in control.
 
-## 3:50-4:30 - Keep sight of the finish line
+## 3:50-4:30 - Trust it with real work
 
-Open a deliverable link editor, paste the project repository or a prepared document link, and save. Refresh to show persistence.
+Advance a focused task and click **Undo**. Open the task's earlier-context section
+if a version is available. Briefly point to the four deliverable links.
 
-"The board tracks the small steps. The anchor board keeps the final presentation, demo, report and documentation in sight."
+"An accidental click should not erase the work. I can undo the last change, recover earlier context, or take a backup to another browser. Import validates the file first, and merging preserves existing tasks. The final deliverables stay linked above the board."
 
 ## 4:30-5:00 - Tradeoffs and close
 

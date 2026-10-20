@@ -180,3 +180,22 @@ The hackathon is "done" when all 13 milestone tags are pushed to your repo and v
 - The live portal uses the milestone identifiers in the table above. See HACKATHON.md for differences from the starter README.
 - Data stays in this browser. Handoff changes the local owner label; it does not message or synchronise with another person.
 - Delivery must distinguish a prepared pitch from James's actual rehearsal.
+
+## 15. Competition improvements
+
+James requested substantial improvements after the original delivery. These
+extensions keep the locked Task/Anchor schema and localStorage architecture:
+
+- Focus desk: explained next-task ordering, selectable queue and direct progress actions.
+- Handoff coaching: four transparent presence checks, additive context templates
+  and a filter for incomplete briefings.
+- Recovery: one-step undo, an 80-entry activity history and earlier context
+  restoration into the task draft.
+- Portable workspace: versioned JSON backups, validated import preview,
+  non-overwriting merge and confirmed replacement.
+- Interaction polish: board/list layouts, accessible stage controls alongside
+  drag grips, a command palette and keyboard shortcuts.
+- Updated seven-slide presentation and demo sequence.
+
+The handoff checks are deterministic guidance, not AI-generated evaluation.
+No backend, paid API, authentication, invented teammate or real-time sync was added.

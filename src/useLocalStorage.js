@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 
 export function useLocalStorage(key, initialValue, validate) {
   const [initial] = useState(() => {
+    const fallback = () =>
+      typeof initialValue === "function" ? initialValue() : initialValue;
     try {
       const raw = window.localStorage.getItem(key);
-      if (raw === null) return { value: initialValue, error: "" };
+      if (raw === null) return { value: fallback(), error: "" };
       const value = JSON.parse(raw);
       if (!validate(value)) throw new Error("Unexpected data");
       return { value, error: "" };
     } catch {
       return {
-        value: initialValue,
+        value: fallback(),
         error: `Could not read ${key}. Existing saved data has been left untouched.`,
       };
     }
