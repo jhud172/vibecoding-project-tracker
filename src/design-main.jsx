@@ -16,6 +16,8 @@ import {
   GUIDE_TEXT,
 } from "./designRationale";
 import { buttonClass } from "./ui";
+import { JustificationRegister } from "./JustificationRegister.jsx";
+import { IDENTITY_NOTE, IMAGERY_NOTE } from "./designInventory.js";
 import "./index.css";
 
 function DesignGuide() {
@@ -52,6 +54,10 @@ function DesignGuide() {
           </p>
           <div className="mt-5">
             <ReadButton text={GUIDE_TEXT} title="Design rationale" />
+            <p className="mt-2 max-w-3xl text-xs leading-relaxed text-text-muted">
+              Whole-guide audio is limited to the first 12,000 characters.
+              Each decision-register entry has its own complete reading control.
+            </p>
           </div>
         </div>
         <nav
@@ -60,6 +66,7 @@ function DesignGuide() {
         >
           {[
             ["principles", "Principles"],
+            ["register", "Decision register"],
             ["decisions", "Interface decisions"],
             ["icons", "Logo & icons"],
             ["evidence", "Evidence & testing"],
@@ -73,6 +80,7 @@ function DesignGuide() {
             </a>
           ))}
         </nav>
+        <JustificationRegister />
         <section id="principles" aria-labelledby="principles-title">
           <h2 id="principles-title" className="mb-4 font-editorial text-3xl">
             The principles
@@ -130,20 +138,12 @@ function DesignGuide() {
               alt="Relay logo: two square nodes joined by a bent connector."
             />
             <p className="max-w-2xl text-sm leading-relaxed">
-              The connected squares express a handoff: one piece of work
-              continues to another stage with its context attached. The serif
-              wordmark identifies Relay; its small dot is decorative. A vector
-              favicon stays sharp when enlarged. The logo uses a single
-              consistent silhouette across themes.
+              {IDENTITY_NOTE}
             </p>
           </div>
           <p className="mb-5 max-w-3xl text-sm leading-relaxed text-text-muted">
             Relay uses Lucide outline icons for a consistent stroke and familiar
-            vocabulary. Icons reinforce labels, not replace them. There are no
-            stock photos or generated illustrations: they would not explain a
-            task’s state, and would add scanning and loading cost. The faint
-            Focus ring is the only ornamental image treatment and carries no
-            essential information.
+            vocabulary. Icons reinforce labels, not replace them. {IMAGERY_NOTE}
           </p>
           <dl className="space-y-4">
             {ICONS.map(([name, use, reason]) => (

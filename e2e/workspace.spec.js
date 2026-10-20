@@ -488,3 +488,59 @@ test("design guide and presentation retain named access controls and slide navig
     .analyze();
   expect(results.violations).toEqual([]);
 });
+
+test("design justification register supports finding, keyboard disclosure, individual reading and narrow reflow", async ({ page }) => {
+  await page.addInitScript(() => {
+    const local = { voiceURI: "guide-device", name: "Guide device", lang: "en-GB", localService: true };
+    window.__guideReading = [];
+    Object.defineProperty(window, "SpeechSynthesisUtterance", { value: class { constructor(text) { this.text = text; } } });
+    Object.defineProperty(window, "speechSynthesis", { value: {
+      getVoices: () => [local], addEventListener() {}, removeEventListener() {}, cancel() {}, pause() {}, resume() {},
+      speak(utterance) {
+        window.__guideReading.push(utterance.text);
+        queueMicrotask(() => { utterance.onstart?.(); utterance.onend?.(); });
+      },
+    } });
+  });
+  await page.goto("/design.html");
+  await expect(page.getByRole("heading", { name: "The decision register", exact: true })).toBeVisible();
+  const search = page.getByRole("searchbox", { name: "Find a justification", exact: true });
+  await search.fill("champagne");
+  const register = page.locator("#register");
+  await expect(register.getByRole("status")).toHaveText("1 of 30 explanations");
+  const book = page.locator("#why-journal-asset");
+  await book.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(book).toHaveAttribute("open", "");
+  await expect(book).toContainText("Basis and psychological claim limits");
+  await expect(book).toContainText("Gold is not claimed to increase trust");
+  await book.getByRole("button", { name: "Read aloud", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__guideReading.join(" "))).toContain("Verification and remaining checks");
+  const reading = await page.evaluate(() => window.__guideReading.join(" "));
+  expect(reading).toContain("Original Blender book");
+  expect(reading).not.toContain("Cloud preview, account forms");
+  let results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(results.violations, JSON.stringify(results.violations)).toEqual([]);
+  await search.fill("no matching explanation xyz");
+  await expect(register).toContainText("No explanations match.");
+  await page.getByRole("button", { name: "Clear explanation search", exact: true }).click();
+  await expect(search).toBeFocused();
+  await expect(register.getByRole("status")).toHaveText("30 of 30 explanations");
+  await search.fill("Clock3");
+  await expect(register.getByRole("status")).toHaveText("1 of 30 explanations");
+  await expect(page.locator("#why-dates")).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Accessibility", exact: true }).click();
+  await page.getByLabel("Text size", { exact: true }).selectOption("200");
+  await page.keyboard.press("Escape");
+  await search.fill("champagne");
+  await book.locator("summary").click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(results.violations, JSON.stringify(results.violations)).toEqual([]);
+  await page.getByText("Asset, icon and page inventory", { exact: true }).click();
+  await page.getByRole("list", { name: "Shipped assets", exact: true }).getByRole("link", { name: "Reason: identity", exact: true }).click();
+  await expect(search).toHaveValue("");
+  await expect(page.locator("#why-identity")).toHaveAttribute("open", "");
+  await expect(page.locator("#why-identity summary")).toBeFocused();
+});

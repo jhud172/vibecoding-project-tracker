@@ -1,3 +1,5 @@
+import { IDENTITY_NOTE, IMAGERY_NOTE, JUSTIFICATIONS, JUSTIFICATION_FIELDS } from "./designInventory.js";
+
 export const PRINCIPLES = [
   [
     "Recognition before recall",
@@ -96,7 +98,7 @@ export const DECISIONS = [
     items: [
       [
         "Warm page, distinct cards and fine boundaries",
-        "The page, content cards and grouped areas use separate surface tokens. Borders separate information without large shadows. Warm paper is a brand preference; no claim that it reduces clinical eye strain is made.",
+        "The page, content cards and grouped areas use separate surface tokens. Borders separate resting content; hover adds stronger optional depth. Warm paper is a brand preference; no claim that it reduces clinical eye strain is made.",
       ],
       [
         "Whitespace and alignment",
@@ -153,7 +155,7 @@ export const DECISIONS = [
       ],
       [
         "Monospace metadata and prompt preview",
-        "A different type style separates counts and structured text from prose. It is limited to supporting content. Small labels have been raised to at least 0.75rem instead of 10–11 fixed pixels.",
+        "A different type style separates counts and structured text from prose. Task and owner/date metadata normally uses at least 0.75rem, while the tiny decorative journal edition is not task information. Font size is a layout choice that still needs rendered and human evaluation.",
       ],
       [
         "Heading size, weight and line length",
@@ -194,7 +196,7 @@ export const DECISIONS = [
       ],
       [
         "100–200% text sizing",
-        "Relative text and spacing scale together. Above 150%, grids stack, the sidebar hides and the list replaces the board. The settings dialog remains scrollable so the user can always reduce the size again.",
+        "Relative text and spacing scale together. At 150% and above, grids stack, the sidebar hides and the list replaces the board. The settings dialog remains scrollable so the user can reduce the size again.",
       ],
       [
         "Text-to-speech with explicit playback",
@@ -210,7 +212,7 @@ export const DECISIONS = [
       ],
       [
         "Pointer targets and movement alternatives",
-        "Buttons and form controls have a minimum 2.75rem target (44px at standard size). Dragging uses a grip and destination highlight, but every stage change also has a labelled select menu.",
+        "Shared buttons and ordinary form controls aim for a 2.75rem target (44px at standard size). Compact controls such as the 32px journal pause button are exceptions; this is not a universal 44px claim. Dragging uses a grip and destination highlight, but every stage change also has a labelled select menu.",
       ],
       [
         "Motion preferences",
@@ -370,6 +372,12 @@ export const SOURCES = [
     "https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis",
     "Browser speech controls, voice availability and playback events.",
   ],
+  ["W3C: reflow", "https://www.w3.org/WAI/WCAG22/Understanding/reflow.html", "Content should remain usable when the effective viewport narrows; a tested emulation is not a complete zoom audit."],
+  ["W3C: focus order", "https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html", "Focus should preserve meaning and operability when navigating sequentially."],
+  ["W3C: consistent identification", "https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification.html", "Equivalent functions should be identified consistently; Relay's particular symbols remain design judgments."],
+  ["W3C: error identification", "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html", "Detected input errors need a textual description identifying the affected input."],
+  ["W3C: status messages", "https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html", "Relevant status updates should be available to assistive technology without requiring focus movement."],
+  ["W3C: animation from interactions", "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html", "Non-essential interaction motion can be disabled. This guidance does not prescribe Relay's exact animation timing."],
 ];
 
 export const GUIDE_TEXT = [
@@ -377,5 +385,8 @@ export const GUIDE_TEXT = [
   ...PRINCIPLES.flat(),
   ...DECISIONS.flatMap((group) => [group.title, ...group.items.flat()]),
   "Logo, images and icons",
+  IDENTITY_NOTE,
+  IMAGERY_NOTE,
   ...ICONS.flat(),
+  ...JUSTIFICATIONS.flatMap(entry => [entry.title, ...JUSTIFICATION_FIELDS.map(([key, label]) => `${label}. ${entry[key]}`)]),
 ].join(". ");

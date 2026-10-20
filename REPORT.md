@@ -3,6 +3,22 @@
 Owner: James (`jhud172`). Built from the course's React, Vite and Tailwind starter.
 Review date: 20 October 2026.
 
+## Justification audit
+
+The subsequent justification audit completes a structured 30-entry decision
+register covering the current 33 named components, 41 referenced Lucide symbols,
+three shipped media assets and three pages. Reasons identify the need, actual
+choice, intended benefit, basis, accessibility, trade-offs, source references and
+verification limits. A source inventory check now runs during design-document
+generation, without pretending that static coverage proves human benefit.
+
+The public guide adds search, keyboard disclosures, individual narration and
+inventory navigation. Outdated imagery/target-size/threshold statements were
+corrected; the original Blender materials, geometry, animation/resource choices
+and exact timing compromises are explicitly explained. The small 3D retry label
+was brought to .75rem. JUSTIFICATION_AUDIT.md records the audit, passing local
+checks and remaining human/service limits. The existing product scope is retained.
+
 ## Competition finalisation
 
 James narrowed the release to necessary work rather than implementing every

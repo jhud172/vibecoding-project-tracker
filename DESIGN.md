@@ -48,8 +48,11 @@ At standard size: page heading 36-44 px, task title 15 px semibold, body 14 px a
 - Movement: labelled status select on every card, no drag-only interactions.
 - Anchors: four compact document slots above the board, separate edit and open actions.
 - Layout: slim sidebar on large screens; compact header on small screens; four columns on desktop with an explicitly scrollable board on narrow screens.
-- Icons: Lucide, consistent 16-20 px strokes, no custom icon set.
-- Motion: short hover/focus/toast transitions; respect reduced motion.
+- Icons: Lucide outline vocabulary with size chosen for its control; the separate
+  original vector logo and Blender emblem repeat the connected-square identity.
+- Motion: original Blender journal, bounded hover/entrance/page transitions,
+  pause and reduced-motion/static fallbacks. Exact timing is art direction,
+  not a claim of a scientifically optimal duration.
 
 ## Voice
 
@@ -69,7 +72,10 @@ At standard size: page heading 36-44 px, task title 15 px semibold, body 14 px a
 - Team: James's solo studio
 - Tagline: Keep the work moving. Keep the context.
 - Wordmark: lowercase serif lettering beside a Lucide workflow icon.
-- Light, dark or device appearance. Optional blue/amber, teal/rose and monochrome palettes, higher contrast, link underlines and reduced motion. No automatic decorative animation.
+- Light, dark or device appearance. Optional blue/amber, teal/rose and monochrome
+  palettes, higher contrast, link underlines and reduced motion. Bounded card
+  entrances are automatic when motion is allowed; there is no perpetual
+  decorative loop.
 
 ## Competition extension
 
@@ -99,3 +105,13 @@ benefit and limits. It is generated from the same source as the live
 [ACCESSIBILITY.md](ACCESSIBILITY.md) documents the controls, implementation,
 evidence and outstanding assistive-technology checks. Future visual or interaction
 changes require a rationale entry and relevant rendered verification.
+
+## Complete justification audit
+
+The live guide's searchable decision register and the generated
+DESIGN_RATIONALE.md record the user need, implemented choice, intended benefit,
+basis, access implications, trade-offs, implementation references and verification
+limits. `src/designInventory.js` maps all currently declared component families,
+referenced Lucide symbols, shipped public assets and three pages to those reasons.
+`npm run docs:check` guards missing/stale source entries; it does not establish
+psychological outcomes or universal accessibility. See JUSTIFICATION_AUDIT.md.

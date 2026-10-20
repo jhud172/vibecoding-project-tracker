@@ -8,6 +8,7 @@
     "test:e2e": "playwright test",
     "lint": "eslint .",
     "docs:design": "node scripts/generate-design-doc.mjs",
+    "docs:check": "node scripts/check-design-coverage.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

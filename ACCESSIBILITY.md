@@ -25,8 +25,9 @@ Other open tabs pick up preference changes on reload.
 | Keyboard and screen-reader structure | Skip link, main landmark, headings, field labels, native controls, focus outlines and live feedback. |
 | Drag alternative | Every stage change is available through a labelled select. |
 | Optional single-character shortcuts | Disabled by default; avoids collisions with speech input and assistive technology. Ctrl/Command K remains available. |
-| 2.75rem button targets | Aim for 44px at standard size; targets scale with text. Inline prose links remain conventional text links. |
+| 2.75rem shared button targets | Aim for 44px at standard size; compact controls such as the 32px journal pause are exceptions. Inline prose links remain conventional text links. |
 | Explainable visual system | DESIGN_RATIONALE.md and /design.html record reasons for layout, fonts, colours, imagery, logo and icon families. |
+| Searchable decision explanations | The guide's register has keyboard disclosures, result/empty states and individual narration for a complete explanation within the per-reading limit. |
 
 ## Implementation
 

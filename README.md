@@ -57,6 +57,8 @@ npm run preview -- --host 127.0.0.1
 - Open **Accessibility** for light/dark/device appearance, 100-200% text sizing, colour-vision alternatives, monochrome, higher contrast, plain headings, link underlines and reduced motion.
 - Read a task, workspace briefing or presentation slide aloud with voice/speed selection and pause/resume/stop. Device/browser voice availability varies; speech starts only on request.
 - Read the published design rationale explaining layout, cognitive intentions, logo, icons, typography and their trade-offs.
+- Search the design guide's decision register for a feature or asset; inspect its
+  need, reason, accessibility, trade-offs and evidence, or read that entry aloud.
 - Edit named briefing sections, inspect a safe Markdown preview, compare earlier context and append individual passages into the draft.
 - Preview concise or detailed handoffs; save custom templates and use research, accessibility, deployment and pitch scaffolds.
 - Keep unfinished task drafts through refresh, and explicitly continue them when returning to the editor.
@@ -104,6 +106,9 @@ Date-only deadlines use the local calendar day. Today and the next two days are 
 - `design.html`, `src/design-main.jsx`, `src/designRationale.js`: published design rationale and source content.
 - `src/Accessibility.jsx`, `src/accessibility.js`: saved preferences, semantic palettes and speech lifecycle.
 - `DESIGN_RATIONALE.md`, `ACCESSIBILITY.md`: design reasons, access features and verification limits.
+- `src/designInventory.js`, `JUSTIFICATION_AUDIT.md`: complete current component,
+  icon, asset and page justification inventory; `npm run docs:check` checks source
+  coverage and runs automatically when generating the design document.
 - `tests/accessibility.test.js`: contrast, preference validation and speech lifecycle regression tests.
 - `tests/studio.test.js`: recovery, import compatibility, focus ordering and checklist regression tests.
 - `e2e/workspace.spec.js`, `.github/workflows/verify.yml`: isolated Chromium/axe regression checks and CI validation.
