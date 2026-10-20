@@ -55,7 +55,7 @@ export const DECISIONS = [
       ],
       [
         "Optional cloud controls and explicit sync",
-        "Account, sharing and comments load in a separate panel so everyday local work is not gated by sign-in. Cloud preview precedes loading, and upload names the data it sends. Visible versions and stale-save rejection make conflicts inspectable. Account IDs enable deliberate sharing without searching or exposing an email directory.",
+        "Account, sharing and comments load in a separate panel so everyday local work is not gated by sign-in. A visible preview notice names the unverified email and real-account acceptance checks. Cloud preview precedes loading, and upload names the data it sends. Visible versions and stale-save rejection make conflicts inspectable. Account IDs enable deliberate sharing without searching or exposing an email directory.",
       ],
       [
         "Recoverable error screen",
@@ -67,7 +67,7 @@ export const DECISIONS = [
       ],
       [
         "Recovery beside save status",
-        "A labelled header control keeps recovery discoverable. Deleted tasks and persistent undo/redo reduce the cost of accidental edits. Storage estimates and last backup-request dates describe observed browser state without promising that a download completed.",
+        "A labelled header control keeps recovery discoverable. Deleted tasks and persistent undo/redo reduce the cost of accidental edits. Storage estimates and last backup-request dates describe observed browser state without promising that a download completed; unreadable storage is reported rather than displayed as zero usage. Raw recovery reads the latest saved workspace and drafts, preserves the protected original and labels a partial export when storage cannot be read. Normal backup and raw recovery explain their different import purposes.",
       ],
       [
         "Draft status and deliberate recovery",
@@ -198,7 +198,7 @@ export const DECISIONS = [
       ],
       [
         "Text-to-speech with explicit playback",
-        "Read a task’s title, owner, stage, due date, description and saved context, or the whole workspace briefing. Voice, speed, pause, resume and stop are available. Nothing starts automatically. Long readings are bounded and clearly announced. Device/browser voices and output are external dependencies.",
+        "Read a task’s title, owner, stage, due date, description and saved context, or the whole workspace briefing. Voice, speed, pause, resume and stop are available. Nothing starts automatically. Automatic voice selection uses local device voices; an online voice or potentially online browser default requires a deliberate choice. If no local voice is ready, guidance explains how to choose. Long readings are bounded and clearly announced. Device/browser voices and output are external dependencies.",
       ],
       [
         "Screen-reader structure",
@@ -218,11 +218,11 @@ export const DECISIONS = [
       ],
       [
         "Forms, errors and context templates",
-        "Visible labels remain after typing; hints are associated with fields. Validation names the problem. Context templates append rather than overwrite, and the checklist distinguishes present from missing using symbols and accessible text.",
+        "Visible labels remain after typing; hints and validation messages are associated with the affected fields. Invalid fields are marked and focused so a keyboard or screen-reader user can correct the problem. Dialogs return to their trigger, or the workspace when that task has been removed; clearing filters returns to search. Empty-list text distinguishes a new workspace from a search with no results. Context templates append rather than overwrite, and the checklist distinguishes present from missing using symbols and accessible text.",
       ],
       [
         "Undo and context history",
-        "A persistent Undo action supports recovery after a change. Earlier context is loaded into a draft for review before saving. Limits are stated: one-step undo ends at the next change/reload, and history is bounded.",
+        "Persistent Undo and Redo support recovery across reloads with up to twelve versions per stack within a storage budget. Earlier context is loaded into a draft for review before saving. Recovery versions, deleted tasks and per-task context have separate, explicitly bounded histories.",
       ],
       [
         "Toasts, copy fallback and import preview",

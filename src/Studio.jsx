@@ -597,7 +597,7 @@ export function ImportBackup({ tasks, onImport }) {
   );
 }
 
-export function TaskList({ tasks, now, onEdit, onUpdate, onCopy }) {
+export function TaskList({ tasks, now, onEdit, onUpdate, onCopy, hasTasks = true }) {
   const ordered = [
     ...focusQueue(tasks, now),
     ...tasks.filter((task) => task.status === "done"),
@@ -606,7 +606,7 @@ export function TaskList({ tasks, now, onEdit, onUpdate, onCopy }) {
     <div className="overflow-hidden rounded-xl border border-line bg-surface-card">
       {!ordered.length && (
         <p className="p-10 text-center text-sm text-text-muted">
-          No tasks match. Clear your filters or create a task.
+          {hasTasks ? "No tasks match these filters. Clear filters to see your saved work." : "No tasks yet. Use New task to add your first next step."}
         </p>
       )}
       {ordered.map((task) => (

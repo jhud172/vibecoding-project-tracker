@@ -197,11 +197,16 @@ export default function CloudPanel({ workspace, onClose }) {
   return (
     <Modal
       title="Your work, across devices."
-      subtitle="Optional account sync and shared projects. Local work stays available when you are offline."
+      subtitle="Optional account sync and shared projects. Local editing needs no account."
       onClose={onClose}
       wide
     >
       <div className="space-y-5 p-6">
+        <p className="rounded-xl border border-line bg-surface-tint p-4 text-sm">
+          Preview feature. Email confirmation/recovery delivery and real-account
+          cross-device workflows have not completed acceptance testing. Keep a
+          local backup; the competition workspace works without an account.
+        </p>
         <p className="text-sm text-text-muted">
           Sync is explicit: preview cloud work before loading it, and save local
           edits when ready. A stale cloud version is rejected so collaborators

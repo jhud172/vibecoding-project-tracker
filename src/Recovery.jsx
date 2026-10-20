@@ -8,6 +8,7 @@ import {
   newProject,
 } from "./workspace";
 import { Modal, buttonClass, primaryClass } from "./ui";
+import { rawStorageValues } from "./rawRecovery.js";
 
 export function WelcomePanel({ onChoose }) {
   const [busy, setBusy] = useState(false);
@@ -58,8 +59,9 @@ export function WelcomePanel({ onChoose }) {
 
 export function RecoveryPanel({ workspace, onClose, onBackup, onNotify }) {
   const [busy, setBusy] = useState(false);
+  const [rawNotice, setRawNotice] = useState("");
   const { state, project } = workspace;
-  let bytes = 0;
+  let bytes = null;
   try {
     bytes = estimateStorageBytes(window.localStorage);
   } catch {
@@ -75,15 +77,24 @@ export function RecoveryPanel({ workspace, onClose, onBackup, onNotify }) {
     }
   };
   const downloadRaw = () => {
+    let values;
+    try {
+      values = rawStorageValues(window.localStorage);
+      setRawNotice("Raw recovery download requested, including readable workspace versions and unfinished drafts. Keep it private. Use a workspace backup for normal import.");
+    } catch {
+      values = { inMemoryWorkspace: JSON.stringify(state) };
+      setRawNotice("Browser storage could not be read completely. This partial download contains the in-memory workspace and protected original only; unfinished drafts may be missing. Keep this browser profile intact.");
+    }
+    values.protectedOriginal = workspace.store.rawRecovery();
     const url = URL.createObjectURL(
       new Blob(
-        [workspace.store.rawRecovery() || JSON.stringify(state, null, 2)],
-        { type: "text/plain" },
+        [JSON.stringify(values, null, 2)],
+        { type: "application/json" },
       ),
     );
     const a = document.createElement("a");
     a.href = url;
-    a.download = "relay-protected-storage.txt";
+    a.download = "relay-protected-storage.json";
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
@@ -111,9 +122,8 @@ export function RecoveryPanel({ workspace, onClose, onBackup, onNotify }) {
             Your saved workspace
           </h3>
           <p className="my-2 text-sm text-text-muted">
-            Approximately {(bytes / 1024).toFixed(0)} KB of browser storage,
-            including retained legacy data. This is an estimate, not a capacity
-            guarantee.
+            {bytes === null ? "Storage usage is unavailable because browser storage cannot be read."
+              : `Approximately ${(bytes / 1024).toFixed(0)} KB of browser storage, including retained legacy data. This is an estimate, not a capacity guarantee.`}
           </p>
           <p className="mb-3 text-xs text-text-muted">
             Last backup requested:{" "}
@@ -130,6 +140,7 @@ export function RecoveryPanel({ workspace, onClose, onBackup, onNotify }) {
               Download protected raw data
             </button>
           </div>
+          {rawNotice && <p role="status" className="mt-3 text-sm text-text-muted">{rawNotice}</p>}
         </section>
         <section aria-labelledby="recovery-undo">
           <h3 id="recovery-undo" className="mb-3 text-base font-semibold">

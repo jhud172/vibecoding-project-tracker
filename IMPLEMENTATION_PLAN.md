@@ -1,5 +1,9 @@
 # Relay complete improvement programme
 
+> **Scope revised by James on 20 October 2026.** The later instruction is to finish
+> necessary work and skip unnecessary additions. See [FINALISATION.md](FINALISATION.md)
+> for the active release requirements. The original programme below is historical.
+
 Owner: James Hudson. Goal created 20 October 2026. Baseline: a227405.
 
 James explicitly requested implementation and finalisation of the entire 75-item

@@ -32,6 +32,8 @@ export function Modal({ title, subtitle, children, onClose, wide = false }) {
     return () => {
       dialog.close();
       if (previous?.isConnected) previous.focus();
+      else if (!document.querySelector("dialog[open]"))
+        document.querySelector("[data-workspace-focus]")?.focus();
     };
   }, []);
   return (
@@ -75,7 +77,7 @@ export function Modal({ title, subtitle, children, onClose, wide = false }) {
   );
 }
 
-export function Field({ label, children, hint }) {
+export function Field({ label, children, hint, error }) {
   const id = useId();
   return (
     <div className="space-y-1.5 text-sm font-medium">
@@ -84,7 +86,8 @@ export function Field({ label, children, hint }) {
       </label>
       {cloneElement(children, {
         id,
-        "aria-describedby": hint ? `${id}-hint` : undefined,
+        "aria-describedby": [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || undefined,
+        "aria-invalid": error ? "true" : undefined,
       })}
       {hint && (
         <span
@@ -94,6 +97,7 @@ export function Field({ label, children, hint }) {
           {hint}
         </span>
       )}
+      {error && <span id={`${id}-error`} className="block text-sm text-type-bug">{error}</span>}
     </div>
   );
 }

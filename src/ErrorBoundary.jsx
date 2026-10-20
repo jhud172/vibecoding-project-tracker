@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { buttonClass } from "./ui";
+import { rawStorageValues } from "./rawRecovery.js";
 
 export class ErrorBoundary extends Component {
   state = { failed: false, message: "" };
@@ -8,12 +9,7 @@ export class ErrorBoundary extends Component {
   }
   download = () => {
     try {
-      const values = {};
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.startsWith("relay.") || key.startsWith("vibetracker."))
-          values[key] = localStorage.getItem(key);
-      }
+      const values = rawStorageValues(localStorage);
       const url = URL.createObjectURL(
         new Blob([JSON.stringify(values, null, 2)], {
           type: "application/json",

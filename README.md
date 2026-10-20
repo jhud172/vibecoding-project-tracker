@@ -6,6 +6,10 @@ A local-first vibecoding project tracker built on Ignacio Alvarez's university h
 
 [Open Relay](https://relay-jhud172.vercel.app) · [Presentation](https://relay-jhud172.vercel.app/presentation.html) · [Why this design?](https://relay-jhud172.vercel.app/design.html) · [Accessibility](ACCESSIBILITY.md) · [Implementation report](REPORT.md) · [Pitch script](PITCH.md)
 
+The competition release scope was narrowed at James's request to completing and
+checking the existing product. [FINALISATION.md](FINALISATION.md) lists the required
+release work and optional suggestions removed from the build commitment.
+
 ## Run locally
 
 Use Node.js 22.12 or newer (Node 24 LTS recommended).
@@ -65,7 +69,7 @@ The authoritative workspace is one localStorage value, `relay.workspace:v3`. Tas
 
 Local work requires no account. The dedicated Relay Supabase project is in London on the existing organization's Free plan. Cloud controls load on demand; publishing requires sign-in and explicit upload confirmation. Sync is currently manual: preview and load cloud work, edit locally, then save the linked version. Concurrent saves reject stale versions; collaborators compare and merge locally. Comments refresh when the cloud preview is refreshed. This is not simultaneous live editing. Viewer/editor permissions are enforced by row-level database policies. The local owner dropdown remains the three PRD identities and sends no message.
 
-Cloud account creation and password recovery need a working email provider. The Free project's default email service has delivery limits; external-user confirmation and a complete real-account cross-device workflow remain acceptance gates. No paid service was enabled. No AI API is connected.
+Cloud controls are visibly labelled as a preview. Cloud account creation and password recovery need a working email provider. The Free project's default email service has delivery limits; external-user confirmation and a complete real-account cross-device workflow remain acceptance gates. No paid service was enabled. No AI API is connected.
 
 Clearing site data removes local work and unfinished drafts. Complete version 3 backups include all projects, templates, task metadata, current activity and deleted-task recovery. Accessibility preferences are opt-in; drafts and undo stacks require the raw recovery download. Imports accept original/version 2 files (2 MB) and version 3 bundles (8 MB), up to 1,000 active tasks per project and 30 projects. Matching changed tasks/links have explicit conflict choices; merge defaults to keeping current content. Import/reset operations create a prior recovery version. Accessibility preference persistence uses a separate browser key and reports its own failure.
 

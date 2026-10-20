@@ -3,11 +3,51 @@
 Owner: James (`jhud172`). Built from the course's React, Vite and Tailwind starter.
 Review date: 20 October 2026.
 
-## Current roadmap increment
+## Competition finalisation
+
+James narrowed the release to necessary work rather than implementing every
+suggestion. FINALISATION.md is the active scope; the original 75-entry ROADMAP.md
+is retained as an honest historical ledger. Optional AI, languages, calendar,
+expanded project management and additional integrations are outside this release.
+
+Finalisation closes existing feature acceptance and corrects concrete defects:
+preference import now checks persistence before reporting success; validation
+messages belong to the affected fields; deleted-task and cleared-filter actions
+retain keyboard focus; and automatic narration selects local device voices, with
+an explicit choice for online speech. Cloud controls visibly state preview status
+and their unverified real-account/email gates. Raw Recovery now reads the latest
+workspace plus unfinished drafts and preserves protected original strings. It
+excludes account/session keys and labels partial exports if storage cannot be read.
+
+Verification comprises 48 unit tests and 30 Chromium browser workflows. The
+12 finalisation workflows cover version restore/Undo, demo-reset recovery,
+preference backup/restore and failed persistence, context history/passages,
+wrap-up, exact concise/detailed clipboard output, induced render recovery,
+validation/focus, explicit online narration choice, 320px spacing/forced-colour
+reflow, PRD handoff/stage/deliverable flows, all built-in templates and current
+raw recovery including drafts. The existing motion and core workspace suites
+remain in place. CI runs lint, units, generated-doc consistency, build and browsers
+for each release commit. Test bodies and GitHub check results provide the actual
+scope and result; these checks are not an accessibility certification.
+
+Local checks passed: lint, 48 units, the full 29-workflow suite before the raw
+recovery correction, and the added raw-download regression after that correction.
+The Windows device voice emitted a real Reading event in manual inspection.
+No audible listening study is claimed. Runtime npm audit reports zero findings;
+seven previously reviewed Tailwind 3 development-tool findings remain. A tooling
+migration is deferred rather than bundled into this finalisation.
+
+Human user/screen-reader evaluation and James's actual timed rehearsal have not
+been performed. Optional cloud account delivery, real-device collaboration and
+permission UI acceptance remain open; database policy fixture checks do not
+substitute for them. The local competition workflows require no account or paid
+service.
+
+## Original motion increment
 
 The subsequent motion extension adds an original Blender journal with a hinged cover and four animated page hinges, perspective chapter navigation, card/metric/deliverable hover depth, button press feedback and dialog entrances. Native .blend source and a reproducible script are included. The renderer loads separately after first paint, batches static geometry and stops rendering at rest. Reduced motion skips the renderer and model; a Blender-rendered still and semantic controls remain. See MOTION.md and assets/source/README.md for rationale, provenance and resource limits.
 
-The complete 75-item goal remains active in ROADMAP.md. Current local checks pass: 46 unit tests, ESLint and a production build. Eighteen isolated Chromium/axe workflows cover migration, persistent recovery, drafts, stale edits, failed storage, denied clipboard access, invalid/reviewed imports, safe previews, templates, enlarged mobile layout and core accessibility scans. The first roadmap increment also passed GitHub's Linux/Node 24 workflow: [verified run](https://github.com/jhud172/vibecoding-project-tracker/actions/runs/39418101856). The later sections retain baseline implementation history; ROADMAP.md records current feature and acceptance status.
+At the motion increment, 46 unit tests, ESLint, a production build and eighteen isolated Chromium/axe workflows passed. These covered migration, persistent recovery, drafts, stale edits, failed storage, denied clipboard access, invalid/reviewed imports, safe previews, templates, enlarged mobile layout and core accessibility scans. The first roadmap increment also passed GitHub's Linux/Node 24 workflow: [verified run](https://github.com/jhud172/vibecoding-project-tracker/actions/runs/39418101856). The later sections retain baseline implementation history; the finalisation record above supersedes their test counts and scope.
 
 The dedicated cloud database passes transaction-scoped outsider/viewer/editor/owner isolation checks and stale-version rejection with all fixtures rolled back. Supabase's security advisor reports zero findings after hardening. Real signup/email delivery, two-device account flows, collaborator UI checks, NVDA/VoiceOver evaluation, user studies and James's rehearsal remain unverified. See CLOUD.md for cloud setup and limits.
 

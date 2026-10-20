@@ -47,7 +47,11 @@ left untouched until an explicit reset; ordinary storage failures are reported.
 
 Speech uses SpeechSynthesis/SpeechSynthesisUtterance, not an external AI API.
 Device voices can load asynchronously. Some browser voices are network services,
-so the picker labels device/online voices. Text is split into bounded utterances,
+so the picker labels device/online voices. Automatic selection now uses only a
+local device voice. If none is available, Relay explains how to select a voice;
+online voices and the potentially online browser default require an explicit
+choice. This policy is shared by the workspace, guide and presentation.
+Text is split into bounded utterances,
 and the first 12,000 characters are read per request with an explicit truncation
 notice. An engine start event controls the Reading state; a startup timeout or
 engine error gives recovery guidance. Starting a replacement, pressing Stop,
@@ -86,8 +90,10 @@ These checks are evidence for specific behavior, not a claim of complete WCAG
 conformance. No full audit with NVDA, VoiceOver, braille, OS forced colours,
 all browser zoom settings or users with disabilities has been completed.
 Actual speech output depends on installed voices, browser/OS support and output
-hardware. Pause/resume support can vary by engine. Export/restore preferences is
-not part of workspace backups. Desktop board layout intentionally has its own
+hardware. Pause/resume support can vary by engine. Complete backups can include
+accessibility preferences, and import restores them only with an explicit opt-in.
+Failed preference restoration reports the failure and retains current settings.
+Desktop board layout intentionally has its own
 horizontal scroll region; list view and large-text mode provide alternatives.
 
 For evaluation, use the main tasks with keyboard only; repeat with NVDA/VoiceOver,
@@ -98,3 +104,16 @@ the device, browser, steps and outcome for any further accessibility claim.
 
 See DESIGN_RATIONALE.md for linked W3C WCAG 2.2, WAI, MDN speech synthesis and
 Nielsen Norman Group guidance, with the specific decision each source supports.
+
+## Competition finalisation checks
+
+`e2e/finalisation.spec.js` exercises associated invalid-field messages and focus,
+focus after task deletion and clearing filters, preference download/restore and
+failed saves, and narration with no local voice versus an explicit online choice.
+Speech uses a deterministic engine fixture in that test; it does not establish
+audible output quality. A 320 CSS-pixel Chromium layout with WCAG text-spacing
+overrides and emulated forced colours retains the tested create-task workflow
+without page/dialog horizontal overflow and passes the automated axe checks.
+This is a specific reflow/emulation check, not an actual OS high-contrast session
+or a complete 400% browser-zoom audit. NVDA/VoiceOver and human studies remain
+unperformed; no certification is claimed.

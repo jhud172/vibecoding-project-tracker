@@ -1,4 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -11,6 +13,8 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:4180",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    // Keep temporary browser download handles outside OneDrive's synced tree.
+    launchOptions: { downloadsPath: join(tmpdir(), "relay-browser-downloads") },
   },
   projects: [
     {
@@ -22,6 +26,7 @@ export default defineConfig({
     },
   ],
   webServer: {
+    timeout: 180000,
     command:
       "npm run build && npm run preview -- --host 127.0.0.1 --port 4180 --strictPort",
     url: "http://127.0.0.1:4180",

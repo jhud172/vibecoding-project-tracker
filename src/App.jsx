@@ -128,6 +128,7 @@ function TaskEditor({
   const [deleting, setDeleting] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [invalidField, setInvalidField] = useState("");
   const versions = activity
     .filter(
       (entry) =>
@@ -136,8 +137,10 @@ function TaskEditor({
         entry.previous,
     )
     .slice(0, 8);
-  const change = (key, value) =>
+  const change = (key, value) => {
+    if (key === invalidField) { setInvalidField(""); setError(""); }
     setDraft((current) => ({ ...current, [key]: value }));
+  };
   const dirty = JSON.stringify(draft) !== JSON.stringify(task);
   const recovery = useDraft(projectId, task, draft, dirty);
   const close = () => {
@@ -168,14 +171,22 @@ function TaskEditor({
     >
       <form
         className="space-y-5 p-6"
+        noValidate
         onSubmit={async (event) => {
           event.preventDefault();
           const message = validateTask(draft);
           setError(message);
           if (message) {
-            event.currentTarget.querySelector("input")?.focus();
+            const field = /title/.test(message) ? "title"
+              : /stage/.test(message) ? "status"
+              : /member/.test(message) ? "assignee"
+              : /feature or bug/.test(message) ? "type"
+              : /due date/.test(message) ? "dueDate" : "contextTool";
+            setInvalidField(field);
+            event.currentTarget.elements.namedItem(field)?.focus();
             return;
           }
+          setInvalidField("");
           setSaving(true);
           const result = await onSave(draft);
           if (result) {
@@ -236,8 +247,9 @@ function TaskEditor({
             {new Date(recovery.savedAt).toLocaleTimeString("en-GB")}
           </p>
         )}
-        <Field label="Task title">
+        <Field label="Task title" error={invalidField === "title" ? error : undefined}>
           <input
+            name="title"
             data-autofocus
             className={fieldClass}
             value={draft.title}
@@ -257,8 +269,9 @@ function TaskEditor({
           />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Task type">
+          <Field label="Task type" error={invalidField === "type" ? error : undefined}>
             <select
+              name="type"
               className={fieldClass}
               value={draft.type}
               onChange={(event) => change("type", event.target.value)}
@@ -267,8 +280,9 @@ function TaskEditor({
               <option value="bug">Bug</option>
             </select>
           </Field>
-          <Field label="Stage">
+          <Field label="Stage" error={invalidField === "status" ? error : undefined}>
             <select
+              name="status"
               className={fieldClass}
               value={draft.status}
               onChange={(event) => change("status", event.target.value)}
@@ -280,8 +294,9 @@ function TaskEditor({
               ))}
             </select>
           </Field>
-          <Field label="Assignee">
+          <Field label="Assignee" error={invalidField === "assignee" ? error : undefined}>
             <select
+              name="assignee"
               className={fieldClass}
               value={draft.assignee}
               onChange={(event) => change("assignee", event.target.value)}
@@ -291,8 +306,9 @@ function TaskEditor({
               ))}
             </select>
           </Field>
-          <Field label="Due date">
+          <Field label="Due date" error={invalidField === "dueDate" ? error : undefined}>
             <input
+              name="dueDate"
               className={fieldClass}
               type="date"
               min="1900-01-01"
@@ -337,8 +353,9 @@ function TaskEditor({
             />
           </Field>
           <div className="mt-3">
-            <Field label="Context tool">
+            <Field label="Context tool" error={invalidField === "contextTool" ? error : undefined}>
               <select
+                name="contextTool"
                 className={fieldClass}
                 value={draft.contextTool || ""}
                 onChange={(event) =>
@@ -531,8 +548,10 @@ function AnchorEditor({ anchor, onClose, onSave }) {
             setError(
               "Use a complete http:// or https:// URL without login credentials.",
             );
+            event.currentTarget.querySelector("input")?.focus();
             return;
           }
+          setError("");
           const failure = await onSave(parsed);
           if (failure) setError(failure);
         }}
@@ -540,12 +559,14 @@ function AnchorEditor({ anchor, onClose, onSave }) {
         <Field
           label={`${anchor.label} URL`}
           hint="Paste a full link, or leave blank to remove it."
+          error={error || undefined}
         >
           <input
             data-autofocus
+            onInvalid={(event) => event.currentTarget.focus()}
             className={fieldClass}
             value={url}
-            onChange={(event) => setUrl(event.target.value)}
+            onChange={(event) => { setUrl(event.target.value); setError(""); }}
             placeholder="https://"
           />
         </Field>
@@ -1085,6 +1106,7 @@ export default function App() {
         />
         <main
           id="workspace"
+          data-workspace-focus
           tabIndex={-1}
           className="mx-auto max-w-[1700px] px-5 pb-10 pt-8 sm:px-9"
         >
@@ -1273,7 +1295,7 @@ export default function App() {
                           href={safeUrl(anchor.url)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          aria-label={`Open ${anchor.label}`}
+                          aria-label={`Open ${anchor.label} (opens a new tab)`}
                           className="rounded p-1 text-brand-primary hover:bg-due-safe"
                         >
                           <ArrowUpRight size={16} />
@@ -1419,6 +1441,7 @@ export default function App() {
                         setOwner("all");
                         setKind("all");
                         setContextFilter("all");
+                        searchRef.current?.focus();
                       }}
                       className="rounded px-2 py-1 text-xs text-brand-primary hover:underline"
                     >
@@ -1449,6 +1472,7 @@ export default function App() {
               {layout === "list" ? (
                 <TaskList
                   tasks={filtered}
+                  hasTasks={tasks.length > 0}
                   now={now}
                   onEdit={setEditing}
                   onUpdate={updateTask}
@@ -1837,6 +1861,10 @@ export default function App() {
             >
               Accounts, cloud sync & collaboration
             </button>
+            <p className="text-xs text-text-muted">
+              Cloud preview: email delivery and real-account cross-device checks
+              are still pending. Local tasks and backups need no account.
+            </p>
             <button
               type="button"
               className={buttonClass}

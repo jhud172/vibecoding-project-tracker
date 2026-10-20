@@ -34,9 +34,20 @@ export function useLocalStorage(key, initialValue, validate) {
   }, [key, value, blocked]);
 
   function replace(nextValue) {
+    // Import/reset callers need the actual persistence result before claiming success.
+    // Keep current preferences if a replacement cannot be stored.
+    try {
+      window.localStorage.setItem(key, JSON.stringify(nextValue));
+    } catch {
+      setError(
+        "Browser storage is unavailable or full. Preferences were not replaced; keep a backup and retry with storage enabled.",
+      );
+      return false;
+    }
     setBlocked(false);
     setError("");
     setValue(nextValue);
+    return true;
   }
   return [value, setValue, error, replace];
 }

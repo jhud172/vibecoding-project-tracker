@@ -66,7 +66,7 @@ certification or a measured psychological effect."
 
 ## 4:40-5:00 - Tradeoffs and close
 
-"I built this as a solo project on the course starter. Local work needs no account. Optional cloud projects add authenticated cross-device sync, comments and viewer/editor permissions. Sync is explicit, and stale cloud saves are rejected. The local assignee labels remain a demonstration; they send no notification. Real-account email delivery and human accessibility evaluation are separate acceptance checks."
+"I built this as a solo project on the course starter. The competition workspace runs locally without an account. Optional cloud controls are a preview: database permissions are tested, while real-account email and cross-device acceptance remain open. The local assignee labels demonstrate handoffs and send no notification. Human accessibility evaluation is still needed."
 
 "Relay: keep the work moving, keep the context."
 

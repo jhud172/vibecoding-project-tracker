@@ -19,9 +19,11 @@ import {
 } from "lucide-react";
 import {
   DEFAULT_ACCESS,
+  BROWSER_VOICE,
   TEXT_SIZES,
   createNarrator,
   resolvePalette,
+  selectReadingVoice,
   spokenTask,
   validAccess,
 } from "./accessibility";
@@ -129,13 +131,16 @@ export function AccessibilityProvider({ children }) {
   }, [speech.state]);
   const update = (key, value) =>
     setPrefs((current) => ({ ...current, [key]: value }));
-  const read = (text, title) =>
-    narrator.current?.start(
-      text,
-      title,
-      prefs.rate,
-      voices.find((voice) => voice.voiceURI === prefs.voice),
-    );
+  const read = (text, title) => {
+    const voice = selectReadingVoice(voices, prefs.voice, navigator.language);
+    if (voice === null) {
+      narrator.current?.stop();
+      setSpeech({ state: "idle", title: "", error:
+        "No local device voice is available yet. In Accessibility, choose a voice or explicitly allow the browser default, which may send text to an online service." });
+      return;
+    }
+    narrator.current?.start(text, title, prefs.rate, voice);
+  };
   return (
     <AccessContext.Provider
       value={{
@@ -201,7 +206,7 @@ export function ReadButton({ text, title, className = buttonClass }) {
       disabled={!supported}
       title={
         supported
-          ? "Read aloud using your device’s voice"
+          ? "Read aloud using your selected voice"
           : "Read-aloud is unavailable in this browser"
       }
     >
@@ -502,20 +507,21 @@ export function AccessibilityPanel({
                   label="Reading voice"
                   hint={
                     voices.length
-                      ? "Device voices are labelled; online voices may use a network service."
-                      : "No voice list is available yet. You can try the browser’s default voice."
+                      ? "Automatic selection uses a local device voice. Choosing an online voice or browser default may send the text to that voice provider."
+                      : "Waiting for device voices. Automatic reading waits for a local voice; browser default requires your explicit choice."
                   }
                 >
                   <select
                     className={fieldClass}
                     value={
-                      voices.some((v) => v.voiceURI === prefs.voice)
+                      prefs.voice === BROWSER_VOICE || voices.some((v) => v.voiceURI === prefs.voice)
                         ? prefs.voice
                         : ""
                     }
                     onChange={(e) => update("voice", e.target.value)}
                   >
-                    <option value="">Browser default</option>
+                    <option value="">Automatic · local device voice</option>
+                    <option value={BROWSER_VOICE}>Browser default · may use online speech</option>
                     {voices.map((voice, i) => (
                       <option
                         value={voice.voiceURI}

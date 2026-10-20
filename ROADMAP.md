@@ -1,6 +1,8 @@
 # Relay improvement ledger
 
-Baseline a227405. All 75 requested improvements remain in scope. Status is evidence-based; planned is not complete. See IMPLEMENTATION_PLAN.md for dependency order.
+Baseline a227405. Historical ledger of 75 suggestions. James has narrowed the
+release to necessary work; [FINALISATION.md](FINALISATION.md) defines the current
+scope. Status is evidence-based; deferred or planned is not complete.
 
 | ID | Area | Improvement | Status / evidence |
 |---|---|---|---|
@@ -12,26 +14,26 @@ Baseline a227405. All 75 requested improvements remain in scope. Status is evide
 | 06 | Engineering | Run tests/build in GitHub CI | Verified on Linux/Node 24: install, lint, unit tests, generated-doc check, production build and all 13 browser checks pass. [Run](https://github.com/jhud172/vibecoding-project-tracker/actions/runs/39418101856). |
 | 07 | Competition | Create a clearly labelled before/after demo workspace | Planned |
 | 08 | Human evaluation | Complete an actual timed rehearsal | Planned; requires actual human participation |
-| 09 | Reliability | Persist recoverable workspace snapshots | Implemented with bounded persistent history; unit/reload tests pass. Restore-version UI final check pending. |
+| 09 | Reliability | Persist recoverable workspace snapshots | Verified: bounded persistent history; browser reload, Restore version and undoing that restoration pass in e2e/finalisation.spec.js. |
 | 10 | Reliability | Multiple undo and redo steps | Verified: persistent stacks, reload, redo and invalidation after a new mutation. |
 | 11 | Reliability | Recover deleted tasks | Verified: delete, reload and restore original task. |
-| 12 | Reliability | Snapshot before imports and demo resets | Implemented in atomic transactions; import/undo browser check passes. Demo-reset final check pending. |
+| 12 | Reliability | Snapshot before imports and demo resets | Verified: import/undo and confirmed demo reset preserve the prior task/link state across reload and Undo. |
 | 13 | Reliability | Prevent partially saved workspace operations | Verified: one-key transaction and injected failed save retain prior complete state. |
 | 14 | Reliability | Display storage usage | Implemented in Recovery, explicitly an approximate browser-storage estimate. |
 | 15 | Reliability | Display last backup and contextual reminders | Partial: last download request recorded and storage-budget notices; contextual reminder flow remains. |
-| 16 | Reliability | Optional access-preference export/import | Implemented opt-in bundle preferences; validated roundtrip unit test passes; UI preference restoration check remains. |
+| 16 | Reliability | Optional access-preference export/import | Verified: download opt-in, import opt-in, theme/palette/text persistence after reload, and failed preference save retaining current settings with an explicit warning. |
 | 17 | Reliability | Inspect individual import conflicts | Verified: invalid file rejected, changed-task preview, explicit conflict choice, merge and Undo. |
 | 18 | Reliability | Recover/export corrupt stored data | Verified protection against rewriting damaged data; raw download and confirmed empty recovery implemented. |
 | 19 | Handoffs | Structured briefing editor | Verified: section edits preserve introductory prose and unknown headings; unit/browser checks. |
 | 20 | Handoffs | Live Markdown preview | Verified supported subset renders without executing HTML or unsafe links; browser check. |
-| 21 | Handoffs | Compare context versions | Implemented line-presence comparison with explicit limitations; pure comparison test passes; final UI history check pending. |
-| 22 | Handoffs | Restore individual context passages | Implemented append-to-draft paragraph controls; final UI history check pending. |
+| 21 | Handoffs | Compare context versions | Verified: browser history after reload identifies removed/added lines against the current draft. Line-presence limitations remain explicit. |
+| 22 | Handoffs | Restore individual context passages | Verified: selected passage appends to the draft, preserves unrelated context, and changes saved data only on Save. |
 | 23 | Handoffs | Use accurate presence-check wording | Verified labels state text thresholds/populated sections and disclaim quality judgment. |
-| 24 | Handoffs | Research/access/deployment/pitch templates | Implemented additive templates; rendered in task editor. |
+| 24 | Handoffs | Research/access/deployment/pitch templates | Verified: all seven built-in templates append exactly without replacing existing context, save and survive reload. |
 | 25 | Handoffs | Custom reusable briefing templates | Verified: save template, save task, reload and recover template; validator tests pass. |
-| 26 | Handoffs | Concise/detailed briefing export | Implemented preview/copy; concise ownership/action/check and legacy prose tested. Final clipboard checks for both modes remain. |
+| 26 | Handoffs | Concise/detailed briefing export | Verified: both visible previews match their exact copied text through the browser Clipboard API fixture; clipboard denial has a manual-copy workflow. |
 | 27 | Handoffs | Handoff preview with owner/next action/verification | Verified preview includes edited next action; missing sections stated explicitly. |
-| 28 | Handoffs | Session wrap-up flow | Implemented draft-based progress/action/check/risk editor; final end-to-end check remains. |
+| 28 | Handoffs | Session wrap-up flow | Verified: progress/action/check/risk edits preserve free text and selected recovered passages, save and survive reload with task identity unchanged. |
 | 29 | Usability | Optional three-step introduction | Planned |
 | 30 | Usability | Explicit empty/sample workspace choice | Verified first-use sample choice manually; empty data remains empty in unit tests. |
 | 31 | Usability | Remember preferred view and layout | Planned |
@@ -45,14 +47,14 @@ Baseline a227405. All 75 requested improvements remain in scope. Status is evide
 | 39 | Accessibility | Progressive settings groups | Planned |
 | 40 | Human evaluation | Validate design intentions with users | Planned; requires actual human participation |
 | 41 | Accessibility | 400% browser zoom and narrow reflow | Planned |
-| 42 | Accessibility | OS forced-colour evaluation | Planned |
-| 43 | Accessibility | User text-spacing resilience | Planned |
-| 44 | Accessibility | Specific validation errors and invalid-field focus | Planned |
-| 45 | Accessibility | Focus after delete/filter/import actions | Planned |
+| 42 | Accessibility | OS forced-colour evaluation | Partial: Chromium forced-colour emulation plus text spacing at 320px passes the create-task/axe check. Actual OS evaluation is unperformed. |
+| 43 | Accessibility | User text-spacing resilience | Verified scoped workflow: 1.5 line height, .12em letters, .16em words and 2em paragraph spacing at 320px; tested task editor/page have no horizontal overflow. Other human/device checks unperformed. |
+| 44 | Accessibility | Specific validation errors and invalid-field focus | Verified for task-title and unsafe deliverable-URL failures: associated error text, aria-invalid and affected-field focus; data validators cover remaining task fields. |
+| 45 | Accessibility | Focus after delete/filter/import actions | Partial: deleted trigger falls back to workspace focus, clearing filters focuses search, native dialog return remains; broader import permutations unperformed. |
 | 46 | Accessibility | Rendered interaction-state contrast evaluation | Planned |
 | 47 | Accessibility | Highlight current spoken passage | Planned |
 | 48 | Accessibility | Read individual briefing sections | Implemented section-specific Read aloud controls using existing tested narration lifecycle; audible device check remains. |
-| 49 | Accessibility | Prefer local device voices with explicit online choice | Planned |
+| 49 | Accessibility | Prefer local device voices with explicit online choice | Verified policy/unit/browser fixture: automatic uses local only, absence shows guidance, online/browser-default requires a choice. Windows local engine emitted Reading during manual verification; audible quality unclaimed. |
 | 50 | Accessibility | Cross-browser speech failure/interrupt evaluation | Planned |
 | 51 | Accessibility | Compact keyboard reference | Planned |
 | 52 | Accessibility | Detailed device/browser/test evidence record | Planned |
@@ -61,7 +63,7 @@ Baseline a227405. All 75 requested improvements remain in scope. Status is evide
 | 55 | Performance | Measure realistic large boards/history | Planned |
 | 56 | Performance | Measure loading/responsiveness/layout stability | Planned |
 | 57 | Performance | Measured loading of secondary features | Partial: cloud panel/SDK split into a separate 62 KB gzip chunk; startup cloud-request absence verified. Broader performance work remains. |
-| 58 | Reliability | Recoverable application error screen | Implemented root/optional-cloud boundaries with raw recovery download and reload; induced render-failure check remains. |
+| 58 | Reliability | Recoverable application error screen | Verified: injected render dependency failure reaches the real boundary, downloads original saved strings and reloads into preserved tasks. Optional cloud uses the same boundary class. |
 | 59 | Reliability | Deliberate storage/clipboard/import/speech failures | Storage, clipboard, invalid imports and stale/corrupt data pass browser checks; speech engine failures pass unit checks. Wider browser coverage remains. |
 | 60 | Privacy | Optional likely-secret detection before sharing | Planned |
 | 61 | Privacy | Selective briefing export | Planned |
@@ -82,6 +84,13 @@ Baseline a227405. All 75 requested improvements remain in scope. Status is evide
 
 ## Current work
 
+James has since narrowed the release to necessary features and final checks.
+[FINALISATION.md](FINALISATION.md) supersedes the original all-75 build commitment.
+Planned suggestions above remain a historical record and are not all required for
+this release. Removed scope is not counted as implemented.
+
 User-authorised motion/3D extension: original Blender journal, cover plus four page hinges, on-demand Three.js scene, functional focus-chapter navigation, tactile hover/press, dialog and page transitions. Editable .blend and generation script are included. Reduced-motion and fallback checks are part of e2e/motion.spec.js. This extension does not replace the unfinished original roadmap items.
 
-Storage/recovery and handoff increments pass 46 unit tests and 18 browser tests. Lint and production build pass. The remaining roadmap is still active; this ledger deliberately distinguishes implementation, observed checks and unfinished acceptance gates.
+Release checks and scope decisions are recorded in FINALISATION.md and REPORT.md.
+This ledger distinguishes verified behaviours, scoped checks, historical
+suggestions and unfinished external/human acceptance gates.

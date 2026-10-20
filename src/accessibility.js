@@ -11,6 +11,18 @@ export const DEFAULT_ACCESS = {
   voice: "",
 };
 export const TEXT_SIZES = [100, 125, 150, 175, 200];
+export const BROWSER_VOICE = "relay:browser-default";
+// null means that automatic local selection is unavailable; undefined is an
+// explicitly selected browser default, which may be an online service.
+export function selectReadingVoice(voices, selection = "", language = "en") {
+  if (selection === BROWSER_VOICE) return undefined;
+  const explicit = voices.find((voice) => voice.voiceURI === selection);
+  if (explicit) return explicit;
+  const local = voices.filter((voice) => voice.localService === true);
+  const sameLanguage = (voice) => voice.lang?.split("-")[0] === language.split("-")[0];
+  return local.find(voice => sameLanguage(voice) && voice.default)
+    || local.find(sameLanguage) || local.find(voice => voice.default) || local[0] || null;
+}
 export function validAccess(value) {
   return (
     !!value &&

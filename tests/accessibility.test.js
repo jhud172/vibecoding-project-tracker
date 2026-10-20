@@ -2,12 +2,26 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   DEFAULT_ACCESS,
+  BROWSER_VOICE,
   createNarrator,
   resolvePalette,
+  selectReadingVoice,
   speechChunks,
   spokenTask,
   validAccess,
 } from "../src/accessibility.js";
+
+test("automatic narration never falls back to online speech without an explicit choice", () => {
+  const remote = { voiceURI: "online", lang: "en-GB", default: true, localService: false };
+  const local = { voiceURI: "device", lang: "en-GB", localService: true };
+  const other = { voiceURI: "fr-device", lang: "fr-FR", default: true, localService: true };
+  assert.equal(selectReadingVoice([remote, other, local], "", "en-GB"), local);
+  assert.equal(selectReadingVoice([remote], "", "en-GB"), null);
+  assert.equal(selectReadingVoice([], "", "en-GB"), null);
+  assert.equal(selectReadingVoice([remote], "online"), remote);
+  assert.equal(selectReadingVoice([remote], "removed-voice"), null);
+  assert.equal(selectReadingVoice([], BROWSER_VOICE), undefined);
+});
 
 function luminance(hex) {
   const channels = hex
